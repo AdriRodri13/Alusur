@@ -27,6 +27,11 @@
     padding: 2rem;
     animation: fadeInUp 1s ease-out;
   }
+
+  .hero-content img{
+    max-width: 70%;
+    margin-bottom: 1em;
+  }
   
   @keyframes fadeInUp {
     from {
@@ -156,80 +161,7 @@
     color: #666;
 }
 
-/* Sección de Contacto */
-.contacto {
-    padding: 8rem 2rem;
-    background-color: #fff;
-}
 
-.contacto h2 {
-    text-align: center;
-    font-size: 4rem;
-    margin-bottom: 5rem;
-}
-
-.contacto-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.contacto-form {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.contacto-form input,
-.contacto-form textarea {
-    padding: 1.5rem;
-    border: 1px solid #ddd;
-    border-radius: 0.5rem;
-    font-size: 1.6rem;
-}
-
-.contacto-form textarea {
-    height: 150px;
-    resize: vertical;
-}
-
-.submit-btn {
-    background-color: var(--color-principal);
-    color: white;
-    padding: 1.5rem;
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 1.8rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.submit-btn:hover {
-    background-color: var(--color-secundario);
-}
-
-.contacto-info {
-    padding: 2rem;
-}
-
-.contacto-info h3 {
-    font-size: 2.4rem;
-    margin-bottom: 2rem;
-}
-
-.contacto-info p {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.contacto-info i {
-    color: var(--color-principal);
-}
 
 /* Media Queries */
 @media screen and (max-width: 768px) {
@@ -253,7 +185,4 @@
         grid-template-columns: 1fr;
     }
     
-    .contacto-container {
-        grid-template-columns: 1fr;
-    }
 }

@@ -1,0 +1,113 @@
+/* Sección Hero */
+.servicios-hero {
+    padding: 12rem 2rem 6rem;
+    text-align: center;
+    color: white;
+    margin-bottom: 4rem;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.servicios-titulo {
+    font-family: var(--fuente-principal);
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    color: var(--color-principal);
+}
+
+.servicios-subtitulo {
+    font-size: 2.2rem;
+    opacity: 0.9;
+    color: var(--color-principal);
+}
+
+.container{
+    max-width: 80%;
+}
+
+/* Grid de Servicios */
+.servicios-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3rem;
+    padding: 2rem;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Tarjetas de Servicio */
+.servicio-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.servicio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.servicio-imagen-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 60%; /* Aspect ratio 16:9 */
+}
+
+.servicio-imagen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.servicio-card:hover .servicio-imagen {
+    transform: scale(1.1);
+}
+
+.servicio-contenido {
+    padding: 2rem;
+}
+
+.servicio-nombre {
+    font-size: 2.4rem;
+    color: var(--color-principal);
+    margin-bottom: 1rem;
+}
+
+.servicio-descripcion {
+    font-size: 1.6rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .servicios-titulo {
+        font-size: 4rem;
+    }
+
+    .servicios-subtitulo {
+        font-size: 1.8rem;
+    }
+
+    .servicios-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .container{
+        max-width: 100%;
+    }
+
+    .servicio-nombre{
+        text-align: center;
+    }
+
+
+}

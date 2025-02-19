@@ -1,0 +1,31 @@
+{% extends 'inicio/base.html' %}
+{% load static %}
+
+{% block titulo %}Servicios - Alusur{% endblock titulo %}
+
+{% block cabecera %}
+<link rel="stylesheet" href="{% static 'inicio/css/servicios.css' %}">
+{% endblock cabecera %}
+
+{% block content %}
+<section class="servicios-hero" style="background: url('{% static 'inicio/img/banner.jpg' %}') center/cover no-repeat;">
+    <h1 class="servicios-titulo">Nuestros Servicios</h1>
+    <p class="servicios-subtitulo">Soluciones integrales en aluminio y vidrio</p>
+</section>
+
+<section class="servicios-grid">
+    {% for servicio in servicios %}
+    <article class="servicio-card" data-aos="fade-up">
+        <div class="servicio-imagen-container">
+            <img src="{{ servicio.imagen.url }}" alt="{{ servicio.nombre }}" class="servicio-imagen">
+        </div>
+        <div class="servicio-contenido">
+            <h2 class="servicio-nombre">{{ servicio.nombre }}</h2>
+            <p class="servicio-descripcion">{{ servicio.descripcion }}</p>
+        </div>
+    </article>
+    {% endfor %}
+</section>
+
+
+{% endblock %}
