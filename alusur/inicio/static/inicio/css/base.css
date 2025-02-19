@@ -1,0 +1,211 @@
+:root{
+    --color-principal : #0712ad;
+    --color-secundario: #3207AD;
+    --color-terciario: #0747AD;
+    --color-cuarto: #077BAD;
+    --color-especial: #6807AD;
+    --fuente-principal: 'Bebas Neue'
+}
+
+/*---------------------*/
+/*--Estilos Generales--*/
+/*---------------------*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    font-size: 62.5%; /*1em equivale a 10 px*/
+}
+
+body{
+    background-color: #f5f5f5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-principal);
+    font-weight: bold;
+}
+
+
+/*---------------------------*/
+/*--Estilos de la Base.html--*/
+/*---------------------------*/
+
+/* ---- HEADER ---- */
+.header {
+    background: linear-gradient(to right, var(--color-principal), var(--color-secundario));
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ---- NAVEGACIÓN ---- */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ---- LOGO ---- */
+.logo {
+    padding: 1em;
+    background-color: white;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.logo:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más intensa al pasar el cursor */
+    transform: scale(1.05); /* Pequeño efecto de zoom */
+}
+
+.logo img {
+    height: 5rem;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+
+/* ---- MENÚ ---- */
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+}
+
+/* ---- BOTONES EN LOS ENLACES ---- */
+.nav-menu-link {
+    background: var(--color-principal);
+    color: white;
+    text-decoration: none;
+    padding: 1.5rem 2rem;
+    border-radius: 2rem;
+    font-size: 2.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    border: 2px solid white;
+}
+
+.nav-menu-link:hover {
+    background: var(--color-terciario);
+    transform: scale(1.05) translateY(-5px) translateX(5px);
+}
+
+/* ---- BOTÓN MENÚ HAMBURGUESA ---- */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.nav-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* ---- ICONOS ---- */
+.nav-menu-link i {
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-menu-link:hover i {
+    transform: rotate(30deg);
+}
+
+/* ---- MENÚ RESPONSIVO ---- */
+@media screen and (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: 10rem;
+        left: 0;
+        background: linear-gradient(to right, var(--color-principal), var(--color-secundario));
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 0;
+        height: calc(100vh - 7rem);
+        overflow-y: auto;
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(100%);
+    }
+
+    .nav-menu.active {
+        transform: translateX(0);
+    }
+
+    .nav-menu-item {
+        margin: 1rem 0;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+}
+
+/* ---- FOOTER ---- */
+.footer {
+    background: linear-gradient(to right, var(--color-principal), var(--color-secundario));
+    color: white;
+    text-align: center;
+    padding: 1.5rem 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: 1.6rem;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* ---- ICONOS REDES SOCIALES ---- */
+.footer-socials {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-link {
+    color: white;
+    font-size: 2rem;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer-link:hover {
+    transform: scale(1.2);
+    color: var(--color-cuarto);
+}
+
+/* ---- PARA QUE EL FOOTER SIEMPRE SE QUEDE ABAJO ---- */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
