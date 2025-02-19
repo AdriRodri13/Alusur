@@ -27,7 +27,7 @@
 <body>
     <header class="header">
         <nav class="nav">
-            <a href="#" id='logo' class="logo">
+            <a href="{% url 'Inicio' %}" id='logo' class="logo">
                 <img src="{% static 'inicio/img/logoalusur.png' %}" alt="Logo">
             </a>
             <button class="nav-toggle">
@@ -35,13 +35,13 @@
             </button>
             <ul class="nav-menu">
                 <li class="nav-menu-item">
-                    <a href="#" class="nav-menu-link">
+                    <a href="{% url 'Inicio' %}" class="nav-menu-link">
                         <i class="fas fa-home"></i>
                         Inicio
                     </a>
                 </li>
                 <li class="nav-menu-item">
-                    <a href="#" class="nav-menu-link">
+                    <a href="{% url 'Nosotros' %}" class="nav-menu-link">
                         <i class="fas fa-info-circle"></i>
                         Nosotros
                     </a>
