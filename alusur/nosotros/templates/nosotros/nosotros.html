@@ -1,12 +1,128 @@
 {% extends "inicio/base.html" %}
 {% load static %}
 
-{% block title %}Aluminios del Sureste{% endblock title %}
+{% block title %}Sobre Nosotros - Aluminios del Sureste{% endblock title %}
 
 {% block cabecera %}
 <link rel="stylesheet" href="{% static 'inicio/css/nosotros.css' %}">
 {% endblock cabecera %}
 
 {% block content %}
+<main>
+    <!-- Sección de Historia -->
+    <section class="historia">
+        <div class="historia-content">
+            <h1 class="fade-in">Nuestra Historia</h1>
+            <div class="historia-grid">
+                <div class="historia-texto slide-in-left">
+                    <p>Desde 1990, Aluminios del Sureste ha sido sinónimo de calidad y excelencia en la carpintería de aluminio en Alicante. Lo que comenzó como un pequeño taller familiar se ha convertido en una empresa líder en el sector.</p>
+                </div>
+                <div class="historia-imagen slide-in-right">
+                    <img src="https://placehold.co/600x400" alt="Historia de Aluminios del Sureste">
+                </div>
+            </div>
+        </div>
+    </section>
 
-{% endblock content%}
+    <!-- Sección del Equipo -->
+    <section class="equipo">
+        <h2 class="fade-in">Nuestro Equipo</h2>
+        <div class="equipo-grid">
+            <div class="miembro-card" data-aos="fade-up">
+                <div class="miembro-imagen">
+                    <img src="https://placehold.co/400x400" alt="Juan García - Director">
+                </div>
+                <div class="miembro-info">
+                    <h3>Alfredo Rodriguez</h3>
+                    <p class="cargo">Director General</p>
+                    <p class="descripcion">Con más de 30 años de experiencia en el sector, Juan lidera nuestra empresa con visión y compromiso.</p>
+                </div>
+            </div>
+
+            <div class="miembro-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="miembro-imagen">
+                    <img src="https://placehold.co/400x400" alt="Ana Martínez - Diseñadora">
+                </div>
+                <div class="miembro-info">
+                    <h3>Ismael Rodriguez</h3>
+                    <p class="cargo">Diseñadora Técnica</p>
+                    <p class="descripcion">Especialista en diseño de soluciones personalizadas y optimización de espacios.</p>
+                </div>
+            </div>
+
+            <div class="miembro-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="miembro-imagen">
+                    <img src="https://placehold.co/400x400" alt="Carlos Ruiz - Técnico">
+                </div>
+                <div class="miembro-info">
+                    <h3>Adrian Rodriguez</h3>
+                    <p class="cargo">Desarrollador de la pagina</p>
+                    <p class="descripcion">Desarrollador web de nuestra pagina</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Valores -->
+    <section class="valores">
+        <h2 class="fade-in">Nuestros Valores</h2>
+        <div class="valores-container">
+            <div class="valor-card" data-aos="zoom-in">
+                <i class="fas fa-medal"></i>
+                <h3>Excelencia</h3>
+                <p>Compromiso con la máxima calidad en cada proyecto.</p>
+            </div>
+
+            <div class="valor-card" data-aos="zoom-in" data-aos-delay="100">
+                <i class="fas fa-handshake"></i>
+                <h3>Confianza</h3>
+                <p>Relaciones duraderas basadas en la honestidad y transparencia.</p>
+            </div>
+
+            <div class="valor-card" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fas fa-leaf"></i>
+                <h3>Sostenibilidad</h3>
+                <p>Compromiso con el medio ambiente y la eficiencia energética.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Instalaciones -->
+    <section class="instalaciones">
+        <h2 class="fade-in">Nuestras Instalaciones</h2>
+        <div class="instalaciones-slider">
+            <div class="slider-container">
+                <div class="slide">
+                    <img src="https://placehold.co/800x400" alt="Taller principal">
+                    <div class="slide-info">
+                        <h3>Taller Principal</h3>
+                        <p>Equipado con la última tecnología en fabricación de aluminio.</p>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="https://placehold.co/800x400" alt="Showroom">
+                    <div class="slide-info">
+                        <h3>Showroom</h3>
+                        <p>Espacio de exposición donde podrás ver nuestros productos.</p>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="https://placehold.co/800x400" alt="Oficina técnica">
+                    <div class="slide-info">
+                        <h3>Oficina Técnica</h3>
+                        <p>Donde diseñamos y planificamos cada proyecto.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="prev-slide"><i class="fas fa-chevron-left"></i></button>
+                <button class="next-slide"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% block scripts %}
+<script src="{% static 'inicio/js/nosotros.js' %}"></script>
+{% endblock scripts %}
+{% endblock content %}
