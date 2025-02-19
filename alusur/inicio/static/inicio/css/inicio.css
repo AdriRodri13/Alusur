@@ -1,0 +1,259 @@
+/* ---- HERO ---- */
+.hero {
+    position: relative;
+    height: 80vh; /* Ajusta según necesites */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 12rem;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    max-width: 800px;
+    padding: 2rem;
+    animation: fadeInUp 1s ease-out;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hero h1 {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  
+  .hero-subtitle {
+    font-size: 1.8rem;
+    margin-bottom: 2.5rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  }
+  
+  .hero-cta {
+    display: inline-block;
+    background-color: var(--color-cuarto);
+    color: #fff;
+    padding: 1rem 2.5rem;
+    border-radius: 3rem;
+    font-size: 1.8rem;
+    text-decoration: none;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .hero-cta:hover {
+    background-color: var(--color-especial);
+    transform: scale(1.05);
+  }
+
+/* Sección Servicios */
+.servicios {
+    padding: 8rem 2rem;
+    background-color: #fff;
+}
+
+.servicios h2 {
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 5rem;
+}
+
+.servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.servicio-card {
+    text-align: center;
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.servicio-card:hover {
+    transform: translateY(-10px);
+}
+
+.servicio-card i {
+    font-size: 4rem;
+    color: var(--color-principal);
+    margin-bottom: 2rem;
+}
+
+.servicio-card h3 {
+    font-size: 2.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.servicio-card p {
+    font-size: 1.6rem;
+    color: #666;
+}
+
+/* Sección Por Qué Elegirnos */
+.porque-elegirnos {
+    padding: 8rem 2rem;
+    background-color: #f9f9f9;
+}
+
+.porque-elegirnos h2 {
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 5rem;
+}
+
+.ventajas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ventaja-item {
+    text-align: center;
+    padding: 3rem;
+}
+
+.ventaja-item i {
+    font-size: 4rem;
+    color: var(--color-secundario);
+    margin-bottom: 2rem;
+}
+
+.ventaja-item h3 {
+    font-size: 2.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.ventaja-item p {
+    font-size: 1.6rem;
+    color: #666;
+}
+
+/* Sección de Contacto */
+.contacto {
+    padding: 8rem 2rem;
+    background-color: #fff;
+}
+
+.contacto h2 {
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 5rem;
+}
+
+.contacto-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.contacto-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contacto-form input,
+.contacto-form textarea {
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    font-size: 1.6rem;
+}
+
+.contacto-form textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: var(--color-principal);
+    color: white;
+    padding: 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: var(--color-secundario);
+}
+
+.contacto-info {
+    padding: 2rem;
+}
+
+.contacto-info h3 {
+    font-size: 2.4rem;
+    margin-bottom: 2rem;
+}
+
+.contacto-info p {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.contacto-info i {
+    color: var(--color-principal);
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+    .hero {
+        height: 60vh;
+        margin-top: 8rem;
+      }
+      .hero h1 {
+        font-size: 3rem;
+      }
+      .hero-subtitle {
+        font-size: 1.5rem;
+      }
+      .hero-cta {
+        font-size: 1.5rem;
+        padding: 1rem 2rem;
+      }
+    
+    .servicios-grid,
+    .ventajas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contacto-container {
+        grid-template-columns: 1fr;
+    }
+}

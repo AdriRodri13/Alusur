@@ -1,5 +1,86 @@
 {% extends "inicio/base.html" %}
-{% load static%}
+{% load static %}
 
 {% block title %}Aluminios del Sureste{% endblock title %}
 
+{% block cabecera %}
+<link rel="stylesheet" href="{% static 'inicio/css/inicio.css' %}">
+{% endblock cabecera %}
+
+{% block content %}
+<!-- Sección Hero -->
+<section class="hero" style="background: url('{% static 'inicio/img/fondo_hero.jpg' %}') center/cover no-repeat;">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Expertos en Carpintería de Aluminio en Alicante</h1>
+      <p class="hero-subtitle">Soluciones personalizadas para tu hogar y negocio desde 1990</p>
+      <a href="#contacto" class="hero-cta">Solicita Presupuesto Gratuito</a>
+    </div>
+</section>
+  
+
+
+<!-- Sección Servicios -->
+<section class="servicios">
+    <h2>Nuestros Servicios</h2>
+    <div class="servicios-grid">
+        <div class="servicio-card">
+            <i class="fas fa-window-maximize"></i>
+            <h3>Ventanas</h3>
+            <p>Ventanas de aluminio con la mejor eficiencia energética y aislamiento acústico.</p>
+        </div>
+        <div class="servicio-card">
+            <i class="fas fa-door-open"></i>
+            <h3>Puertas</h3>
+            <p>Puertas de aluminio resistentes y seguras para entrada, terraza o interior.</p>
+        </div>
+        <div class="servicio-card">
+            <i class="fas fa-home"></i>
+            <h3>Cerramientos</h3>
+            <p>Cerramientos de terrazas y porches para aprovechar al máximo tu espacio.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Por Qué Elegirnos -->
+<section class="porque-elegirnos">
+    <h2>¿Por Qué Elegirnos?</h2>
+    <div class="ventajas-grid">
+        <div class="ventaja-item">
+            <i class="fas fa-certificate"></i>
+            <h3>30 Años de Experiencia</h3>
+            <p>Trayectoria avalada por cientos de clientes satisfechos en Alicante.</p>
+        </div>
+        <div class="ventaja-item">
+            <i class="fas fa-tools"></i>
+            <h3>Profesionales Cualificados</h3>
+            <p>Equipo técnico especializado en carpintería de aluminio.</p>
+        </div>
+        <div class="ventaja-item">
+            <i class="fas fa-hand-holding-usd"></i>
+            <h3>Precios Competitivos</h3>
+            <p>La mejor relación calidad-precio del mercado.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Sección de Contacto -->
+<section id="contacto" class="contacto">
+    <h2>Contacta con Nosotros</h2>
+    <div class="contacto-container">
+        <form class="contacto-form">
+            <input type="text" placeholder="Nombre" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Teléfono" required>
+            <textarea placeholder="¿En qué podemos ayudarte?" required></textarea>
+            <button type="submit" class="submit-btn">Enviar Consulta</button>
+        </form>
+        <div class="contacto-info">
+            <h3>Información de Contacto</h3>
+            <p><i class="fas fa-map-marker-alt"></i> Calle Principal 123, Alicante</p>
+            <p><i class="fas fa-phone"></i> 965 123 456</p>
+            <p><i class="fas fa-envelope"></i> info@aluminiosdelsureste.es</p>
+        </div>
+    </div>
+</section>
+{% endblock content %}
