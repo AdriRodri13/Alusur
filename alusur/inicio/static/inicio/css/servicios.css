@@ -23,7 +23,7 @@
 
 .container{
     max-width: 80%;
-    margin: 0;
+    margin: 0 auto;
 }
 
 /* Grid de Servicios */
