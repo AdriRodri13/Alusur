@@ -285,4 +285,8 @@ section {
         right: auto;
         margin-top: -2rem;
     }
+
+    .container{
+        margin-top: 0px;
+    }
 }
