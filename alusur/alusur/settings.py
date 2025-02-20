@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "nosotros",
     "contacto",
     "usuarios",
+    "gestion",
 ]
 
 MIDDLEWARE = [

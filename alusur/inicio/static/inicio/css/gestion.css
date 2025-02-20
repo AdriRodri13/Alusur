@@ -1,0 +1,132 @@
+/* Estilos para la página de gestión */
+
+.gestion-container {
+    max-width: 800px;
+    margin: 12rem auto 4rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gestion-titulo {
+    font-family: var(--fuente-principal);
+    font-size: 3.6rem;
+    color: var(--color-principal);
+    text-align: center;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+}
+
+.gestion-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.gestion-form p {
+    margin: 0;
+}
+
+.gestion-form label {
+    display: block;
+    font-size: 1.8rem;
+    color: var(--color-principal);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.gestion-form input[type="file"] {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.6rem;
+    border: 2px solid var(--color-principal);
+    border-radius: 0.8rem;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.gestion-form input[type="file"]:hover {
+    border-color: var(--color-secundario);
+}
+
+.gestion-form button {
+    background: linear-gradient(to right, var(--color-principal), var(--color-secundario));
+    color: white;
+    padding: 1.5rem 3rem;
+    border: none;
+    border-radius: 0.8rem;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.1rem;
+    align-self: center;
+}
+
+.gestion-form button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.gestion-form button:active {
+    transform: translateY(-1px);
+}
+
+/* Mensajes de estado */
+.mensaje-error {
+    background-color: #fee;
+    color: #d00;
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    border: 1px solid #fcc;
+}
+
+.mensaje-exito {
+    background-color: #efe;
+    color: #0a0;
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    border: 1px solid #cfc;
+}
+
+/* Estilos responsivos */
+@media screen and (max-width: 768px) {
+    .gestion-container {
+        margin: 10rem 2rem 4rem;
+        padding: 1.5rem;
+    }
+
+    .gestion-titulo {
+        font-size: 3rem;
+    }
+
+    .gestion-form button {
+        width: 100%;
+        padding: 1.2rem;
+    }
+}
+
+/* Animación de carga */
+.cargando {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

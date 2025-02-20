@@ -1,0 +1,33 @@
+{% extends 'inicio/base.html' %}
+{% load static %}
+
+{% block titulo %}Gestión de Archivos{% endblock titulo %}
+
+{% block cabecera %}
+<link rel="stylesheet" href="{% static 'inicio/css/gestion.css' %}">
+{% endblock cabecera %}
+
+{% block content %}
+<div class="gestion-container">
+    <h2 class="gestion-titulo">Subir Archivo</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mensaje-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="gestion-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">
+            Subir Archivo
+            <span class="cargando" style="display: none;"></span>
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'inicio/js/gestion.js' %}">
+{% endblock %}
