@@ -37,6 +37,10 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- HEADER ---- */
 .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     background: linear-gradient(to right, var(--color-principal), var(--color-secundario));
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 1.5rem 2rem;
@@ -52,8 +56,8 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0px;
 }
 
 /* ---- LOGO ---- */
@@ -61,13 +65,13 @@ h1, h2, h3, h4, h5, h6 {
     padding: 1em;
     background-color: white;
     border-radius: 1em;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .logo:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más intensa al pasar el cursor */
-    transform: scale(1.05); /* Pequeño efecto de zoom */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
 }
 
 .logo img {
@@ -82,6 +86,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     list-style: none;
     gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
 /* ---- BOTONES EN LOS ENLACES ---- */
@@ -89,17 +94,16 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--color-principal);
     color: white;
     text-decoration: none;
-    padding: 1.5rem 2rem;
-    border-radius: 2rem;
-    font-size: 2.2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 600;
     text-transform: uppercase;
     transition: background 0.3s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     border: 2px solid white;
-    width: 200px;
     justify-content: center;
 }
 
@@ -132,6 +136,37 @@ h1, h2, h3, h4, h5, h6 {
     transform: rotate(30deg);
 }
 
+/* ---- MENÚ EN DOS COLUMNAS (ESCRITORIO) ---- */
+@media screen and (min-width: 1024px) {
+    .nav {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+
+    }
+    .logo {
+        justify-self: start;
+    }
+    .nav-menu {
+        justify-self: end;
+    }
+
+    .nav-menu-link{
+        width: 200px;
+    }
+}
+
+/* ---- OPTIMIZACIÓN PARA PORTÁTILES (PANTALLAS MENORES A 1024PX) ---- */
+@media screen and (max-width: 1024px) {
+    .nav-menu-link {
+        padding: 1rem 1.2rem;
+        font-size: 1.6rem;
+    }
+    .nav-menu {
+        gap: 1rem;
+    }
+}
+
 /* ---- MENÚ RESPONSIVO ---- */
 @media screen and (max-width: 768px) {
     .nav-menu {
@@ -159,6 +194,10 @@ h1, h2, h3, h4, h5, h6 {
 
     .nav-toggle {
         display: block;
+    }
+
+    .nav-menu-link{
+        width: 200px;
     }
 }
 

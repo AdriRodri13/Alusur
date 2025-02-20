@@ -1,7 +1,7 @@
 /* ---- HERO ---- */
 .hero {
     position: relative;
-    height: 80vh; /* Ajusta según necesites */
+    height: 60vh; /* Ajusta según necesites */
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,4 +1,13 @@
 {% extends 'inicio/base.html' %}
+
+{% block titulo %}
+    Login
+{% endblock titulo %}
+{% load static %}
+{% block cabecera %}
+    <link rel="stylesheet" href="{% static 'inicio/css/login.css' %}">
+{% endblock cabecera %}
+
 {% block content %}
 
 <h2>Iniciar Sesion</h2>
