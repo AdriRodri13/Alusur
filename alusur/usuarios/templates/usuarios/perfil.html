@@ -1,0 +1,59 @@
+{% extends 'inicio/base.html' %}
+{% load static %}
+
+{% block titulo %}
+    Perfil de Usuario
+{% endblock titulo %}
+
+{% block cabecera %}
+    <link rel="stylesheet" href="{% static 'inicio/css/perfil.css' %}">
+{% endblock cabecera %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="Avatar de {{ user.username }}">
+            {% else %}
+                <img src="{% static 'inicio/img/default-avatar.png' %}" alt="Avatar por defecto">
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h1>{{ user.get_full_name|default:user.username }}</h1>
+            <p class="profile-username">@{{ user.username }}</p>
+            <p class="profile-email">{{ user.email }}</p>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-section">
+            <h2>Información Personal</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label"><i class="fas fa-user"></i> Nombre:</span>
+                    <span class="info-value">{{ user.first_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="fas fa-user"></i> Apellidos:</span>
+                    <span class="info-value">{{ user.last_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="fas fa-calendar"></i> Fecha de registro:</span>
+                    <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="fas fa-clock"></i> Último acceso:</span>
+                    <span class="info-value">{{ user.last_login|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <a href="{% url 'Logout' %}">Cerrar Sesion</a>    
+        </div>
+
+        
+    </div>
+</div>
+{% endblock content %}

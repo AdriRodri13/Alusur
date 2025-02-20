@@ -58,6 +58,22 @@
                         Contacto
                     </a>
                 </li>
+                {% if user.is_authenticated%}
+                <li class="nav-menu-item">
+                    <a href="{% url 'Perfil' %}" class="nav-menu-link">
+                        <i class="fas fa-user"></i>
+                        Perfil
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-menu-item">
+                    <a href="{% url 'Login' %}" class="nav-menu-link">
+                        <i class="fas fa-user"></i>
+                        Login
+                    </a>
+                </li>
+                {% endif %}
+
             </ul>
         </nav>
     </header>

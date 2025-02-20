@@ -1,0 +1,132 @@
+/* Contenedor principal del perfil */
+.profile-container {
+    max-width: 1000px;
+    margin: 20rem auto 3rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+/* Cabecera del perfil */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    padding: 2rem;
+    background: linear-gradient(to right, var(--color-principal), var(--color-secundario));
+    border-radius: 1rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+
+.profile-avatar {
+    flex-shrink: 0;
+}
+
+.profile-avatar img {
+    width: 15rem;
+    height: 15rem;
+    border-radius: 50%;
+    border: 0.4rem solid white;
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+
+.profile-info {
+    flex-grow: 1;
+}
+
+.profile-info h1 {
+    color: white;
+    font-size: 3.6rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--fuente-principal);
+}
+
+.profile-username {
+    font-size: 1.8rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.profile-email {
+    font-size: 1.6rem;
+    opacity: 0.8;
+}
+
+
+/* Secciones del perfil */
+.profile-section {
+    background-color: #f8f9fa;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-section h2 {
+    font-size: 2.4rem;
+    margin-bottom: 2rem;
+    color: var(--color-principal);
+    font-family: var(--fuente-principal);
+}
+
+/* Grid de información */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+    gap: 2rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-label {
+    font-size: 1.4rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-value {
+    font-size: 1.6rem;
+    color: #333;
+    font-weight: 500;
+}
+
+
+
+
+
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .profile-container {
+        margin-top: 12rem;
+        padding: 1rem;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .profile-info h1 {
+        font-size: 2.8rem;
+    }
+
+    .profile-actions {
+        margin-top: 1.5rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    
+}
