@@ -264,7 +264,7 @@
 }
 
 .hero-card-front {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255, 255, 255);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 50px 30px;
@@ -1478,7 +1478,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-card-front {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255, 255, 255);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 40px;
@@ -1635,7 +1635,7 @@ h1, h2, h3, h4, h5, h6 {
 .presentation-image-container {
   position: relative;
   height: 100%;
-  min-height: 400px;
+  min-height: 200px;
 }
 
 .presentation-image-wrapper {

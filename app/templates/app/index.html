@@ -371,17 +371,17 @@ html, body {
     <!-- HEADER / HERO SECTION -->
     <header id="hero" class="hero-section">
         <!-- Navbar mejorado -->
-        <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar">
+        <nav class="navbar navbar-expand-lg fixed-top mb-4" id="mainNavbar">
             <div class="container">
                 <a class="navbar-brand" href="#hero">
                     <div class="brand-container">
                         <div class="brand-icon">
                             <i class="fa-solid fa-house-chimney-window"></i>
                         </div>
-                        <div class="brand-text">
-                            <span class="brand-name">Aluminios</span>
-                            <span class="brand-subtitle">del Sureste</span>
+                        <div class="bg-white p-2 w-50 rounded">
+                            <img src="{% static 'app/images/logoalusur.png' %}" class="img-fluid rounded" style="max-height: 60px;">
                         </div>
+
                     </div>
                 </a>
 
@@ -442,11 +442,8 @@ html, body {
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1200">
-                        <div class="hero-badge mb-3">
-                            <i class="fas fa-award me-2"></i>
-                            +30 años de experiencia
-                        </div>
-                        <h1 class="hero-title mb-4">
+                        
+                        <h1 class="hero-title mt-4">
                             <span class="hero-title-line1">Aluminios del</span>
                             <span class="hero-title-line2">Sureste</span>
                             <div class="hero-title-underline"></div>
@@ -456,6 +453,10 @@ html, body {
                             <span class="text-highlight">puertas</span> y
                             <span class="text-highlight">cerramientos</span> de aluminio
                         </h2>
+                        <div class="hero-badge mb-3">
+                            <i class="fas fa-award me-2"></i>
+                            +30 años de experiencia
+                        </div>
                         <p class="hero-description mb-5">
                             Transformamos espacios con soluciones de carpintería de aluminio de alta calidad,
                             combinando diseño moderno, eficiencia energética y durabilidad excepcional.
@@ -475,7 +476,7 @@ html, body {
                             </div>
                         </div>
                         <div class="hero-buttons">
-                            <a href="#contacto" class="btn btn-primary btn-hero me-3 smooth-scroll">
+                            <a href="#contacto" class="btn btn-danger text-white btn-hero me-3 smooth-scroll">
                                 <i class="fas fa-calculator me-2"></i>
                                 Presupuesto Gratuito
                                 <span class="btn-shine"></span>
@@ -493,16 +494,16 @@ html, body {
                                     <img src="{% static 'app/images/logoalusur.png' %}" alt="logo alusur" class="mb-4">
                                     <div class="hero-features">
                                         <div class="feature-item">
-                                            <i class="fas fa-shield-alt"></i>
-                                            <span>Garantía</span>
+                                            <i class="fas fa-shield-alt text-black"></i>
+                                            <span class="text-black">Garantía</span>
                                         </div>
                                         <div class="feature-item">
-                                            <i class="fas fa-leaf"></i>
-                                            <span>Eco-friendly</span>
+                                            <i class="fa-solid fa-user-tie text-black"></i>
+                                            <span class="text-black">Profesionalidad</span>
                                         </div>
                                         <div class="feature-item">
-                                            <i class="fas fa-tools"></i>
-                                            <span>Calidad</span>
+                                            <i class="fas fa-tools text-black"></i>
+                                            <span class="text-black">Calidad</span>
                                         </div>
                                     </div>
                                 </div>
@@ -570,9 +571,6 @@ html, body {
                 </div>
                 {% endif %}
             </div>
-            {% if not forloop.last %}
-            <hr class="presentation-divider">
-            {% endif %}
             {% endfor %}
         </div>
     </section>

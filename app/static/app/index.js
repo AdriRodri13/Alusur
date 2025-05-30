@@ -127,7 +127,7 @@ function initParallax() {
 
     window.addEventListener('scroll', function() {
         const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5;
+        const rate = scrolled * -0.05;
 
         // Efecto parallax en hero
         const heroSection = document.querySelector('.hero-section');
