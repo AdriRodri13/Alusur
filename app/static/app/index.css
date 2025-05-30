@@ -2443,3 +2443,32 @@ h1, h2, h3, h4, h5, h6 {
     scroll-behavior: auto;
   }
 }
+
+.instagram-widget-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.elfsight-app-5d93f748-e1db-41e0-b1fa-15ba2e3ad729 {
+    width: 100% !important;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Responsive simple */
+@media (max-width: 768px) {
+    .instagram-widget-container {
+        padding: 15px;
+        margin: 15px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .instagram-widget-container {
+        padding: 10px;
+        border-radius: 10px;
+    }
+}
