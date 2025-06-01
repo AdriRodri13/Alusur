@@ -337,58 +337,9 @@ function initIntersectionAnimations() {
     });
 }
 
-// GALERÍA MODAL PARA PROYECTOS
-function initProjectGallery() {
-    const projectImages = document.querySelectorAll('.project-image img');
 
-    projectImages.forEach(img => {
-        img.addEventListener('click', function() {
-            openImageModal(this.src, this.alt);
-        });
-    });
-}
 
-function openImageModal(src, alt) {
-    const modal = document.createElement('div');
-    modal.className = 'image-modal';
-    modal.innerHTML = `
-        <div class="modal-overlay">
-            <div class="modal-content">
-                <img src="${src}" alt="${alt}" class="modal-image">
-                <button class="modal-close">&times;</button>
-            </div>
-        </div>
-    `;
 
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
-
-    // Cerrar modal
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal || e.target.classList.contains('modal-close')) {
-            closeImageModal(modal);
-        }
-    });
-
-    // Cerrar con ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeImageModal(modal);
-        }
-    });
-}
-
-function closeImageModal(modal) {
-    modal.classList.remove('show');
-    document.body.style.overflow = '';
-    setTimeout(() => {
-        modal.remove();
-    }, 300);
-}
 
 // PERFORMANCE OPTIMIZATION
 function optimizePerformance() {
@@ -438,7 +389,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar todas las funcionalidades adicionales
     initCardAnimations();
     initIntersectionAnimations();
-    initProjectGallery();
     optimizePerformance();
 
     console.log('🚀 SPA Aluminios del Sureste cargada correctamente');

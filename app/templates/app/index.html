@@ -29,342 +29,6 @@
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="{% static 'app/index.css' %}">
 
-    <style>
-/* 🚨 PROBLEMA 1: Elementos que se salen del contenedor */
-
-/* FIX: Asegurar que ningún elemento se salga del viewport */
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  overflow-x: hidden; /* Previene scroll horizontal */
-  width: 100%;
-}
-
-/* 🚨 PROBLEMA 2: Padding lateral en hero-content excesivo */
-
-/* ANTES (problemático): */
-.hero-content .col-lg-6:first-child {
-  padding-right: 40px; /* ❌ Muy grande para móviles */
-}
-
-/* DESPUÉS (corregido): */
-.hero-content .col-lg-6:first-child {
-  padding-right: 40px;
-}
-
-@media (max-width: 992px) {
-  .hero-content .col-lg-6:first-child {
-    padding-right: 15px; /* ✅ Reducido para tablets */
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-content .col-lg-6:first-child {
-    padding-right: 0; /* ✅ Sin padding extra en móviles */
-    padding-left: 0;
-  }
-}
-
-/* 🚨 PROBLEMA 3: Elementos flotantes se salen del contenedor */
-
-/* FIX: Contener elementos flotantes */
-.floating-elements {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden; /* ✅ Añadido para contener elementos */
-}
-
-.floating-element {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  /* ... resto de estilos */
-}
-
-/* Ajustar posiciones para evitar overflow */
-@media (max-width: 768px) {
-  .floating-element {
-    width: 30px;
-    height: 30px;
-    font-size: 0.9rem;
-  }
-
-  .floating-element:nth-child(1) {
-    top: 10%;
-    right: 5%; /* ✅ Más hacia adentro */
-  }
-
-  .floating-element:nth-child(2) {
-    top: 40%;
-    right: 2%; /* ✅ Más hacia adentro */
-  }
-
-  .floating-element:nth-child(3) {
-    top: 70%;
-    right: 10%; /* ✅ Más hacia adentro */
-  }
-}
-
-/* 🚨 PROBLEMA 4: Hero stats con gap fijo problemático */
-
-/* ANTES (problemático): */
-.hero-stats {
-  display: flex;
-  gap: 40px; /* ❌ Puede causar overflow */
-}
-
-/* DESPUÉS (corregido): */
-.hero-stats {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 30px 0 40px 0;
-}
-
-@media (max-width: 768px) {
-  .hero-stats {
-    gap: 15px;
-    margin: 15px 0 25px 0;
-  }
-}
-
-@media (max-width: 576px) {
-  .hero-stats {
-    gap: 10px;
-    margin: 10px 0 20px 0;
-  }
-
-  .hero-stat {
-    min-width: auto; /* ✅ Permitir que se ajusten */
-    flex: 1 1 30%; /* ✅ Flexible pero con límite */
-  }
-}
-
-/* 🚨 PROBLEMA 5: Botones del hero causando overflow */
-
-/* FIX: Mejorar responsive de botones */
-.hero-buttons {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-@media (max-width: 768px) {
-  .hero-buttons {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-    width: 100%;
-  }
-
-  .btn-hero {
-    width: 100%;
-    padding: 12px 20px;
-    font-size: 0.9rem;
-  }
-}
-
-/* 🚨 PROBLEMA 6: Imagen decoration se sale del contenedor */
-
-/* FIX: Contener decoraciones */
-.image-decoration {
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  width: 100px;
-  height: 100px;
-  background: var(--gradient-primary);
-  border-radius: 50%;
-  opacity: 0.1;
-  z-index: -1;
-}
-
-@media (max-width: 768px) {
-  .image-decoration {
-    display: none; /* ✅ Ocultar en móviles para evitar overflow */
-  }
-}
-
-/* 🚨 PROBLEMA 7: Partículas pueden salirse */
-
-/* FIX: Mejorar contención de partículas */
-.hero-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden; /* ✅ Crítico para evitar overflow */
-  z-index: 1;
-}
-
-.particle {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
-  animation: float-particle 20s infinite linear;
-  will-change: transform; /* ✅ Optimización de rendimiento */
-}
-
-/* Reducir tamaños en móviles */
-@media (max-width: 768px) {
-  .particle {
-    background: rgba(255, 255, 255, 0.03); /* ✅ Más sutil */
-  }
-
-  .particle:nth-child(1) { width: 10px; height: 10px; }
-  .particle:nth-child(2) { width: 8px; height: 8px; }
-  .particle:nth-child(3) { width: 12px; height: 12px; }
-  .particle:nth-child(4) { width: 6px; height: 6px; }
-  .particle:nth-child(5) { width: 9px; height: 9px; }
-}
-
-/* 🚨 PROBLEMA 8: Container padding inconsistente */
-
-/* FIX: Padding consistente en containers */
-@media (max-width: 768px) {
-  .container {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-
-  .hero-content {
-    padding: 20px 0;
-  }
-
-  .hero-section {
-    padding: 80px 0 40px 0;
-    min-height: auto;
-  }
-}
-
-@media (max-width: 576px) {
-  .container {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
-  .hero-section {
-    padding: 70px 0 30px 0;
-  }
-}
-
-/* 🚨 PROBLEMA 9: Texto que puede desbordarse */
-
-/* FIX: Prevenir overflow de texto */
-.hero-title,
-.hero-subtitle,
-.hero-description {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-}
-
-@media (max-width: 576px) {
-  .hero-title {
-    font-size: 1.8rem;
-    line-height: 1.2;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-
-  .hero-description {
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-}
-
-/* 🚨 PROBLEMA 10: Cards que no se adaptan bien */
-
-/* FIX: Mejorar responsive de tarjetas */
-@media (max-width: 768px) {
-  .value-card,
-  .service-card,
-  .project-card {
-    margin-bottom: 20px;
-  }
-
-  .service-image-container,
-  .project-image-container {
-    height: 200px; /* ✅ Reducir altura en móviles */
-  }
-}
-
-/* 🔧 FIX CENTRADO - Restaurar comportamiento de Bootstrap */
-
-/* Restaurar centrado en hero-buttons */
-@media (min-width: 768px) {
-  .hero-buttons {
-    justify-content: flex-start; /* Volver a alineación natural en desktop */
-  }
-}
-
-/* Restaurar centrado en hero-stats */
-@media (min-width: 768px) {
-  .hero-stats {
-    justify-content: flex-start; /* Volver a alineación natural en desktop */
-  }
-}
-
-/* Restaurar centrado de textos en secciones */
-.text-center {
-  text-align: center !important;
-}
-
-.section-title::after {
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
-
-/* Asegurar que containers mantengan su centrado */
-.container {
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-/* Restaurar padding lateral correcto en hero-content para desktop */
-@media (min-width: 992px) {
-  .hero-content .col-lg-6:first-child {
-    padding-right: 40px !important;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  .hero-content .col-lg-6:first-child {
-    padding-right: 15px !important;
-  }
-}
-
-/* Solo en móviles quitar padding completamente */
-@media (max-width: 767px) {
-  .hero-content .col-lg-6:first-child {
-    padding-right: 15px !important;
-    padding-left: 15px !important;
-    text-align: center;
-  }
-
-  .hero-buttons {
-    justify-content: center !important;
-  }
-
-  .hero-stats {
-    justify-content: center !important;
-  }
-}
-
-    </style>
 </head>
 <body>
 
@@ -653,9 +317,11 @@ html, body {
                             {% if servicio.imagen %}
                             <div class="service-image">
                                 <img src="{{ servicio.imagen.url }}" alt="{{ servicio.titulo }}" class="img-fluid">
-                                <div class="service-overlay">
-                                    <i class="fas fa-plus"></i>
-                                </div>
+                                <!--
+                                    <div class="service-overlay">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                -->
                             </div>
                             {% else %}
                             <div class="service-image service-placeholder">
@@ -716,247 +382,80 @@ html, body {
 
     <!-- PROYECTOS FINALIZADOS -->
     <section id="proyectos" class="section-padding">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center" data-aos="fade-up">
-                    <h2 class="section-title mb-3">Proyectos Realizados</h2>
-                    <p class="section-subtitle">Algunos de nuestros trabajos más destacados</p>
+    <div class="container">
+        <div class="row mb-5">
+        <div class="col-12 text-center" data-aos="fade-up">
+            <h2 class="section-title mb-3">Proyectos Realizados</h2>
+            <p class="section-subtitle">Algunos de nuestros trabajos más destacados</p>
+        </div>
+        </div>
+
+        <div class="row g-4">
+        {% for proyecto in proyecto_finalizado %}
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="{{ forloop.counter|add:100 }}">
+            <article class="project-card h-100 d-flex flex-column" data-bs-toggle="modal" data-bs-target="#modalProyecto{{ proyecto.id }}">
+            <div class="project-image-container">
+                {% if proyecto.imagen %}
+                <div class="project-image">
+                <img src="{{ proyecto.imagen.url }}" alt="{{ proyecto.titulo }}" class="img-fluid">
+                <div class="project-overlay">
+                    <i class="fas fa-plus"></i>
+                </div>
+                </div>
+                {% else %}
+                <div class="project-image project-placeholder">
+                    <i class="fas fa-image project-placeholder-icon"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="project-content flex-grow-1 d-flex flex-column">
+                <h3 class="project-title">{{ proyecto.titulo }}</h3>
+                <div class="project-description flex-grow-1">
+                <p>{{ proyecto.descripcion|truncatewords:20 }}</p>
+                </div>
+                <div class="project-meta mt-auto">
+                <div class="project-category">
+                    <i class="fas fa-tag me-1"></i>
+                    Carpintería de Aluminio
+                </div>
                 </div>
             </div>
+            </article>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+    </section>
 
-            <div class="row g-4">
-                {% for proyecto in proyecto_finalizado %}
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="{{ forloop.counter|add:100 }}">
-                    <article class="project-card h-100 d-flex flex-column">
-                        <div class="project-image-container">
-                            {% if proyecto.imagen %}
-                            <div class="project-image">
-                                <img src="{{ proyecto.imagen.url }}" alt="{{ proyecto.titulo }}" class="img-fluid">
 
-                            </div>
-                            {% else %}
-                            <div class="project-image project-placeholder">
-                                <i class="fas fa-image project-placeholder-icon"></i>
+    <section id="contacto-visual" class="section-padding bg-light">
+        <div class="container">
+            <div class="row">
+            <!-- Mapa -->
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                {% include 'app/includes/mapa.html' %}
+            </div>
 
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="project-content flex-grow-1 d-flex flex-column">
-                            <h3 class="project-title">{{ proyecto.titulo }}</h3>
-                            <div class="project-description flex-grow-1">
-                                <p>{{ proyecto.descripcion|truncatewords:20 }}</p>
-                            </div>
-                            <div class="project-meta mt-auto">
-                                <div class="project-category">
-                                    <i class="fas fa-tag me-1"></i>
-                                    Carpintería de Aluminio
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                {% endfor %}
+            <!-- Instagram -->
+            <div class="col-lg-6">
+                {% include 'app/includes/instagram.html' %}
+            </div>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN INSTAGRAM -->
-<section id="instagram" class="section-padding bg-light">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-12 text-center" data-aos="fade-up">
-                <h2 class="section-title mb-3">Síguenos en Instagram</h2>
-                <p class="section-subtitle">
-                    Descubre nuestros últimos proyectos y trabajos en carpintería de aluminio
-                </p>
-            </div>
-        </div>
-        
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-8">
-                <div class="instagram-widget-container d-flex justify-content-center">
-                    <script src="https://static.elfsight.com/platform/platform.js" async></script>
-                    <div class="elfsight-app-5d93f748-e1db-41e0-b1fa-15ba2e3ad729" data-elfsight-app-lazy></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    
 
     <!-- FOOTER -->
-    <footer id="contacto" class="footer-section">
-        <div class="footer-waves">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"></path>
-            </svg>
-        </div>
+    {%include 'app/include/footer.html'%}
 
-        <div class="container">
-            <!-- Sección principal del footer -->
-            <div class="row g-4 mb-5">
-                <!-- Información de la empresa -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="800">
-                    <div class="footer-content">
-                        <div class="footer-brand mb-4">
-                            <div class="footer-logo">
-                                <i class="fas fa-cube"></i>
-                            </div>
-                            <h3 class="footer-title">
-                                Aluminios del Sureste
-                            </h3>
-                        </div>
-                        <p class="footer-description">
-                            Líderes en carpintería de aluminio en Alicante con más de 30 años de experiencia.
-                            Ofrecemos soluciones innovadoras que combinan calidad, diseño y eficiencia energética.
-                        </p>
-                        <div class="footer-certifications">
-                            <div class="certification-badge">
-                                <i class="fas fa-certificate"></i>
-                                <span>ISO 9001</span>
-                            </div>
-                            <div class="certification-badge">
-                                <i class="fas fa-leaf"></i>
-                                <span>Eco-friendly</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- SCRIPTS -->
+    {%include 'app/include/scripts.html'%}
 
-                <!-- Servicios rápidos -->
-                <div class="col-lg-2 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
-                    <div class="footer-content">
-                        <h4 class="footer-subtitle">Servicios</h4>
-                        <ul class="footer-links">
-                            <li><a href="#servicios" class="smooth-scroll">Ventanas de Aluminio</a></li>
-                            <li><a href="#servicios" class="smooth-scroll">Puertas</a></li>
-                            <li><a href="#servicios" class="smooth-scroll">Cerramientos</a></li>
-                            <li><a href="#servicios" class="smooth-scroll">Mamparas</a></li>
-                            <li><a href="#servicios" class="smooth-scroll">Persianas</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Información de contacto -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
-                    <div class="footer-content">
-                        <h4 class="footer-subtitle">Contacto</h4>
-                        <ul class="footer-contact">
-                            <li class="contact-item">
-                                <div class="contact-icon">
-                                    <i class="fas fa-phone"></i>
-                                </div>
-                                <div class="contact-info">
-                                    <span class="contact-label">Teléfono</span>
-                                    <a href="tel:+34XXX XXX XXX" class="contact-value">+34 XXX XXX XXX</a>
-                                </div>
-                            </li>
-                            <li class="contact-item">
-                                <div class="contact-icon">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <div class="contact-info">
-                                    <span class="contact-label">Email</span>
-                                    <a href="mailto:info@aluminiosdelsureste.com" class="contact-value">info@aluminiosdelsureste.com</a>
-                                </div>
-                            </li>
-                            <li class="contact-item">
-                                <div class="contact-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="contact-info">
-                                    <span class="contact-label">Ubicación</span>
-                                    <span class="contact-value">Alicante, España</span>
-                                </div>
-                            </li>
-                            <li class="contact-item">
-                                <div class="contact-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="contact-info">
-                                    <span class="contact-label">Horario</span>
-                                    <span class="contact-value">Lun-Vie: 8:00-18:00</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Newsletter y redes sociales -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
-                    <div class="footer-content">
-                        <h4 class="footer-subtitle">Mantente Conectado</h4>
-                        <p class="newsletter-description">
-                            Recibe las últimas novedades y ofertas especiales directamente en tu email.
-                        </p>
-                        <form class="newsletter-form mb-4">
-                            <div class="newsletter-input-group">
-                                <input type="email" class="newsletter-input" placeholder="Tu email">
-                                <button type="submit" class="newsletter-btn">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </form>
-                        <div class="footer-social">
-                            <h5 class="social-title">Síguenos</h5>
-                            <div class="social-links">
-                                <a href="#" class="social-link facebook" aria-label="Facebook">
-                                    <i class="fab fa-facebook-f"></i>
-                                    <span class="social-tooltip">Facebook</span>
-                                </a>
-                                <a href="#" class="social-link instagram" aria-label="Instagram">
-                                    <i class="fab fa-instagram"></i>
-                                    <span class="social-tooltip">Instagram</span>
-                                </a>
-                                <a href="#" class="social-link linkedin" aria-label="LinkedIn">
-                                    <i class="fab fa-linkedin-in"></i>
-                                    <span class="social-tooltip">LinkedIn</span>
-                                </a>
-                                <a href="#" class="social-link whatsapp" aria-label="WhatsApp">
-                                    <i class="fab fa-whatsapp"></i>
-                                    <span class="social-tooltip">WhatsApp</span>
-                                </a>
-                                <a href="#" class="social-link youtube" aria-label="YouTube">
-                                    <i class="fab fa-youtube"></i>
-                                    <span class="social-tooltip">YouTube</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Separador -->
-            <hr class="footer-divider">
-
-            <!-- Footer bottom -->
-            <div class="footer-bottom">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <p class="footer-copyright">
-                            &copy; 2025 Aluminios del Sureste. Todos los derechos reservados.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="footer-links-bottom">
-                            <a href="#" class="footer-link-bottom">Política de Privacidad</a>
-                            <a href="#" class="footer-link-bottom">Términos de Servicio</a>
-                            <a href="#" class="footer-link-bottom">Cookies</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </footer>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- AOS (Animate On Scroll) JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-    <!-- JavaScript Personalizado -->
-    <script src="{% static 'app/index.js' %}"></script>
+    <!-- MODALES DE PROYECTOS -->
+    {% for proyecto in proyecto_finalizado %}
+    {% include 'app/includes/modal_proyecto.html' %}
+    {% endfor %}
 
 </body>
 </html>
