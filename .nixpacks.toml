@@ -1,5 +1,0 @@
-[phases.setup]
-nixPkgs = ["python311", "gcc", "postgresql", "libpq", "pkg-config"]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
