@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-temporal")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 # --- APPS ---
 INSTALLED_APPS = [
@@ -100,11 +101,6 @@ else:
         CLOUDINARY_STORAGE.get("API_SECRET")
     ]):
         raise Exception("❌ Cloudinary no está configurado correctamente. Revisa tus variables de entorno.")
-
-# --- SEGURIDAD EXTRA ---
-CSRF_TRUSTED_ORIGINS = [
-    "https://alusur-production.up.railway.app/",
-]
 
 # --- CLAVE PRIMARIA AUTOMÁTICA ---
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
