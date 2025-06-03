@@ -37,7 +37,7 @@
         <!-- Navbar mejorado -->
         <nav class="navbar navbar-expand-lg fixed-top mb-4" id="mainNavbar">
             <div class="container">
-                <a class="navbar-brand" href="#hero">
+                <a class="navbar-brand mx-auto d-lg-block" href="#hero">
                     <div class="brand-container">
                         <div class="brand-icon">
                             <i class="fa-solid fa-house-chimney-window"></i>
@@ -45,9 +45,18 @@
                         <div class="bg-white p-2 w-50 rounded">
                             <img src="{% static 'app/images/logoalusur.png' %}" class="img-fluid rounded" style="max-height: 60px;">
                         </div>
-
                     </div>
                 </a>
+
+                <!-- Botones sociales para móvil (fuera del menú) -->
+                <div class="d-lg-none social-mobile-nav">
+                    <a href="https://www.instagram.com/aluminios_alusur/" class="social-btn-mobile instagram-mobile" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/alusur/" class="social-btn-mobile linkedin-mobile" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
 
                 <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span></span>
@@ -87,10 +96,24 @@
                                 Contacto
                             </a>
                         </li>
+                        <!-- Botones sociales para escritorio (dentro del menú) -->
+                        <li class="nav-item mt-2 mt-sm-0 d-none d-lg-block">
+                            <div class="social-links">
+                                <a href="https://www.instagram.com/aluminios_alusur/" class="social-link instagram" aria-label="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                    <span class="social-tooltip">Instagram</span>
+                                </a>
+                                <a href="https://www.linkedin.com/in/alusur/" class="social-link linkedin" aria-label="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                    <span class="social-tooltip">LinkedIn</span>
+                                </a>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
+
 
         <!-- Partículas de fondo -->
         <div class="hero-particles">
@@ -102,7 +125,7 @@
         </div>
 
         <!-- Contenido del hero mejorado -->
-        <div class="hero-content">
+        <div class="hero-content mt-4 mt-sm-0">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1200">

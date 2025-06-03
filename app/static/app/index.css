@@ -2800,3 +2800,34 @@ html, body {
     justify-content: center !important;
   }
 }
+
+.social-mobile-nav {
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+}
+
+.social-mobile-nav .social-btn-mobile {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 35px !important;
+    height: 35px !important;
+    border-radius: 50% !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.social-mobile-nav .social-btn-mobile.instagram-mobile {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+    color: white !important;
+}
+
+.social-mobile-nav .social-btn-mobile.linkedin-mobile {
+    background: #0077b5 !important;
+    color: white !important;
+}
+
+.social-mobile-nav .social-btn-mobile:hover {
+    transform: scale(1.1) !important;
+}
