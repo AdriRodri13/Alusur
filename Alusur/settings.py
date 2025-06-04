@@ -13,6 +13,7 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 #DEBUG = True
 #ALLOWED_HOSTS = ["*"]
 #CSRF_TRUSTED_ORIGINS = []
+#estamos en la rama develop
 
 # --- APPS ---
 INSTALLED_APPS = [
