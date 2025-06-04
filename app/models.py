@@ -1,7 +1,7 @@
 from django.db import models
 
 from .utils import seleccionar_storage
-
+from django.urls import reverse
 # Create your models here.
 
 class TextoPresentacion(models.Model):
@@ -27,6 +27,9 @@ class Servicio(models.Model):
 
     def __str__(self):
         return self.titulo
+    
+    def get_absolute_url(self):
+        return reverse("servicio_detalle", args=[self.id])
 
 class EmpresaTrabajada(models.Model):
     nombre_empresa = models.CharField(max_length=100, unique=True)
@@ -39,6 +42,9 @@ class EmpresaTrabajada(models.Model):
 
     def __str__(self):
         return self.nombre_empresa
+    
+    def get_absolute_url(self):
+        return reverse("empresa_detalle", args=[self.id])
 
 class ProyectoFinalizado(models.Model):
     titulo = models.CharField(max_length=100)
@@ -49,6 +55,9 @@ class ProyectoFinalizado(models.Model):
         blank=True,
         null=True
     )
+
+    def get_absolute_url(self):
+        return reverse("proyecto_detalle", args=[self.id])
 
 
 

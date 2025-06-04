@@ -1,0 +1,339 @@
+/* ========== DASHBOARD STYLES ========== */
+
+.dashboard-container {
+    max-width: 100%;
+}
+
+/* ========== STATS CARDS ========== */
+.stats-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border: 1px solid #e3e6f0;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.25rem 2rem 0 rgba(58, 59, 69, 0.2);
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stats-icon.bg-primary {
+    background: linear-gradient(135deg, var(--color-primario), var(--color-acento));
+}
+
+.stats-icon.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.stats-icon.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+.stats-icon.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1);
+}
+
+.stats-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    margin: 0;
+    line-height: 1;
+}
+
+.stats-content p {
+    margin: 5px 0 0 0;
+    color: #858796;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* ========== QUICK ACTIONS ========== */
+.quick-actions-card,
+.activity-card,
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border: 1px solid #e3e6f0;
+    height: 100%;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-primario);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-title i {
+    font-size: 1.1rem;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #f8f9fc;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--color-primario);
+    transition: all 0.3s ease;
+    min-height: 100px;
+}
+
+.quick-action-btn:hover {
+    background: var(--color-primario);
+    color: white;
+    border-color: var(--color-primario);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(7, 18, 173, 0.3);
+}
+
+.quick-action-btn i {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.quick-action-btn span {
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ========== ACTIVITY LIST ========== */
+.activity-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--color-acento);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-text {
+    margin: 0 0 5px 0;
+    color: #5a5c69;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.activity-time {
+    color: #858796;
+    font-size: 0.8rem;
+}
+
+.no-activity {
+    text-align: center;
+    padding: 40px 20px;
+    color: #858796;
+}
+
+.no-activity i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+    opacity: 0.5;
+}
+
+.no-activity p {
+    margin: 0;
+    font-style: italic;
+}
+
+/* ========== INFO CARD ========== */
+.info-list {
+    margin-bottom: 25px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e3e6f0;
+    font-size: 0.9rem;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item strong {
+    color: #5a5c69;
+}
+
+.info-item span {
+    color: #858796;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-online {
+    background: #d4edda;
+    color: #155724;
+}
+
+.quick-links h6 {
+    color: var(--color-primario);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quick-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    color: #858796;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.quick-link:hover {
+    color: var(--color-acento);
+    transform: translateX(5px);
+}
+
+.quick-link i {
+    width: 16px;
+    text-align: center;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 992px) {
+    .stats-card {
+        margin-bottom: 20px;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 0;
+    }
+    
+    .stats-card,
+    .quick-actions-card,
+    .activity-card,
+    .info-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .stats-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .stats-content h3 {
+        font-size: 1.8rem;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-action-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        min-height: auto;
+        padding: 15px;
+    }
+    
+    .quick-action-btn i {
+        margin-bottom: 0;
+        margin-right: 15px;
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .stats-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .activity-item {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .activity-icon {
+        align-self: center;
+    }
+}

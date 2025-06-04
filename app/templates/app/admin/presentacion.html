@@ -1,0 +1,260 @@
+{% extends "app/admin/base.html" %}
+{% load static %}
+
+{% block title %}Gestión de Textos de Presentación - ALUSUR{% endblock title %}
+
+{% block page_title %}Textos de Presentación{% endblock page_title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/admin/crud.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div class="crud-container">
+    <!-- Header con botón crear -->
+    <div class="crud-header">
+        <div class="crud-header-left">
+            <h5 class="crud-title">
+                <i class="fas fa-file-alt"></i>
+                Textos de Presentación
+            </h5>
+            <p class="crud-subtitle">Gestiona los textos informativos de la empresa</p>
+        </div>
+        <div class="crud-header-right">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#presentacionModal" onclick="openCreateModal()">
+                <i class="fas fa-plus"></i>
+                Nuevo Texto
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="crud-filters">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar textos...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="filter-actions">
+                    <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                        <i class="fas fa-filter"></i>
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de presentaciones -->
+    <div class="crud-table-container">
+        <div class="table-responsive">
+            <table class="table crud-table" id="presentacionTable">
+                <thead>
+                    <tr>
+                        <th width="50">#</th>
+                        <th>Imagen</th>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th width="120">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for presentacion in presentaciones %}
+                    <tr>
+                        <td>{{ presentacion.id }}</td>
+                        <td>
+                            <div class="table-image">
+                                {% if presentacion.imagen %}
+                                    <img src="{{ presentacion.imagen.url }}" alt="{{ presentacion.titulo }}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% else %}
+                                    <i class="fas fa-image"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-title">{{ presentacion.titulo }}</div>
+                        </td>
+                        <td>
+                            <div class="table-description">
+                                {{ presentacion.descripcion|truncatechars:100 }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editPresentacion({{ presentacion.id }})" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="viewPresentacion({{ presentacion.id }})" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deletePresentacion({{ presentacion.id }})" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <div class="py-5">
+                                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No hay textos de presentación registrados</h5>
+                                <p class="text-muted">Comienza creando tu primer texto</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    {% if presentaciones.count > 0 %}
+    <div class="crud-pagination">
+        <nav aria-label="Paginación">
+            <div class="d-flex justify-content-center">
+                <span class="text-muted">Mostrando {{ presentaciones.count }} texto{{ presentaciones.count|pluralize:"s" }}</span>
+            </div>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Crear/Editar Presentación -->
+<div class="modal fade" id="presentacionModal" tabindex="-1" aria-labelledby="presentacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="presentacionModalLabel">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="modalTitle">Nuevo Texto de Presentación</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="presentacionForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <input type="hidden" id="presentacionId" name="id">
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="titulo" class="form-label">Título *</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" maxlength="100" required>
+                            <small class="form-text text-muted">Máximo 100 caracteres</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="descripcion" class="form-label">Descripción *</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="6" required></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="imagen" class="form-label">Imagen</label>
+                            <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                            <small class="form-text text-muted">Formatos: JPG, PNG, WebP (máx. 2MB)</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Vista previa</label>
+                            <div class="image-preview" id="imagenPreview">
+                                <i class="fas fa-image"></i>
+                                <span>Sin imagen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveButton">
+                        <i class="fas fa-save"></i>
+                        <span id="saveButtonText">Guardar Texto</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ver Presentación -->
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalLabel">
+                    <i class="fas fa-eye"></i>
+                    Detalles del Texto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="view-content">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>Título:</h6>
+                            <p id="viewTitulo" class="view-field"></p>
+                            
+                            <h6>Descripción:</h6>
+                            <p id="viewDescripcion" class="view-field content-box"></p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Imagen:</h6>
+                            <div class="view-image" id="viewImagen">
+                                <i class="fas fa-image"></i>
+                                <span>Sin imagen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'app/admin/crud.js' %}"></script>
+<script>
+    // Configuración específica para presentaciones
+    const CRUD_CONFIG = {
+        modelName: 'presentacion',
+        ajaxUrls: {
+            get: '{% url "admin_ajax_get_item" "presentacion" 0 %}',
+            save: '{% url "admin_ajax_save_item" "presentacion" %}',
+            delete: '{% url "admin_ajax_delete_item" "presentacion" 0 %}'
+        }
+    };
+
+    // Funciones específicas para presentaciones
+    function editPresentacion(id) {
+        editItem(id);
+    }
+
+    function viewPresentacion(id) {
+        viewItem(id);
+    }
+
+    function deletePresentacion(id) {
+        deleteItem(id);
+    }
+
+    function openCreateModal() {
+        openCreateModalGeneric();
+    }
+</script>
+{% endblock extra_js %}

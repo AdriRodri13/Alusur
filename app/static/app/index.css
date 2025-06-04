@@ -2802,7 +2802,7 @@ html, body {
 }
 
 .social-mobile-nav {
-    display: flex !important;
+    display: flex ;
     gap: 10px !important;
     align-items: center !important;
 }

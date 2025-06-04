@@ -10,10 +10,10 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
-#DEBUG = True
-#ALLOWED_HOSTS = ["*"]
-#CSRF_TRUSTED_ORIGINS = []
-#estamos en la rama develop
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = []
+
 
 # --- APPS ---
 INSTALLED_APPS = [
@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     "cloudinary",
     "cloudinary_storage",
     "whitenoise.runserver_nostatic",
+    'django.contrib.sitemaps',
+
 ]
 
 # --- MIDDLEWARE ---
@@ -109,3 +111,7 @@ else:
 
 # --- CLAVE PRIMARIA AUTOMÁTICA ---
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/admin/login/'

@@ -17,9 +17,17 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.sitemaps.views import sitemap
+from app.sitemaps import ServicioSitemap, EmpresaTrabajadaSitemap, ProyectoFinalizadoSitemap
 
+sitemaps = {
+    'servicios': ServicioSitemap,
+    'empresas': EmpresaTrabajadaSitemap,
+    'proyectos': ProyectoFinalizadoSitemap,
+}
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path('django-admin/', admin.site.urls),
+    path("sitemap.xml", sitemap, {'sitemaps': sitemaps}, name='sitemap'),
     path("", include("app.urls")),
 ]

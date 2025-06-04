@@ -132,10 +132,22 @@
                             <a href="#" class="footer-link-bottom">Política de Privacidad</a>
                             <a href="#" class="footer-link-bottom">Términos de Servicio</a>
                             <a href="#" class="footer-link-bottom">Cookies</a>
+                            <!-- Acceso admin discreto -->
+                            <a href="{% url 'admin_login' %}" class="footer-link-bottom admin-access bg-primary rounded p-2" title="Panel de administración">Admin</a>
                         </div>
                     </div>
                 </div>
             </div>
 
         </div>
+        
+        <!-- Script para acceso secreto con teclado (opcional) -->
+        <script>
+        // Combinación secreta: Ctrl + Shift + A
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && (e.key === 'q' || e.key==='Q')) {
+                window.location.href = '{% url "admin_login" %}';
+            }
+        });
+        </script>
     </footer>
