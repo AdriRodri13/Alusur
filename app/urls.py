@@ -28,6 +28,9 @@ urlpatterns = [
     path('admin/presentacion/', views.admin_presentacion, name='admin_presentacion'),
     path('admin/servicios/', views.admin_servicios, name='admin_servicios'),
     path('admin/proyectos/', views.admin_proyectos, name='admin_proyectos'),
+    path('aviso-privacidad/', views.aviso_privacidad, name='aviso_privacidad'),
+    path('politica-cookies/', views.politica_cookies, name='politica_cookies'),
+    path('terminos-servicio/', views.terminos_servicio, name='terminos_servicio'),
     
     # Vistas AJAX para modales
     # Vistas AJAX para modales

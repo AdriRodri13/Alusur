@@ -378,3 +378,15 @@ def servicio_detalle(request, pk):
 def proyecto_detalle(request, pk):
     proyecto = get_object_or_404(ProyectoFinalizado, pk=pk)
     return render(request, "app/proyecto_detalle.html", {"proyecto": proyecto})
+
+def aviso_privacidad(request):
+    """Página de aviso de privacidad"""
+    return render(request, "app/aviso_privacidad.html")
+
+def politica_cookies(request):
+    """Página de política de cookies"""
+    return render(request, "app/politica_cookies.html")
+
+def terminos_servicio(request):
+    """Página de términos de servicio"""
+    return render(request, "app/terminos_servicio.html")
