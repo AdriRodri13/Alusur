@@ -361,6 +361,18 @@ body {
     transform: translateX(0);
   }
 
+  .admin-main.mobile-overlay::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+  }
+
+  .admin-sidebar {
+    z-index: 1000;
+  }
+
   .admin-main {
     margin-left: 0;
   }
