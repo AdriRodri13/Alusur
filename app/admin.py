@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Servicio, EmpresaTrabajada, ProyectoFinalizado, TextoPresentacion
+from .models import Servicio, ProyectoFinalizado, TextoPresentacion
 
 @admin.register(Servicio)
 class ServicioAdmin(admin.ModelAdmin):
@@ -7,11 +7,6 @@ class ServicioAdmin(admin.ModelAdmin):
     search_fields = ("titulo",)
     list_per_page = 25
 
-@admin.register(EmpresaTrabajada)
-class EmpresaTrabajadaAdmin(admin.ModelAdmin):
-    list_display = ("nombre_empresa",)
-    search_fields = ("nombre_empresa",)
-    list_per_page = 25
 
 @admin.register(ProyectoFinalizado)
 class ProyectoFinalizadoAdmin(admin.ModelAdmin):

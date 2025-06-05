@@ -2079,16 +2079,17 @@ h1, h2, h3, h4, h5, h6 {
 
 /* EMPRESAS TRABAJADAS */
 .company-card {
-  background: white;
+  background: rgb(255, 255, 255);
   border-radius: var(--border-radius);
   padding: 30px 20px;
   text-align: center;
-  box-shadow: var(--shadow-card);
+  box-shadow: 6px 8px 12px rgba(0.1, 0.1, 0.1, 0.3);
   transition: var(--transition-smooth);
   height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border:solid 1px var(--color-acento-hover);
 }
 
 .company-card:hover {
@@ -2831,3 +2832,15 @@ html, body {
 .social-mobile-nav .social-btn-mobile:hover {
     transform: scale(1.1) !important;
 }
+
+/* Brand styles for clients section */
+.brand-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: block;
+}
+.brand-stradivarius { color: #000; }
+.brand-zara { color: #333; }
+.brand-santander { color: #d4001a; }
+.brand-inditex { color: #555; }
+.brand-massimo { color: #795548; }

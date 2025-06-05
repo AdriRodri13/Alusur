@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import *
+from .models import TextoPresentacion, Servicio, ProyectoFinalizado
 
 
 # Create your views here.
@@ -9,11 +9,10 @@ def inicio(request):
 
     texto_presentacion = TextoPresentacion.objects.all()
     servicios = Servicio.objects.all()
-    empresas_trabajadas = EmpresaTrabajada.objects.all()
     proyecto_finalizado = ProyectoFinalizado.objects.all()
 
 
-    context = {"texto_presentacion":texto_presentacion,"servicios": servicios,"empresas_trabajadas": empresas_trabajadas,"proyecto_finalizado": proyecto_finalizado}
+    context = {"texto_presentacion": texto_presentacion, "servicios": servicios, "proyecto_finalizado": proyecto_finalizado}
 
     return render(request, template_name, context)
 
@@ -34,26 +33,8 @@ from django.core.files.base import ContentFile
 import os
 from django.http import HttpResponse
 
-# Create your views here.
-def inicio(request):
-    template_name = "app/index.html"
-
-    texto_presentacion = TextoPresentacion.objects.all()
-    servicios = Servicio.objects.all()
-    empresas_trabajadas = EmpresaTrabajada.objects.all()
-    proyecto_finalizado = ProyectoFinalizado.objects.all()
-
-    context = {
-        "texto_presentacion": texto_presentacion,
-        "servicios": servicios,
-        "empresas_trabajadas": empresas_trabajadas,
-        "proyecto_finalizado": proyecto_finalizado
-    }
-
-    return render(request, template_name, context)
-
 # Importar los modelos
-from .models import TextoPresentacion, Servicio, EmpresaTrabajada, ProyectoFinalizado
+from .models import TextoPresentacion, Servicio, ProyectoFinalizado
 
 @csrf_protect
 @never_cache
@@ -115,7 +96,6 @@ def admin_dashboard(request):
     # Obtener estadísticas reales de los modelos
     total_presentaciones = TextoPresentacion.objects.count()
     total_servicios = Servicio.objects.count()
-    total_empresas = EmpresaTrabajada.objects.count()
     total_proyectos = ProyectoFinalizado.objects.count()
     
     # Actividad reciente (últimos elementos creados por ID - ya que no hay created_at)
@@ -139,19 +119,10 @@ def admin_dashboard(request):
             'created_at': timezone.now(),
         })
     
-    # Últimas empresas
-    latest_empresas = EmpresaTrabajada.objects.order_by('-id')[:1]
-    for empresa in latest_empresas:
-        recent_activities.append({
-            'icon': 'building',
-            'description': f'Empresa "{empresa.nombre_empresa}" en el sistema',
-            'created_at': timezone.now(),
-        })
     
     context = {
         'total_presentaciones': total_presentaciones,
         'total_servicios': total_servicios,
-        'total_empresas': total_empresas,
         'total_proyectos': total_proyectos,
         'recent_activities': recent_activities,
         'last_update': timezone.now(),
@@ -185,18 +156,6 @@ def admin_servicios(request):
     
     return render(request, 'app/admin/servicios.html', context)
 
-@login_required(login_url='admin_login')
-def admin_empresas(request):
-    """
-    Vista para gestionar empresas trabajadas
-    """
-    empresas = EmpresaTrabajada.objects.all().order_by('-id')  # Cambiado a -id
-    
-    context = {
-        'empresas': empresas,
-    }
-    
-    return render(request, 'app/admin/empresas.html', context)
 
 @login_required(login_url='admin_login')
 def admin_proyectos(request):
@@ -225,7 +184,6 @@ import json
 MODEL_MAPPING = {
     'presentacion': TextoPresentacion,
     'servicio': Servicio,
-    'empresa': EmpresaTrabajada,
     'proyecto': ProyectoFinalizado,
 }
 
@@ -397,7 +355,6 @@ def get_model_display_name(model_name):
     display_names = {
         'servicio': 'Servicio',
         'presentacion': 'Texto de Presentación',
-        'empresa': 'Empresa',
         'proyecto': 'Proyecto'
     }
     return display_names.get(model_name, model_name.title())
@@ -417,10 +374,19 @@ def servicio_detalle(request, pk):
     servicio = get_object_or_404(Servicio, pk=pk)
     return render(request, "app/servicio_detalle.html", {"servicio": servicio})
 
-def empresa_detalle(request, pk):
-    empresa = get_object_or_404(EmpresaTrabajada, pk=pk)
-    return render(request, "app/empresa_detalle.html", {"empresa": empresa})
 
 def proyecto_detalle(request, pk):
     proyecto = get_object_or_404(ProyectoFinalizado, pk=pk)
     return render(request, "app/proyecto_detalle.html", {"proyecto": proyecto})
+
+def aviso_privacidad(request):
+    """Página de aviso de privacidad"""
+    return render(request, "app/aviso_privacidad.html")
+
+def politica_cookies(request):
+    """Página de política de cookies"""
+    return render(request, "app/politica_cookies.html")
+
+def terminos_servicio(request):
+    """Página de términos de servicio"""
+    return render(request, "app/terminos_servicio.html")

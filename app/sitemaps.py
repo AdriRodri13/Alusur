@@ -1,5 +1,5 @@
 from django.contrib.sitemaps import Sitemap
-from .models import Servicio, EmpresaTrabajada, ProyectoFinalizado
+from .models import Servicio, ProyectoFinalizado
 
 class ServicioSitemap(Sitemap):
     changefreq = "monthly"
@@ -12,15 +12,6 @@ class ServicioSitemap(Sitemap):
         return obj.get_absolute_url()
 
 
-class EmpresaTrabajadaSitemap(Sitemap):
-    changefreq = "yearly"
-    priority = 0.6
-
-    def items(self):
-        return EmpresaTrabajada.objects.all()
-
-    def location(self, obj):
-        return obj.get_absolute_url()
 
 
 class ProyectoFinalizadoSitemap(Sitemap):

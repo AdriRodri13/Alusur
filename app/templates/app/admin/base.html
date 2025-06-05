@@ -55,12 +55,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_empresas' %}">
-                        <i class="fas fa-building"></i>
-                        <span>Empresas</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_proyectos' %}">
                         <i class="fas fa-project-diagram"></i>
                         <span>Proyectos</span>
@@ -154,16 +148,30 @@
     <script>
         // Toggle Sidebar
         document.addEventListener('DOMContentLoaded', function() {
-            const sidebarToggle = document.getElementById('sidebarToggleTop');
+            const toggleOpen = document.getElementById('sidebarToggleTop');
+            const toggleClose = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('adminSidebar');
             const mainContent = document.getElementById('adminMain');
 
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function() {
+            function handleToggle() {
+                if (window.innerWidth < 992) {
+                    sidebar.classList.toggle('show');
+                    mainContent.classList.toggle('mobile-overlay');
+                } else {
                     sidebar.classList.toggle('collapsed');
                     mainContent.classList.toggle('sidebar-collapsed');
-                });
+                }
             }
+
+            if (toggleOpen) toggleOpen.addEventListener('click', handleToggle);
+            if (toggleClose) toggleClose.addEventListener('click', handleToggle);
+
+            mainContent.addEventListener('click', function () {
+                if (window.innerWidth < 992 && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                    mainContent.classList.remove('mobile-overlay');
+                }
+            });
 
             // Active nav link
             const currentPath = window.location.pathname;
