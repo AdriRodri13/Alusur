@@ -457,7 +457,6 @@ function getModelDisplayName(modelName) {
     const displayNames = {
         'servicio': 'Servicio',
         'presentacion': 'Texto de Presentación',
-        'empresa': 'Empresa',
         'proyecto': 'Proyecto'
     };
     return displayNames[modelName] || modelName;
