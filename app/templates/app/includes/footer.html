@@ -129,9 +129,9 @@
                     </div>
                     <div class="col-md-6">
                         <div class="footer-links-bottom">
-                            <a href="#" class="footer-link-bottom">Política de Privacidad</a>
-                            <a href="#" class="footer-link-bottom">Términos de Servicio</a>
-                            <a href="#" class="footer-link-bottom">Cookies</a>
+                            <a href="{% url 'aviso_privacidad' %}" class="footer-link-bottom">Política de Privacidad</a>
+                            <a href="{% url 'terminos_servicio' %}" class="footer-link-bottom">Términos de Servicio</a>
+                            <a href="{% url 'politica_cookies' %}" class="footer-link-bottom">Cookies</a>
                             <!-- Acceso admin discreto -->
                             <a href="{% url 'admin_login' %}" class="footer-link-bottom admin-access bg-primary rounded p-2" title="Panel de administración">Admin</a>
                         </div>
