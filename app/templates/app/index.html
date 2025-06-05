@@ -362,10 +362,10 @@
                                 <p>{{ servicio.descripcion|truncatewords:25 }}</p>
                             </div>
                             <div class="service-footer mt-auto">
-                                <a href="#contacto" class="btn btn-primary btn-service smooth-scroll">
+                                <button class="btn btn-primary btn-service" data-bs-toggle="modal" data-bs-target="#modalServicio{{ servicio.id }}">
                                     <i class="fas fa-arrow-right me-2"></i>
                                     Más información
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </article>
@@ -475,6 +475,11 @@
 
     <!-- SCRIPTS -->
     {%include 'app/includes/scripts.html'%}
+
+    <!-- MODALES DE SERVICIOS -->
+    {% for servicio in servicios %}
+    {% include 'app/includes/modal_servicio.html' %}
+    {% endfor %}
 
     <!-- MODALES DE PROYECTOS -->
     {% for proyecto in proyecto_finalizado %}
