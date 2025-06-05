@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.contrib.sitemaps import Sitemap
-from app.models import *  # cambia 'mi_app' y 'TuModelo'
+from app.models import Servicio, ProyectoFinalizado, TextoPresentacion
 
 
 
@@ -27,7 +27,6 @@ urlpatterns = [
     # Gestión de contenido
     path('admin/presentacion/', views.admin_presentacion, name='admin_presentacion'),
     path('admin/servicios/', views.admin_servicios, name='admin_servicios'),
-    path('admin/empresas/', views.admin_empresas, name='admin_empresas'),
     path('admin/proyectos/', views.admin_proyectos, name='admin_proyectos'),
     
     # Vistas AJAX para modales
@@ -38,7 +37,6 @@ urlpatterns = [
 
     
     path('servicio/<int:pk>/', views.servicio_detalle, name='servicio_detalle'),
-    path('empresa/<int:pk>/', views.empresa_detalle, name='empresa_detalle'),
     path('proyecto/<int:pk>/', views.proyecto_detalle, name='proyecto_detalle'),
 ]
 

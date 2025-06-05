@@ -2831,3 +2831,15 @@ html, body {
 .social-mobile-nav .social-btn-mobile:hover {
     transform: scale(1.1) !important;
 }
+
+/* Brand styles for clients section */
+.brand-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: block;
+}
+.brand-stradivarius { color: #000; }
+.brand-zara { color: #333; }
+.brand-santander { color: #d4001a; }
+.brand-inditex { color: #555; }
+.brand-massimo { color: #795548; }
