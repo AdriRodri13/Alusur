@@ -1,22 +1,7 @@
 from django.shortcuts import render
 from .models import TextoPresentacion, Servicio, ProyectoFinalizado, Parrafo
-
-
-# Create your views here.
-def inicio(request):
-
-    template_name = "app/index.html"
-
-    texto_presentacion = TextoPresentacion.objects.all()
-    servicios = Servicio.objects.all()
-    proyecto_finalizado = ProyectoFinalizado.objects.all()
-
-
-    context = {"texto_presentacion": texto_presentacion, "servicios": servicios, "proyecto_finalizado": proyecto_finalizado}
-
-    return render(request, template_name, context)
-
-# views.py para el panel de administración - CORREGIDO
+import requests
+from django.conf import settings
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -32,9 +17,26 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
 from django.http import HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+import json
 
-# Importar los modelos
-from .models import TextoPresentacion, Servicio, ProyectoFinalizado
+
+# Create your views here.
+def inicio(request):
+
+    template_name = "app/index.html"
+
+    texto_presentacion = TextoPresentacion.objects.all()
+    servicios = Servicio.objects.all()
+    proyecto_finalizado = ProyectoFinalizado.objects.all()
+
+
+    context = {"texto_presentacion": texto_presentacion, "servicios": servicios, "proyecto_finalizado": proyecto_finalizado}
+
+    return render(request, template_name, context)
 
 @csrf_protect
 @never_cache
@@ -170,21 +172,58 @@ def admin_proyectos(request):
     
     return render(request, 'app/admin/proyectos.html', context)
 
-# ========== VISTAS AJAX PARA MODALES ==========
+# Vista para gestionar párrafos de un servicio específico
+@login_required(login_url='admin_login')
+def admin_servicio_parrafos(request, servicio_id):
+    """
+    Vista para gestionar párrafos de un servicio específico
+    """
+    try:
+        servicio = Servicio.objects.get(id=servicio_id)
+    except Servicio.DoesNotExist:
+        messages.error(request, 'Servicio no encontrado')
+        return redirect('admin_servicios')
+    
+    parrafos = Parrafo.objects.filter(servicio=servicio).order_by('id')
+    
+    context = {
+        'servicio': servicio,
+        'parrafos': parrafos,
+        'tipo_contenido': 'servicio'
+    }
+    
+    return render(request, 'app/admin/parrafos.html', context)
 
-# En tu views.py del admin
+# Vista para gestionar párrafos de un proyecto específico
+@login_required(login_url='admin_login')
+def admin_proyecto_parrafos(request, proyecto_id):
+    """
+    Vista para gestionar párrafos de un proyecto específico
+    """
+    try:
+        proyecto = ProyectoFinalizado.objects.get(id=proyecto_id)
+    except ProyectoFinalizado.DoesNotExist:
+        messages.error(request, 'Proyecto no encontrado')
+        return redirect('admin_proyectos')
+    
+    parrafos = Parrafo.objects.filter(proyecto=proyecto).order_by('id')
+    
+    context = {
+        'proyecto': proyecto,
+        'parrafos': parrafos,
+        'tipo_contenido': 'proyecto'
+    }
+    
+    return render(request, 'app/admin/parrafos.html', context)
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
-from django.contrib.auth.decorators import login_required
-import json
+
 
 # Mapping de modelos
 MODEL_MAPPING = {
     'presentacion': TextoPresentacion,
     'servicio': Servicio,
     'proyecto': ProyectoFinalizado,
+    'parrafo': Parrafo,
 }
 
 @login_required(login_url='admin_login')
@@ -241,7 +280,7 @@ def ajax_get_item(request, model_name, item_id):
 @require_http_methods(["POST"])
 def ajax_save_item(request, model_name):
     """
-    Guardar/actualizar un elemento vía AJAX
+    Guardar/actualizar un elemento vía AJAX (actualizado para párrafos)
     """
     try:
         # Validar modelo
@@ -270,9 +309,41 @@ def ajax_save_item(request, model_name):
             obj = model_class()
             action = 'creado'
         
-        # Actualizar campos
+        # Manejar párrafos especialmente
+        if model_name == 'parrafo':
+            # Obtener el servicio o proyecto padre
+            servicio_id = request.POST.get('servicio_id')
+            proyecto_id = request.POST.get('proyecto_id')
+            
+            if servicio_id:
+                try:
+                    servicio = Servicio.objects.get(id=servicio_id)
+                    obj.servicio = servicio
+                    obj.proyecto = None
+                except Servicio.DoesNotExist:
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Servicio no encontrado'
+                    }, status=404)
+            elif proyecto_id:
+                try:
+                    proyecto = ProyectoFinalizado.objects.get(id=proyecto_id)
+                    obj.proyecto = proyecto
+                    obj.servicio = None
+                except ProyectoFinalizado.DoesNotExist:
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Proyecto no encontrado'
+                    }, status=404)
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Debe especificar un servicio o proyecto'
+                }, status=400)
+        
+        # Actualizar campos normales
         for field in model_class._meta.fields:
-            if field.name == 'id':
+            if field.name in ['id', 'servicio', 'proyecto']:
                 continue
                 
             field_value = None
@@ -350,12 +421,14 @@ def ajax_delete_item(request, model_name, item_id):
         }, status=500)
 
 
+# Actualizar get_model_display_name
 def get_model_display_name(model_name):
     """Helper para obtener nombres legibles de los modelos"""
     display_names = {
         'servicio': 'Servicio',
         'presentacion': 'Texto de Presentación',
-        'proyecto': 'Proyecto'
+        'proyecto': 'Proyecto',
+        'parrafo': 'Párrafo'
     }
     return display_names.get(model_name, model_name.title())
 
@@ -372,16 +445,29 @@ from django.shortcuts import get_object_or_404
 
 def servicio_detalle(request, pk):
     servicio = get_object_or_404(Servicio, pk=pk)
-    parrafos = Parrafo.objects.filter(servicio=servicio)
-    context = {"servicio": servicio, "parrafos": parrafos}
-    return render(request, "app/servicio_detalle.html", context)
-
+    parrafos = servicio.parrafos.all().order_by('id')
+    
+    context = {
+        'item': servicio,  # Objeto unificado
+        'parrafos': parrafos,
+        'tipo_contenido': 'servicio',  # Para breadcrumb y títulos
+        'seccion_id': 'servicios',  # Para el botón de regreso
+    }
+    
+    return render(request, "app/detalle.html", context)
 
 def proyecto_detalle(request, pk):
     proyecto = get_object_or_404(ProyectoFinalizado, pk=pk)
-    parrafos = Parrafo.objects.filter(proyecto=proyecto)
-    context = {"proyecto": proyecto, "parrafos": parrafos}
-    return render(request, "app/proyecto_detalle.html", context)
+    parrafos = proyecto.parrafos.all().order_by('id')
+    
+    context = {
+        'item': proyecto,  # Objeto unificado
+        'parrafos': parrafos,
+        'tipo_contenido': 'proyecto',  # Para breadcrumb y títulos
+        'seccion_id': 'proyectos',  # Para el botón de regreso
+    }
+    
+    return render(request, "app/detalle.html", context)
 
 def aviso_privacidad(request):
     """Página de aviso de privacidad"""
@@ -394,3 +480,61 @@ def politica_cookies(request):
 def terminos_servicio(request):
     """Página de términos de servicio"""
     return render(request, "app/terminos_servicio.html")
+
+
+def generacion_texto_ia(request):
+    """
+    Genera un texto utilizando IA (DeepSeek) basado en las especificaciones proporcionadas.
+    """
+
+    palabras_clave = [
+        "aluminio", "ventanas", "puertas", "cerramientos", "persianas",
+        "barandillas", "mamparas", "rejas", "mosquiteras", "carpinteria",
+        "aluminio de alta calidad", "instalación profesional", "diseño personalizado",
+        "eficiencia energética", "durabilidad", "estética moderna", "seguridad mejorada",
+        "sostenibilidad", "aislamiento térmico y acústico", "carpinteria de aluminio en alicante",
+    ]
+
+    if request.method == "POST":
+        especificaciones = request.POST.get("especificaciones", "").strip()
+        if not especificaciones:
+            return JsonResponse({"error": "Debes proporcionar especificaciones."}, status=400)
+
+        prompt = (
+            "Debes actuar como un agente SEO experto y redactor de contenido. "
+            "Tu tarea es generar un texto optimizado para SEO en base a las siguientes especificaciones. "
+            "No debes usar emojis. Es obligatorio incluir al menos algunas de estas palabras clave: "
+            f"{', '.join(palabras_clave)}. "
+            f"Especificaciones: {especificaciones}"
+        )
+
+        try:
+            response = requests.post(
+                settings.DEEPSEEK_API_URL,
+                headers={
+                    "Authorization": f"Bearer {settings.DEEPSEEK_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": "deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": "Eres un redactor SEO profesional."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 800
+                },
+                timeout=15  # segundos
+            )
+
+            if response.status_code != 200:
+                return JsonResponse({"error": "Error al comunicarse con la IA."}, status=500)
+
+            data = response.json()
+            texto_generado = data["choices"][0]["message"]["content"]
+            return JsonResponse({"texto": texto_generado})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Método no permitido."}, status=405)

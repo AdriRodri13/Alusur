@@ -83,8 +83,11 @@
                                 {{ servicio.descripcion|truncatechars:100 }}
                             </div>
                         </td>
-                        <td>
+                                                <td>
                             <div class="action-buttons">
+                                <a href="{% url 'admin_servicio_parrafos' servicio.id %}" class="btn btn-sm btn-outline-success" title="Gestionar Párrafos">
+                                    <i class="fas fa-paragraph"></i>
+                                </a>
                                 <button class="btn btn-sm btn-outline-primary" onclick="editServicio({{ servicio.id }})" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -96,6 +99,7 @@
                                 </button>
                             </div>
                         </td>
+
                     </tr>
                     {% empty %}
                     <tr>

@@ -1,0 +1,633 @@
+/* ========== DETALLE CSS UNIFICADO - SERVICIOS Y PROYECTOS ========== */
+
+/* Variables heredadas del index.css */
+:root {
+  --color-primario: #0712ad;
+  --color-primario-hover: #0056b3;
+  --color-acento: #007bff;
+  --color-acento-hover: #0069d9;
+  --color-texto: #333333;
+  --color-texto-suave: #555;
+  --color-gris-claro: #f5f5f5;
+  --color-gris-medio: #eeeeee;
+  --gradient-primary: linear-gradient(135deg, var(--color-primario) 0%, var(--color-acento) 100%);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --border-radius: 15px;
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== BASE STYLES ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  color: var(--color-texto);
+  overflow-x: hidden;
+  background: white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ========== MAIN CONTENT ========== */
+main {
+  padding-top: 90px; /* Espacio para navbar fixed */
+  min-height: calc(100vh - 90px);
+  position: relative;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* ========== HEADER SECTION ========== */
+.detail-header {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 60px 0 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="grain" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="50" cy="10" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="10" cy="90" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.4;
+}
+
+.detail-header-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.detail-title {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin-bottom: 30px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  line-height: 1.1;
+}
+
+.detail-breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.detail-breadcrumb a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-breadcrumb a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.detail-breadcrumb i {
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+.detail-breadcrumb span {
+  color: white;
+  font-weight: 600;
+}
+
+.detail-description {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  opacity: 0.95;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ========== CONTENT SECTION ========== */
+.detail-content {
+  padding: 80px 0;
+  background: white;
+  position: relative;
+}
+
+.detail-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+/* ========== PARAGRAPH SECTIONS ========== */
+.paragraph-section {
+  margin-bottom: 70px;
+  position: relative;
+}
+
+.paragraph-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Párrafos con imagen - layout lado a lado */
+.paragraph-with-image {
+  min-height: 400px;
+  align-items: stretch;
+}
+
+.paragraph-image-container {
+  position: relative;
+  height: 400px; /* Altura fija para todas las imágenes */
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 30px;
+  transition: var(--transition-smooth);
+}
+
+.paragraph-image-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.paragraph-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Mantiene aspecto y llena el contenedor */
+  object-position: center; /* Centra la imagen */
+  transition: var(--transition-smooth);
+}
+
+.paragraph-section:hover .paragraph-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: var(--transition-smooth);
+}
+
+.paragraph-image-container:hover .image-overlay {
+  opacity: 0.1;
+}
+
+.paragraph-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  height: 400px; /* Misma altura que la imagen */
+  background: var(--color-gris-claro);
+  border-radius: var(--border-radius);
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.paragraph-text-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gradient-primary);
+}
+
+/* Párrafos sin imagen - full width */
+.paragraph-full-width {
+  text-align: left;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 50px 40px;
+  background: var(--color-gris-claro);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.paragraph-full-width:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.paragraph-full-width::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gradient-primary);
+}
+
+/* ========== PARAGRAPH TEXT STYLES ========== */
+.paragraph-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--color-texto);
+  margin: 0;
+}
+
+.paragraph-content p {
+  margin-bottom: 20px;
+}
+
+.paragraph-content p:last-child {
+  margin-bottom: 0;
+}
+
+.paragraph-content p:first-child {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--color-primario);
+}
+
+/* ========== SEPARATORS ========== */
+.paragraph-separator {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-gris-medio), transparent);
+  margin: 60px 0;
+  border-radius: 1px;
+}
+
+/* ========== BACK BUTTON SECTION ========== */
+.back-section {
+  background: var(--color-gris-claro);
+  padding: 60px 0;
+  text-align: center;
+  border-top: 1px solid var(--color-gris-medio);
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 16px 35px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-card);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-back::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-back:hover::before {
+  left: 100%;
+}
+
+.btn-back:hover {
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  text-decoration: none;
+}
+
+.btn-back i {
+  font-size: 1.1rem;
+  transition: var(--transition-smooth);
+}
+
+.btn-back:hover i {
+  transform: translateX(-3px);
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Large tablets (768px - 992px) */
+@media (max-width: 992px) {
+  .detail-title {
+    font-size: 2.8rem;
+  }
+
+  .paragraph-image-container,
+  .paragraph-text-container {
+    height: 350px;
+  }
+
+  .paragraph-text-container {
+    padding: 30px;
+  }
+
+  .paragraph-full-width {
+    padding: 40px 30px;
+  }
+
+  .detail-content {
+    padding: 60px 0;
+  }
+}
+
+/* Tablets (576px - 768px) */
+@media (max-width: 768px) {
+  main {
+    padding-top: 80px;
+  }
+
+  .detail-header {
+    padding: 40px 0 60px 0;
+  }
+
+  .detail-title {
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+  }
+
+  .detail-breadcrumb {
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    gap: 8px;
+  }
+
+  .detail-description {
+    font-size: 1.1rem;
+  }
+
+  .detail-content {
+    padding: 50px 0;
+  }
+
+  .paragraph-section {
+    margin-bottom: 50px;
+  }
+
+  /* Cambiar a layout vertical en tablets */
+  .paragraph-with-image {
+    min-height: auto;
+  }
+
+  .paragraph-image-container {
+    height: 280px;
+    margin-bottom: 25px;
+  }
+
+  .paragraph-text-container {
+    height: auto;
+    min-height: 200px;
+    padding: 25px;
+    margin-bottom: 0;
+  }
+
+  .paragraph-content {
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .paragraph-full-width {
+    padding: 35px 25px;
+  }
+
+  .paragraph-separator {
+    margin: 40px 0;
+  }
+
+  .back-section {
+    padding: 50px 0;
+  }
+}
+
+/* Mobile (hasta 576px) */
+@media (max-width: 576px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  main {
+    padding-top: 75px;
+  }
+
+  .detail-header {
+    padding: 30px 0 50px 0;
+  }
+
+  .detail-title {
+    font-size: 1.9rem;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .detail-breadcrumb {
+    font-size: 0.85rem;
+    gap: 6px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .detail-description {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .detail-content {
+    padding: 40px 0;
+  }
+
+  .paragraph-section {
+    margin-bottom: 40px;
+  }
+
+  .paragraph-image-container {
+    height: 250px;
+    margin-bottom: 20px;
+  }
+
+  .paragraph-text-container {
+    padding: 20px;
+    min-height: 180px;
+  }
+
+  .paragraph-content {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .paragraph-content p:first-child {
+    font-size: 1.05rem;
+  }
+
+  .paragraph-full-width {
+    padding: 25px 20px;
+  }
+
+  .paragraph-separator {
+    margin: 30px 0;
+  }
+
+  .back-section {
+    padding: 40px 0;
+  }
+
+  .btn-back {
+    width: 100%;
+    max-width: 300px;
+    padding: 14px 25px;
+    font-size: 1rem;
+  }
+}
+
+/* Extra small devices (hasta 380px) */
+@media (max-width: 380px) {
+  .detail-title {
+    font-size: 1.7rem;
+  }
+
+  .paragraph-image-container {
+    height: 220px;
+  }
+
+  .paragraph-text-container {
+    padding: 18px;
+    min-height: 160px;
+  }
+
+  .paragraph-full-width {
+    padding: 20px 15px;
+  }
+
+  .paragraph-content {
+    font-size: 0.95rem;
+  }
+}
+
+/* ========== ANIMACIONES Y EFECTOS ========== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.paragraph-section {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.paragraph-section:nth-child(1) { animation-delay: 0.1s; }
+.paragraph-section:nth-child(2) { animation-delay: 0.2s; }
+.paragraph-section:nth-child(3) { animation-delay: 0.3s; }
+.paragraph-section:nth-child(4) { animation-delay: 0.4s; }
+.paragraph-section:nth-child(5) { animation-delay: 0.5s; }
+
+/* ========== ACCESIBILIDAD ========== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+  
+  .paragraph-section {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* ========== FOCUS STATES ========== */
+.btn-back:focus {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 3px;
+}
+
+a:focus {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+  .detail-header {
+    background: white !important;
+    color: black !important;
+    box-shadow: none;
+  }
+
+  .detail-title {
+    color: black !important;
+    text-shadow: none;
+  }
+
+  .paragraph-text-container,
+  .paragraph-full-width {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .back-section {
+    display: none;
+  }
+
+  .paragraph-image-container {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}

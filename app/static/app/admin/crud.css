@@ -702,3 +702,182 @@
         width: 100%;
     }
 }
+
+/* Agregar al final de tu crud.css */
+
+/* Estilos para el botón de párrafos */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.action-buttons .btn-outline-success:hover {
+    color: white;
+    background-color: #28a745;
+    border-color: #28a745;
+    transform: translateY(-2px);
+}
+
+/* Ajustar ancho de la columna de acciones para acomodar el nuevo botón */
+.crud-table th[width="120"] {
+    width: 140px;
+}
+
+/* Responsive para botones de acción */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 3px;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+/* Agregar al final de tu crud.css */
+
+/* Estilos para la sección de generación de IA */
+.ia-generation-section {
+    border-left: 4px solid #17a2b8;
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+.ia-generation-section .card {
+    border: 1px solid #17a2b8;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(23, 162, 184, 0.1);
+    transition: all 0.3s ease;
+}
+
+.ia-generation-section .card:hover {
+    box-shadow: 0 4px 8px rgba(23, 162, 184, 0.2);
+}
+
+.ia-generation-section .card-body {
+    background: linear-gradient(135deg, #f8fdff 0%, #e3f9fd 100%);
+}
+
+#toggleIaGenerator {
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#toggleIaGenerator:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+}
+
+#generateTextBtn {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#generateTextBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(23, 162, 184, 0.4);
+}
+
+#generateTextBtn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+#iaLoadingIndicator {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+/* Botones de ejemplo */
+.ejemplo-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    margin: 0.125rem;
+}
+
+.btn-xs {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
+/* Vista previa de especificaciones */
+#especificacionesPreview {
+    border-top: 1px solid #dee2e6;
+    padding-top: 10px;
+}
+
+#especificacionesPreview .bg-light {
+    border: 1px solid #e9ecef;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+/* Formulario de IA */
+.ia-generation-section .form-label {
+    font-weight: 600;
+    color: #138496;
+    font-size: 0.9rem;
+}
+
+.ia-generation-section .form-select,
+.ia-generation-section .form-control {
+    border: 1px solid #b8daff;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.ia-generation-section .form-select:focus,
+.ia-generation-section .form-control:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+/* Animación para el spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ia-generation-section {
+        border-left: none;
+        border-top: 4px solid #17a2b8;
+        padding-left: 0;
+        padding-top: 15px;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .d-flex.gap-2 .btn {
+        width: 100%;
+    }
+
+    .d-flex.flex-wrap.gap-1 {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ejemplo-btn {
+        margin: 0.25rem 0;
+        width: 100%;
+    }
+}

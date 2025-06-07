@@ -1,0 +1,138 @@
+{% extends "app/cliente_base.html" %}
+{% load static %}
+
+{% block title %}{{ item.titulo }} - ALUSUR{% endblock title %}
+
+{% block meta_description %}
+<meta name="description" content="{{ item.descripcion|truncatewords:30 }} - Aluminios del Sureste, especialistas en carpintería de aluminio en Alicante.">
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ item.titulo }}, {{ tipo_contenido }}, carpintería aluminio Alicante, ventanas, puertas, cerramientos">
+{% endblock meta_keywords %}
+
+{% block og_meta %}
+<meta property="og:title" content="{{ item.titulo }} - ALUSUR">
+<meta property="og:description" content="{{ item.descripcion|truncatewords:25 }}">
+<meta property="og:type" content="article">
+{% if item.imagen %}
+<meta property="og:image" content="{{ item.imagen.url }}">
+{% endif %}
+{% endblock og_meta %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/detalle.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <!-- HEADER SECTION -->
+    <section class="detail-header">
+        <div class="container">
+            <div class="detail-header-content">
+                <!-- Breadcrumb -->
+                <nav class="detail-breadcrumb" aria-label="breadcrumb">
+                    <a href="{% url 'inicio' %}">
+                        <i class="fas fa-home"></i>
+                        Inicio
+                    </a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="{% url 'inicio' %}#{{ seccion_id }}">{{ tipo_contenido|capfirst }}s</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>{{ item.titulo }}</span>
+                </nav>
+
+                <!-- Título principal -->
+                <h1 class="detail-title">{{ item.titulo }}</h1>
+                
+                <!-- Descripción general -->
+                {% if item.descripcion %}
+                <div class="detail-description">
+                    {{ item.descripcion|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT SECTION -->
+    <section class="detail-content">
+        <div class="container">
+            {% if parrafos %}
+                {% for parrafo in parrafos %}
+                    <div class="paragraph-section" data-aos="fade-up" data-aos-duration="800" data-aos-delay="{{ forloop.counter0|add:100 }}">
+                        {% if parrafo.imagen %}
+                            <!-- Párrafo con imagen -->
+                            <div class="row align-items-center paragraph-with-image">
+                                <!-- Contenido de texto -->
+                                <div class="col-lg-6 {% if forloop.counter|divisibleby:2 %}order-lg-2{% endif %}">
+                                    <div class="paragraph-text-container">
+                                        <div class="paragraph-content">
+                                            {{ parrafo.contenido|linebreaks }}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Imagen -->
+                                <div class="col-lg-6 {% if forloop.counter|divisibleby:2 %}order-lg-1{% endif %}">
+                                    <div class="paragraph-image-container">
+                                        <img src="{{ parrafo.imagen.url }}" 
+                                             alt="Imagen para {{ item.titulo }}" 
+                                             class="paragraph-image img-fluid">
+                                        <div class="image-overlay"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <!-- Párrafo sin imagen - ancho completo -->
+                            <div class="paragraph-full-width">
+                                <div class="paragraph-content">
+                                    {{ parrafo.contenido|linebreaks }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Separador entre párrafos (excepto el último) -->
+                    {% if not forloop.last %}
+                        <hr class="paragraph-separator">
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <!-- Si no hay párrafos, mostrar solo la descripción -->
+                <div class="paragraph-section" data-aos="fade-up">
+                    <div class="paragraph-full-width">
+                        <div class="paragraph-content">
+                            <p>{{ item.descripcion|default:"Información detallada próximamente." }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- BACK SECTION -->
+    <section class="back-section">
+        <div class="container">
+            <div class="text-center">
+                <a href="{% url 'inicio' %}#{{ seccion_id }}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver a {{ tipo_contenido|capfirst }}s
+                </a>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+{% block extra_js %}
+<!-- Inicializar AOS para animaciones -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    });
+</script>
+{% endblock extra_js %}

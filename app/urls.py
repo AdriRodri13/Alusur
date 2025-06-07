@@ -33,11 +33,12 @@ urlpatterns = [
     path('terminos-servicio/', views.terminos_servicio, name='terminos_servicio'),
     
     # Vistas AJAX para modales
-    # Vistas AJAX para modales
     path('admin/ajax/get/<str:model_name>/<int:item_id>/', views.ajax_get_item, name='admin_ajax_get_item'),
     path('admin/ajax/save/<str:model_name>/', views.ajax_save_item, name='admin_ajax_save_item'),
-    path('admin/ajax/delete/<str:model_name>/<int:item_id>/', views.ajax_delete_item, name='admin_ajax_delete_item'),  # ← Cambiar aquí
-
+    path('admin/ajax/delete/<str:model_name>/<int:item_id>/', views.ajax_delete_item, name='admin_ajax_delete_item'),  
+    path('admin/servicios/<int:servicio_id>/parrafos/', views.admin_servicio_parrafos, name='admin_servicio_parrafos'),
+    path('admin/proyectos/<int:proyecto_id>/parrafos/', views.admin_proyecto_parrafos, name='admin_proyecto_parrafos'),
+    path('admin/generar-texto-ia/', views.generacion_texto_ia, name='generacion_texto_ia'),
     
     path('servicio/<int:pk>/', views.servicio_detalle, name='servicio_detalle'),
     path('proyecto/<int:pk>/', views.proyecto_detalle, name='proyecto_detalle'),
