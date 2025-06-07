@@ -77,35 +77,70 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link smooth-scroll" href="{% url 'inicio' %}#presentacion">
-                            <i class="fas fa-users me-1"></i>
-                            Nosotros
-                        </a>
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#presentacion">
+                                <i class="fas fa-users me-1"></i>
+                                Nosotros
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#presentacion">
+                                <i class="fas fa-users me-1"></i>
+                                Nosotros
+                            </a>
+                        {% endif %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link smooth-scroll" href="{% url 'inicio' %}#servicios">
-                            <i class="fas fa-tools me-1"></i>
-                            Servicios
-                        </a>
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#servicios">
+                                <i class="fas fa-tools me-1"></i>
+                                Servicios
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#servicios">
+                                <i class="fas fa-tools me-1"></i>
+                                Servicios
+                            </a>
+                        {% endif %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link smooth-scroll" href="{% url 'inicio' %}#empresas">
-                            <i class="fas fa-handshake me-1"></i>
-                            Clientes
-                        </a>
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#empresas">
+                                <i class="fas fa-handshake me-1"></i>
+                                Clientes
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#empresas">
+                                <i class="fas fa-handshake me-1"></i>
+                                Clientes
+                            </a>
+                        {% endif %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link smooth-scroll" href="{% url 'inicio' %}#proyectos">
-                            <i class="fas fa-images me-1"></i>
-                            Proyectos
-                        </a>
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#proyectos">
+                                <i class="fas fa-images me-1"></i>
+                                Proyectos
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#proyectos">
+                                <i class="fas fa-images me-1"></i>
+                                Proyectos
+                            </a>
+                        {% endif %}
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link btn-nav-cta smooth-scroll" href="{% url 'inicio' %}#contacto">
-                            <i class="fas fa-phone me-1"></i>
-                            Contacto
-                        </a>
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link btn-nav-cta smooth-scroll" href="#contacto">
+                                <i class="fas fa-phone me-1"></i>
+                                Contacto
+                            </a>
+                        {% else %}
+                            <a class="nav-link btn-nav-cta" href="{% url 'inicio' %}#contacto">
+                                <i class="fas fa-phone me-1"></i>
+                                Contacto
+                            </a>
+                        {% endif %}
                     </li>
                     
                     <!-- Botones sociales para escritorio (dentro del menú) -->
@@ -176,11 +211,19 @@
                     <div class="footer-content">
                         <h4 class="footer-subtitle">Servicios</h4>
                         <ul class="footer-links">
-                            <li><a href="{% url 'inicio' %}#servicios" class="smooth-scroll">Ventanas de Aluminio</a></li>
-                            <li><a href="{% url 'inicio' %}#servicios" class="smooth-scroll">Puertas</a></li>
-                            <li><a href="{% url 'inicio' %}#servicios" class="smooth-scroll">Cerramientos</a></li>
-                            <li><a href="{% url 'inicio' %}#servicios" class="smooth-scroll">Mamparas</a></li>
-                            <li><a href="{% url 'inicio' %}#servicios" class="smooth-scroll">Persianas</a></li>
+                            {% if request.resolver_match.url_name == 'inicio' %}
+                                <li><a href="#servicios" class="smooth-scroll">Ventanas de Aluminio</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Puertas</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Cerramientos</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Mamparas</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Persianas</a></li>
+                            {% else %}
+                                <li><a href="{% url 'inicio' %}#servicios">Ventanas de Aluminio</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Puertas</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Cerramientos</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Mamparas</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Persianas</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>

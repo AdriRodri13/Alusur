@@ -61,6 +61,7 @@ class Parrafo(models.Model):
         blank=True,
         null=True,
     )
+    titulo = models.CharField(max_length=100, blank=True, null=True)
     contenido = models.TextField()
     imagen = models.ImageField(
         storage=seleccionar_storage(),

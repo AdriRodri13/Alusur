@@ -257,12 +257,26 @@ def ajax_get_item(request, model_name, item_id):
             field_value = getattr(obj, field.name)
             
             # Manejar diferentes tipos de campos
-            if hasattr(field_value, 'url'):  # ImageField/FileField
-                data[field.name] = field_value.url if field_value else ''
+            if hasattr(field, 'upload_to'):  # ImageField/FileField
+                # Verificar si el campo tiene valor antes de acceder a .url
+                if field_value and hasattr(field_value, 'url'):
+                    data[field.name + '_url'] = field_value.url
+                    data[field.name] = str(field_value)  # Nombre del archivo
+                else:
+                    data[field.name + '_url'] = ''
+                    data[field.name] = ''
+            elif field.__class__.__name__ == 'ForeignKey':  # ForeignKey específico
+                # Para relaciones, guardar solo el ID
+                if field_value is not None:
+                    data[field.name] = field_value.id
+                    data[field.name + '_name'] = str(field_value)  # Nombre para display
+                else:
+                    data[field.name] = None
+                    data[field.name + '_name'] = ''
             elif hasattr(field_value, 'isoformat'):  # DateField/DateTimeField
                 data[field.name] = field_value.isoformat() if field_value else ''
             else:
-                data[field.name] = field_value
+                data[field.name] = field_value if field_value is not None else ''
         
         return JsonResponse({
             'success': True,
@@ -272,7 +286,7 @@ def ajax_get_item(request, model_name, item_id):
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'error': str(e)
+            'error': f'Error interno: {str(e)}'
         }, status=500)
 
 
@@ -485,6 +499,7 @@ def terminos_servicio(request):
 def generacion_texto_ia(request):
     """
     Genera un texto utilizando IA (DeepSeek) basado en las especificaciones proporcionadas.
+    Ahora incluye generación de títulos y HTML enriquecido con clases CSS específicas.
     """
 
     palabras_clave = [
@@ -493,19 +508,60 @@ def generacion_texto_ia(request):
         "aluminio de alta calidad", "instalación profesional", "diseño personalizado",
         "eficiencia energética", "durabilidad", "estética moderna", "seguridad mejorada",
         "sostenibilidad", "aislamiento térmico y acústico", "carpinteria de aluminio en alicante",
+        "ALUSUR", "Aluminios del Sureste", "Alicante", "profesionalismo", "garantía"
     ]
 
     if request.method == "POST":
         especificaciones = request.POST.get("especificaciones", "").strip()
+        incluir_titulo = request.POST.get("incluir_titulo", "false").lower() == "true"
+        
         if not especificaciones:
             return JsonResponse({"error": "Debes proporcionar especificaciones."}, status=400)
 
-        prompt = (
-            "Debes actuar como un agente SEO experto y redactor de contenido. "
-            "Tu tarea es generar un texto optimizado para SEO en base a las siguientes especificaciones. "
-            "No debes usar emojis. Es obligatorio incluir al menos algunas de estas palabras clave: "
-            f"{', '.join(palabras_clave)}. "
-            f"Especificaciones: {especificaciones}"
+        # Construir prompt mejorado con instrucciones específicas para HTML y títulos
+        prompt_base = (
+            "Eres un redactor SEO profesional especializado en carpintería de aluminio. "
+            "Tu tarea es generar contenido optimizado para la web de Aluminios del Sureste (ALUSUR). "
+            "NO uses emojis. "
+        )
+
+        # Instrucciones para HTML enriquecido (simplificado)
+        prompt_html = (
+            "IMPORTANTE: Mantén el contenido CONCISO y usa ocasionalmente estas clases CSS:\n"
+            "- <span class=\"importante\">texto destacado</span> SOLO para 1-2 conceptos clave por párrafo\n"
+            "- <span class=\"destacado\">texto resaltado</span> SOLO para información muy relevante\n"
+            "- Usa párrafos simples <p> sin clases adicionales\n"
+            "- NO uses más de 3-4 líneas por párrafo\n"
+            "- NO uses listas a menos que sea estrictamente necesario\n\n"
+        )
+
+        # Palabras clave
+        prompt_seo = (
+            f"Incluye naturalmente algunas de estas palabras clave: {', '.join(palabras_clave)}. "
+        )
+
+        # Instrucciones específicas según si incluye título o no
+        if incluir_titulo:
+            prompt_titulo = (
+                "Genera UN SOLO PÁRRAFO CORTO (máximo 3-4 líneas) sin título H2. "
+                "Al final añade: TITULO_SUGERIDO: [título corto máximo 50 caracteres]"
+            )
+        else:
+            prompt_titulo = (
+                "Genera UN SOLO PÁRRAFO CORTO (máximo 3-4 líneas) sin título."
+            )
+
+        # Prompt completo
+        prompt_completo = (
+            f"{prompt_base}"
+            f"{prompt_html}"
+            f"{prompt_seo}"
+            f"{prompt_titulo}\n\n"
+            f"Especificaciones del contenido: {especificaciones}\n\n"
+            "FORMATO ESPERADO (ejemplo):\n"
+            "<p>Nuestras <span class=\"importante\">ventanas de aluminio</span> destacan por su "
+            "<span class=\"destacado\">excelente aislamiento térmico</span>. La instalación profesional "
+            "garantiza un rendimiento óptimo durante décadas.</p>"
         )
 
         try:
@@ -518,23 +574,46 @@ def generacion_texto_ia(request):
                 json={
                     "model": "deepseek-chat",
                     "messages": [
-                        {"role": "system", "content": "Eres un redactor SEO profesional."},
-                        {"role": "user", "content": prompt}
+                        {
+                            "role": "system", 
+                            "content": (
+                                "Eres un redactor SEO especializado en carpintería de aluminio. "
+                                "Escribes párrafos CORTOS y CONCISOS. Usas HTML mínimo para destacar 1-2 conceptos clave. "
+                                "Tu estilo es directo, profesional y sin florituras."
+                            )
+                        },
+                        {"role": "user", "content": prompt_completo}
                     ],
                     "temperature": 0.7,
-                    "max_tokens": 800
+                    "max_tokens": 400
                 },
-                timeout=15  # segundos
+                timeout=20  # Aumentado por contenido más complejo
             )
 
             if response.status_code != 200:
                 return JsonResponse({"error": "Error al comunicarse con la IA."}, status=500)
 
             data = response.json()
-            texto_generado = data["choices"][0]["message"]["content"]
-            return JsonResponse({"texto": texto_generado})
+            contenido_generado = data["choices"][0]["message"]["content"].strip()
+            
+            # Procesar respuesta para separar contenido y título
+            resultado = {"texto": contenido_generado}
+            
+            if incluir_titulo and "TITULO_SUGERIDO:" in contenido_generado:
+                partes = contenido_generado.split("TITULO_SUGERIDO:")
+                if len(partes) == 2:
+                    resultado["texto"] = partes[0].strip()
+                    resultado["titulo"] = partes[1].strip()
+            
+            return JsonResponse(resultado)
 
+        except requests.Timeout:
+            return JsonResponse({"error": "Timeout: La IA tardó demasiado en responder."}, status=500)
+        except requests.RequestException as e:
+            return JsonResponse({"error": f"Error de conexión: {str(e)}"}, status=500)
+        except KeyError as e:
+            return JsonResponse({"error": f"Respuesta inesperada de la IA: {str(e)}"}, status=500)
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": f"Error interno: {str(e)}"}, status=500)
 
     return JsonResponse({"error": "Método no permitido."}, status=405)
