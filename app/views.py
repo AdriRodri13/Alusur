@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import TextoPresentacion, Servicio, ProyectoFinalizado
+from .models import TextoPresentacion, Servicio, ProyectoFinalizado, Parrafo
 
 
 # Create your views here.
@@ -372,12 +372,16 @@ from django.shortcuts import get_object_or_404
 
 def servicio_detalle(request, pk):
     servicio = get_object_or_404(Servicio, pk=pk)
-    return render(request, "app/servicio_detalle.html", {"servicio": servicio})
+    parrafos = Parrafo.objects.filter(servicio=servicio)
+    context = {"servicio": servicio, "parrafos": parrafos}
+    return render(request, "app/servicio_detalle.html", context)
 
 
 def proyecto_detalle(request, pk):
     proyecto = get_object_or_404(ProyectoFinalizado, pk=pk)
-    return render(request, "app/proyecto_detalle.html", {"proyecto": proyecto})
+    parrafos = Parrafo.objects.filter(proyecto=proyecto)
+    context = {"proyecto": proyecto, "parrafos": parrafos}
+    return render(request, "app/proyecto_detalle.html", context)
 
 def aviso_privacidad(request):
     """Página de aviso de privacidad"""

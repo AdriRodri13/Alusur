@@ -46,4 +46,31 @@ class ProyectoFinalizado(models.Model):
         return reverse("proyecto_detalle", args=[self.id])
 
 
+class Parrafo(models.Model):
+    servicio = models.ForeignKey(
+        Servicio,
+        on_delete=models.CASCADE,
+        related_name="parrafos",
+        blank=True,
+        null=True,
+    )
+    proyecto = models.ForeignKey(
+        ProyectoFinalizado,
+        on_delete=models.CASCADE,
+        related_name="parrafos",
+        blank=True,
+        null=True,
+    )
+    contenido = models.TextField()
+    imagen = models.ImageField(
+        storage=seleccionar_storage(),
+        upload_to="Parrafo/",
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return self.contenido[:50]
+
+
 

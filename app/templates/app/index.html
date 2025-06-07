@@ -362,10 +362,10 @@
                                 <p>{{ servicio.descripcion|truncatewords:25 }}</p>
                             </div>
                             <div class="service-footer mt-auto">
-                                <button class="btn btn-primary btn-service" data-bs-toggle="modal" data-bs-target="#modalServicio{{ servicio.id }}">
+                                <a class="btn btn-primary btn-service" href="{{ servicio.get_absolute_url }}">
                                     <i class="fas fa-arrow-right me-2"></i>
                                     Más información
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </article>
@@ -428,7 +428,7 @@
         <div class="row g-4">
         {% for proyecto in proyecto_finalizado %}
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="{{ forloop.counter|add:100 }}">
-            <article class="project-card h-100 d-flex flex-column" data-bs-toggle="modal" data-bs-target="#modalProyecto{{ proyecto.id }}">
+            <a href="{{ proyecto.get_absolute_url }}" class="project-card h-100 d-flex flex-column text-decoration-none">
             <div class="project-image-container">
                 {% if proyecto.imagen %}
                 <div class="project-image">
@@ -455,7 +455,7 @@
                 </div>
                 </div>
             </div>
-            </article>
+            </a>
         </div>
         {% endfor %}
         </div>
@@ -487,15 +487,7 @@
     <!-- SCRIPTS -->
     {%include 'app/includes/scripts.html'%}
 
-    <!-- MODALES DE SERVICIOS -->
-    {% for servicio in servicios %}
-    {% include 'app/includes/modal_servicio.html' %}
-    {% endfor %}
 
-    <!-- MODALES DE PROYECTOS -->
-    {% for proyecto in proyecto_finalizado %}
-    {% include 'app/includes/modal_proyecto.html' %}
-    {% endfor %}
 
 </body>
 </html>
