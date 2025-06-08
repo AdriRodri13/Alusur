@@ -725,7 +725,7 @@ def generacion_texto_ia(request):
             "Escribes párrafos CORTOS y CONCISOS. Usas HTML mínimo para destacar conceptos clave. "
             "Tu estilo es directo, profesional y técnico. NUNCA repites información ya existente."
         )
-        
+        breakpoint()
         # Llamada a la API de DeepSeek
         response = requests.post(
             settings.DEEPSEEK_API_URL,
@@ -745,7 +745,7 @@ def generacion_texto_ia(request):
                 "frequency_penalty": 0.5,  # Reduce repeticiones
                 "presence_penalty": 0.3    # Fomenta nuevos temas
             },
-            timeout=25
+            timeout=100  # Aumentado para manejar contexto más largo
         )
         
         if response.status_code != 200:
@@ -789,6 +789,7 @@ def generacion_texto_ia(request):
         }, status=500)
     
     except requests.RequestException as e:
+        
         return JsonResponse({
             "error": f"Error de conexión con la IA: {str(e)}"
         }, status=500)

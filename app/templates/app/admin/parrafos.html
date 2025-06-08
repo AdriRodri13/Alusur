@@ -283,7 +283,6 @@
                                         </div>
 
                                         <!-- Botones y ejemplos -->
-
                                         <div class="d-flex gap-2">
                                             <button type="button" class="btn btn-info btn-sm" id="generateTextBtn">
                                                 <i class="fas fa-magic"></i>
@@ -317,6 +316,8 @@
                                 </div>
                             </div>
                             
+                            <!-- AQUÍ ESTABA EL PROBLEMA: FALTABA EL TEXTAREA -->
+                            <textarea class="form-control" id="contenido" name="contenido" rows="8" placeholder="Ingresa el contenido del párrafo..." required></textarea>
                         </div>
                     </div>
                     
@@ -390,45 +391,49 @@
         </div>
     </div>
 </div>
-{% endblock content %}
 
-{% block extra_js %}
-<script src="{% static 'app/admin/crud.js' %}"></script>
 <script>
-    // Configuración específica para párrafos
-    const CRUD_CONFIG = {
-        modelName: 'parrafo',
-        ajaxUrls: {
-            get: '{% url "admin_ajax_get_item" "parrafo" 0 %}',
-            save: '{% url "admin_ajax_save_item" "parrafo" %}',
-            delete: '{% url "admin_ajax_delete_item" "parrafo" 0 %}'
-        }
-    };
-
-    // Funciones específicas para párrafos
-    function editParrafo(id) {
-        editItem(id);
+// Configuración específica para párrafos
+const CRUD_CONFIG = {
+    modelName: 'parrafo',
+    ajaxUrls: {
+        get: '{% url "admin_ajax_get_item" "parrafo" 0 %}',
+        save: '{% url "admin_ajax_save_item" "parrafo" %}',
+        delete: '{% url "admin_ajax_delete_item" "parrafo" 0 %}'
     }
+};
 
-    function viewParrafo(id) {
-        viewItem(id);
-    }
+// Funciones específicas para párrafos
+function editParrafo(id) {
+    editItem(id);
+}
 
-    function deleteParrafo(id) {
-        deleteItem(id);
-    }
+function viewParrafo(id) {
+    viewItem(id);
+}
 
-    function openCreateModal() {
-        openCreateModalGeneric();
-        // Limpiar campos específicos
-        document.getElementById('titulo').value = '';
-        // Ocultar el panel de IA al abrir modal para crear
-        document.getElementById('iaGeneratorPanel').style.display = 'none';
-        document.getElementById('toggleIaGenerator').innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
-    }
+function deleteParrafo(id) {
+    deleteItem(id);
+}
 
-    // Funcionalidad de generación de texto con IA
-// Script completo para el template de párrafos con IA mejorada
+function openCreateModal() {
+    openCreateModalGeneric();
+    // Limpiar campos específicos
+    const tituloField = document.getElementById('titulo');
+    const contenidoField = document.getElementById('contenido');
+    
+    if (tituloField) tituloField.value = '';
+    if (contenidoField) contenidoField.value = '';
+    
+    // Ocultar el panel de IA al abrir modal para crear
+    const iaPanel = document.getElementById('iaGeneratorPanel');
+    const toggleBtn = document.getElementById('toggleIaGenerator');
+    
+    if (iaPanel) iaPanel.style.display = 'none';
+    if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
+}
+
+// Funcionalidad de generación de texto con IA
 document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('toggleIaGenerator');
     const iaPanel = document.getElementById('iaGeneratorPanel');
@@ -437,6 +442,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingIndicator = document.getElementById('iaLoadingIndicator');
     const contenidoTextarea = document.getElementById('contenido');
     const tituloInput = document.getElementById('titulo');
+
+    // Verificar que los elementos existan
+    if (!toggleBtn || !iaPanel || !generateBtn || !clearBtn || !loadingIndicator || !contenidoTextarea || !tituloInput) {
+        console.error('Algunos elementos del DOM no se encontraron para la funcionalidad de IA');
+        return;
+    }
 
     // Toggle del panel de IA
     toggleBtn.addEventListener('click', function() {
@@ -449,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Generar texto con IA - VERSIÓN MEJORADA
+    // Generar texto con IA
     generateBtn.addEventListener('click', function() {
         const especificaciones = construirEspecificaciones();
         
@@ -518,110 +529,65 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Limpiar campos de IA
     clearBtn.addEventListener('click', function() {
-        document.getElementById('tipoContenido').value = '';
-        document.getElementById('productoEspecifico').value = '';
-        document.getElementById('enfoqueEspecifico').value = '';
-        document.getElementById('tonoContenido').value = 'profesional';
-        document.getElementById('especificacionesAdicionales').value = '';
-        document.getElementById('incluirTitulo').checked = true;
-        contenidoTextarea.value = '';
-        tituloInput.value = '';
-        document.getElementById('especificacionesPreview').style.display = 'none';
+        const tipoContenido = document.getElementById('tipoContenido');
+        const productoEspecifico = document.getElementById('productoEspecifico');
+        const enfoqueEspecifico = document.getElementById('enfoqueEspecifico');
+        const tonoContenido = document.getElementById('tonoContenido');
+        const especificacionesAdicionales = document.getElementById('especificacionesAdicionales');
+        const incluirTitulo = document.getElementById('incluirTitulo');
+        const especificacionesPreview = document.getElementById('especificacionesPreview');
+
+        if (tipoContenido) tipoContenido.value = '';
+        if (productoEspecifico) productoEspecifico.value = '';
+        if (enfoqueEspecifico) enfoqueEspecifico.value = '';
+        if (tonoContenido) tonoContenido.value = 'profesional';
+        if (especificacionesAdicionales) especificacionesAdicionales.value = '';
+        if (incluirTitulo) incluirTitulo.checked = true;
+        if (contenidoTextarea) contenidoTextarea.value = '';
+        if (tituloInput) tituloInput.value = '';
+        if (especificacionesPreview) especificacionesPreview.style.display = 'none';
     });
 
     // Vista previa de especificaciones
     const previewBtn = document.getElementById('previewSpecsBtn');
-    previewBtn.addEventListener('click', function() {
-        const especificaciones = construirEspecificaciones();
-        const previewDiv = document.getElementById('especificacionesPreview');
-        const previewText = document.getElementById('previewText');
-        
-        if (especificaciones) {
-            // Añadir información de contexto a la vista previa
-            const itemId = getItemId();
-            const tipoContenido = getTipoContenido();
-            const contextoInfo = `\n\n[CONTEXTO: ${tipoContenido} ID ${itemId} - La IA tendrá en cuenta los párrafos existentes para evitar repeticiones]`;
+    if (previewBtn) {
+        previewBtn.addEventListener('click', function() {
+            const especificaciones = construirEspecificaciones();
+            const previewDiv = document.getElementById('especificacionesPreview');
+            const previewText = document.getElementById('previewText');
             
-            previewText.textContent = especificaciones + contextoInfo;
-            previewDiv.style.display = 'block';
-        } else {
-            showAlert('Completa al menos el tipo de contenido y producto para ver la vista previa', 'info');
-        }
-    });
-
-    // Ejemplos rápidos
-    document.querySelectorAll('.ejemplo-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const ejemplo = this.getAttribute('data-ejemplo');
-            aplicarEjemplo(ejemplo);
-        });
-    });
-
-    // NUEVAS FUNCIONES PARA OBTENER CONTEXTO
-    
-    /**
-     * Obtiene el ID del servicio o proyecto actual
-     */
-    function getItemId() {
-        // Buscar en campos ocultos del formulario
-        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
-        const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
-        
-        if (servicioIdInput && servicioIdInput.value) {
-            return servicioIdInput.value;
-        } else if (proyectoIdInput && proyectoIdInput.value) {
-            return proyectoIdInput.value;
-        }
-        
-        // Fallback: intentar extraer de la URL
-        const pathParts = window.location.pathname.split('/');
-        for (let i = 0; i < pathParts.length; i++) {
-            if ((pathParts[i] === 'servicios' || pathParts[i] === 'proyectos') && pathParts[i + 1]) {
-                const potentialId = parseInt(pathParts[i + 1]);
-                if (!isNaN(potentialId)) {
-                    return potentialId.toString();
-                }
+            if (especificaciones && previewDiv && previewText) {
+                // Añadir información de contexto a la vista previa
+                const itemId = getItemId();
+                const tipoContenido = getTipoContenido();
+                const contextoInfo = `\n\n[CONTEXTO: ${tipoContenido} ID ${itemId} - La IA tendrá en cuenta los párrafos existentes para evitar repeticiones]`;
+                
+                previewText.textContent = especificaciones + contextoInfo;
+                previewDiv.style.display = 'block';
+            } else {
+                showAlert('Completa al menos el tipo de contenido y producto para ver la vista previa', 'info');
             }
-        }
-        
-        console.warn('No se pudo determinar el ID del item');
-        return null;
+        });
     }
 
-    /**
-     * Determina si estamos trabajando con un servicio o proyecto
-     */
-    function getTipoContenido() {
-        // Buscar en campos ocultos del formulario
-        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
-        const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
-        
-        if (servicioIdInput && servicioIdInput.value) {
-            return 'servicio';
-        } else if (proyectoIdInput && proyectoIdInput.value) {
-            return 'proyecto';
-        }
-        
-        // Fallback: intentar extraer de la URL o título de página
-        if (window.location.pathname.includes('/servicios/') || 
-            document.title.includes('Servicio')) {
-            return 'servicio';
-        } else if (window.location.pathname.includes('/proyectos/') || 
-                   document.title.includes('Proyecto')) {
-            return 'proyecto';
-        }
-        
-        console.warn('No se pudo determinar el tipo de contenido, usando "servicio" por defecto');
-        return 'servicio';
-    }
-
-    // Función para construir las especificaciones - ACTUALIZADA
+    // Función para construir las especificaciones
     function construirEspecificaciones() {
-        const tipo = document.getElementById('tipoContenido').value;
-        const producto = document.getElementById('productoEspecifico').value;
-        const enfoque = document.getElementById('enfoqueEspecifico').value;
-        const tono = document.getElementById('tonoContenido').value;
-        const adicionales = document.getElementById('especificacionesAdicionales').value;
+        const tipoElement = document.getElementById('tipoContenido');
+        const productoElement = document.getElementById('productoEspecifico');
+        const enfoqueElement = document.getElementById('enfoqueEspecifico');
+        const tonoElement = document.getElementById('tonoContenido');
+        const adicionalesElement = document.getElementById('especificacionesAdicionales');
+
+        if (!tipoElement || !productoElement) {
+            console.error('Elementos de especificaciones no encontrados');
+            return null;
+        }
+
+        const tipo = tipoElement.value;
+        const producto = productoElement.value;
+        const enfoque = enfoqueElement ? enfoqueElement.value : '';
+        const tono = tonoElement ? tonoElement.value : 'profesional';
+        const adicionales = adicionalesElement ? adicionalesElement.value : '';
 
         if (!tipo || !producto) {
             return null;
@@ -639,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
             especificaciones += `. Consideraciones adicionales: ${adicionales}`;
         }
 
-        // Instrucciones para HTML enriquecido actualizadas para las nuevas clases CSS
+        // Instrucciones para HTML enriquecido
         especificaciones += `. IMPORTANTE: Usa HTML enriquecido con estas clases CSS específicas:`;
         especificaciones += ` - <span class="importante">texto muy destacado</span> para conceptos clave`;
         especificaciones += ` - <span class="destacado">texto destacado</span> para información relevante`;
@@ -649,97 +615,129 @@ document.addEventListener('DOMContentLoaded', function() {
         return especificaciones;
     }
 
-    // Función para aplicar ejemplos - SIN CAMBIOS
-    function aplicarEjemplo(ejemplo) {
-        const partes = ejemplo.split(' ');
+    // Función para obtener el ID del item
+    function getItemId() {
+        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
+        const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
         
-        if (partes.includes('ventanas')) {
-            document.getElementById('productoEspecifico').value = 'ventanas aluminio';
-        } else if (partes.includes('puertas')) {
-            document.getElementById('productoEspecifico').value = 'puertas aluminio';
-        } else if (partes.includes('persianas')) {
-            document.getElementById('productoEspecifico').value = 'persianas';
+        if (servicioIdInput && servicioIdInput.value) {
+            return servicioIdInput.value;
+        } else if (proyectoIdInput && proyectoIdInput.value) {
+            return proyectoIdInput.value;
         }
-
-        if (partes.includes('eficiencia')) {
-            document.getElementById('tipoContenido').value = 'beneficios';
-            document.getElementById('enfoqueEspecifico').value = 'eficiencia';
-        } else if (partes.includes('seguridad')) {
-            document.getElementById('tipoContenido').value = 'beneficios';
-            document.getElementById('enfoqueEspecifico').value = 'seguridad';
-        } else if (partes.includes('durabilidad')) {
-            document.getElementById('tipoContenido').value = 'caracteristicas';
-            document.getElementById('enfoqueEspecifico').value = 'durabilidad';
-        }
-
-        if (partes.includes('profesional')) {
-            document.getElementById('tonoContenido').value = 'profesional';
-        }
+        
+        console.warn('No se pudo determinar el ID del item');
+        return null;
     }
 
-    // Función para obtener CSRF token - SIN CAMBIOS
+    // Función para determinar el tipo de contenido
+    function getTipoContenido() {
+        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
+        
+        if (servicioIdInput && servicioIdInput.value) {
+            return 'servicio';
+        }
+        
+        return 'proyecto';
+    }
+
+    // Función para obtener CSRF token
     function getCSRFToken() {
-        return document.querySelector('[name=csrfmiddlewaretoken]').value;
-    }
-
-    // Función auxiliar para mostrar información de contexto (opcional)
-    function mostrarInfoContexto() {
-        const itemId = getItemId();
-        const tipoContenido = getTipoContenido();
-        
-        if (itemId && console) {
-            console.log(`Contexto IA: ${tipoContenido} ID ${itemId}`);
-            console.log('La IA tendrá en cuenta los párrafos existentes para evitar repeticiones');
-        }
-    }
-    
-    // Mostrar info de contexto al cargar (solo en modo debug)
-    if (window.location.search.includes('debug=true')) {
-        mostrarInfoContexto();
+        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        return csrfInput ? csrfInput.value : '';
     }
 });
 
-// Extender las funciones de CRUD para incluir el campo título - SIN CAMBIOS
+// Extender las funciones de CRUD para incluir el campo título
 function populateEditForm(data) {
-    document.getElementById('parrafoId').value = data.id;
-    document.getElementById('titulo').value = data.titulo || '';
-    document.getElementById('contenido').value = data.contenido || '';
+    const parrafoIdField = document.getElementById('parrafoId');
+    const tituloField = document.getElementById('titulo');
+    const contenidoField = document.getElementById('contenido');
+    const imagenPreview = document.getElementById('imagenPreview');
+
+    if (parrafoIdField) parrafoIdField.value = data.id || '';
+    if (tituloField) tituloField.value = data.titulo || '';
+    if (contenidoField) contenidoField.value = data.contenido || '';
     
     // Manejo de imagen en edición
-    const imagenPreview = document.getElementById('imagenPreview');
-    if (data.imagen_url) {
-        imagenPreview.innerHTML = `<img src="${data.imagen_url}" alt="Preview" class="img-fluid rounded">`;
-    } else {
-        imagenPreview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+    if (imagenPreview) {
+        if (data.imagen_url) {
+            imagenPreview.innerHTML = `<img src="${data.imagen_url}" alt="Preview" class="img-fluid rounded">`;
+        } else {
+            imagenPreview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+        }
     }
 }
 
 function populateViewModal(data) {
-    document.getElementById('viewTitulo').innerHTML = data.titulo ? `<strong>${data.titulo}</strong>` : '<em class="text-muted">Sin título</em>';
-    document.getElementById('viewContenido').innerHTML = data.contenido || '<em class="text-muted">Sin contenido</em>';
-    
+    const viewTitulo = document.getElementById('viewTitulo');
+    const viewContenido = document.getElementById('viewContenido');
     const viewImagen = document.getElementById('viewImagen');
-    if (data.imagen_url) {
-        viewImagen.innerHTML = `<img src="${data.imagen_url}" alt="Imagen del párrafo" class="img-fluid rounded">`;
-    } else {
-        viewImagen.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+
+    if (viewTitulo) {
+        viewTitulo.innerHTML = data.titulo ? `<strong>${data.titulo}</strong>` : '<em class="text-muted">Sin título</em>';
+    }
+    
+    if (viewContenido) {
+        viewContenido.innerHTML = data.contenido || '<em class="text-muted">Sin contenido</em>';
+    }
+    
+    if (viewImagen) {
+        if (data.imagen_url) {
+            viewImagen.innerHTML = `<img src="${data.imagen_url}" alt="Imagen del párrafo" class="img-fluid rounded">`;
+        } else {
+            viewImagen.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+        }
     }
 }
 
-// Preview de imagen al seleccionar archivo - SIN CAMBIOS
-document.getElementById('imagen').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const preview = document.getElementById('imagenPreview');
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid rounded">`;
-        };
-        reader.readAsDataURL(file);
-    } else {
-        preview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+// Preview de imagen al seleccionar archivo
+document.addEventListener('DOMContentLoaded', function() {
+    const imagenInput = document.getElementById('imagen');
+    if (imagenInput) {
+        imagenInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagenPreview');
+            
+            if (file && preview) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid rounded">`;
+                };
+                reader.readAsDataURL(file);
+            } else if (preview) {
+                preview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+            }
+        });
     }
 });
+
+// Función auxiliar para mostrar alertas
+function showAlert(message, type) {
+    // Crear el elemento de alerta
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.setAttribute('role', 'alert');
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+    // Buscar un contenedor para las alertas o usar el body
+    const container = document.querySelector('.crud-container') || document.body;
+    container.insertBefore(alertDiv, container.firstChild);
+
+    // Auto-ocultar después de 5 segundos
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
 </script>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'app/admin/crud.js' %}"></script>
 {% endblock extra_js %}
