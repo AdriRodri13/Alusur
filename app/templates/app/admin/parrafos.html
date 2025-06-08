@@ -451,230 +451,318 @@
     }
 
     // Funcionalidad de generación de texto con IA
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggleBtn = document.getElementById('toggleIaGenerator');
-        const iaPanel = document.getElementById('iaGeneratorPanel');
-        const generateBtn = document.getElementById('generateTextBtn');
-        const clearBtn = document.getElementById('clearIaBtn');
-        const loadingIndicator = document.getElementById('iaLoadingIndicator');
-        const contenidoTextarea = document.getElementById('contenido');
-        const tituloInput = document.getElementById('titulo');
+// Script completo para el template de párrafos con IA mejorada
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggleIaGenerator');
+    const iaPanel = document.getElementById('iaGeneratorPanel');
+    const generateBtn = document.getElementById('generateTextBtn');
+    const clearBtn = document.getElementById('clearIaBtn');
+    const loadingIndicator = document.getElementById('iaLoadingIndicator');
+    const contenidoTextarea = document.getElementById('contenido');
+    const tituloInput = document.getElementById('titulo');
 
-        // Toggle del panel de IA
-        toggleBtn.addEventListener('click', function() {
-            if (iaPanel.style.display === 'none') {
-                iaPanel.style.display = 'block';
-                toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Ocultar IA';
-            } else {
+    // Toggle del panel de IA
+    toggleBtn.addEventListener('click', function() {
+        if (iaPanel.style.display === 'none') {
+            iaPanel.style.display = 'block';
+            toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Ocultar IA';
+        } else {
+            iaPanel.style.display = 'none';
+            toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
+        }
+    });
+
+    // Generar texto con IA - VERSIÓN MEJORADA
+    generateBtn.addEventListener('click', function() {
+        const especificaciones = construirEspecificaciones();
+        
+        if (!especificaciones) {
+            showAlert('Por favor, selecciona al menos el tipo de contenido y el producto', 'warning');
+            return;
+        }
+
+        // Mostrar loading
+        loadingIndicator.style.display = 'block';
+        generateBtn.disabled = true;
+
+        // Obtener información del contexto actual
+        const itemId = getItemId();
+        const tipoContenido = getTipoContenido();
+        
+        // Preparar datos para enviar
+        const formData = new FormData();
+        formData.append('especificaciones', especificaciones);
+        formData.append('incluir_titulo', document.getElementById('incluirTitulo').checked);
+        formData.append('item_id', itemId);
+        formData.append('tipo_contenido', tipoContenido);
+        formData.append('csrfmiddlewaretoken', getCSRFToken());
+
+        // Realizar petición AJAX
+        fetch('{% url "generacion_texto_ia" %}', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.texto) {
+                contenidoTextarea.value = data.texto;
+                
+                // Si viene título sugerido, añadirlo
+                if (data.titulo && document.getElementById('incluirTitulo').checked) {
+                    tituloInput.value = data.titulo;
+                }
+                
+                showAlert('Párrafo generado exitosamente con IA (contexto incluido)', 'success');
+                
+                // Mostrar información de debug si está disponible
+                if (data.debug_info && console) {
+                    console.log('Debug IA:', data.debug_info);
+                }
+                
+                // Ocultar panel después de generar
                 iaPanel.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
-            }
-        });
-
-        // Generar texto con IA
-        generateBtn.addEventListener('click', function() {
-            const especificaciones = construirEspecificaciones();
-            
-            if (!especificaciones) {
-                showAlert('Por favor, selecciona al menos el tipo de contenido y el producto', 'warning');
-                return;
-            }
-
-            // Mostrar loading
-            loadingIndicator.style.display = 'block';
-            generateBtn.disabled = true;
-
-            // Realizar petición AJAX
-            fetch('{% url "generacion_texto_ia" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': getCSRFToken(),
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `especificaciones=${encodeURIComponent(especificaciones)}&incluir_titulo=${document.getElementById('incluirTitulo').checked}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.texto) {
-                    contenidoTextarea.value = data.texto;
-                    
-                    // Si viene título sugerido, añadirlo
-                    if (data.titulo && document.getElementById('incluirTitulo').checked) {
-                        tituloInput.value = data.titulo;
-                    }
-                    
-                    showAlert('Párrafo generado exitosamente con IA', 'success');
-                    // Ocultar panel después de generar
-                    iaPanel.style.display = 'none';
-                    toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
-                } else {
-                    showAlert('Error: ' + (data.error || 'No se pudo generar el párrafo'), 'danger');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('Error de conexión al generar párrafo con IA', 'danger');
-            })
-            .finally(() => {
-                loadingIndicator.style.display = 'none';
-                generateBtn.disabled = false;
-            });
-        });
-
-        // Limpiar campos de IA
-        clearBtn.addEventListener('click', function() {
-            document.getElementById('tipoContenido').value = '';
-            document.getElementById('productoEspecifico').value = '';
-            document.getElementById('enfoqueEspecifico').value = '';
-            document.getElementById('tonoContenido').value = 'profesional';
-            document.getElementById('especificacionesAdicionales').value = '';
-            document.getElementById('incluirTitulo').checked = true;
-            contenidoTextarea.value = '';
-            tituloInput.value = '';
-            document.getElementById('especificacionesPreview').style.display = 'none';
-        });
-
-        // Vista previa de especificaciones
-        const previewBtn = document.getElementById('previewSpecsBtn');
-        previewBtn.addEventListener('click', function() {
-            const especificaciones = construirEspecificaciones();
-            const previewDiv = document.getElementById('especificacionesPreview');
-            const previewText = document.getElementById('previewText');
-            
-            if (especificaciones) {
-                previewText.textContent = especificaciones;
-                previewDiv.style.display = 'block';
             } else {
-                showAlert('Completa al menos el tipo de contenido y producto para ver la vista previa', 'info');
+                showAlert('Error: ' + (data.error || 'No se pudo generar el párrafo'), 'danger');
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Error de conexión al generar párrafo con IA', 'danger');
+        })
+        .finally(() => {
+            loadingIndicator.style.display = 'none';
+            generateBtn.disabled = false;
         });
+    });
 
-        // Ejemplos rápidos
-        document.querySelectorAll('.ejemplo-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const ejemplo = this.getAttribute('data-ejemplo');
-                aplicarEjemplo(ejemplo);
-            });
-        });
+    // Limpiar campos de IA
+    clearBtn.addEventListener('click', function() {
+        document.getElementById('tipoContenido').value = '';
+        document.getElementById('productoEspecifico').value = '';
+        document.getElementById('enfoqueEspecifico').value = '';
+        document.getElementById('tonoContenido').value = 'profesional';
+        document.getElementById('especificacionesAdicionales').value = '';
+        document.getElementById('incluirTitulo').checked = true;
+        contenidoTextarea.value = '';
+        tituloInput.value = '';
+        document.getElementById('especificacionesPreview').style.display = 'none';
+    });
 
-        // Función para construir las especificaciones
-        function construirEspecificaciones() {
-            const tipo = document.getElementById('tipoContenido').value;
-            const producto = document.getElementById('productoEspecifico').value;
-            const enfoque = document.getElementById('enfoqueEspecifico').value;
-            const tono = document.getElementById('tonoContenido').value;
-            const adicionales = document.getElementById('especificacionesAdicionales').value;
-            const incluirTitulo = document.getElementById('incluirTitulo').checked;
-
-            if (!tipo || !producto) {
-                return null;
-            }
-
-            let especificaciones = `Genera un párrafo sobre ${tipo} de ${producto}`;
+    // Vista previa de especificaciones
+    const previewBtn = document.getElementById('previewSpecsBtn');
+    previewBtn.addEventListener('click', function() {
+        const especificaciones = construirEspecificaciones();
+        const previewDiv = document.getElementById('especificacionesPreview');
+        const previewText = document.getElementById('previewText');
+        
+        if (especificaciones) {
+            // Añadir información de contexto a la vista previa
+            const itemId = getItemId();
+            const tipoContenido = getTipoContenido();
+            const contextoInfo = `\n\n[CONTEXTO: ${tipoContenido} ID ${itemId} - La IA tendrá en cuenta los párrafos existentes para evitar repeticiones]`;
             
-            if (enfoque) {
-                especificaciones += ` ${enfoque}`;
-            }
-            
-            especificaciones += `. El tono debe ser ${tono}`;
-            
-            if (adicionales) {
-                especificaciones += `. Consideraciones adicionales: ${adicionales}`;
-            }
-
-            // Instrucciones para HTML enriquecido
-            especificaciones += `. IMPORTANTE: Usa HTML enriquecido con estas clases CSS específicas:`;
-            especificaciones += ` - <span class="importante">texto muy destacado</span> para conceptos clave`;
-            especificaciones += ` - <span class="destacado">texto destacado</span> para información relevante`;
-            especificaciones += ` - <span class="resaltado">texto resaltado</span> para detalles importantes`;
-            especificaciones += ` - <ul class="lista-beneficios"><li>elemento</li></ul> para listas de beneficios`;
-            especificaciones += ` - <div class="caja-informacion"><p>información</p></div> para información especial`;
-            especificaciones += ` - <span class="numero-destacado">número</span> para estadísticas`;
-            especificaciones += ` - <span class="estadistica">dato%</span> para porcentajes y datos`;
-
-            if (incluirTitulo) {
-                especificaciones += ` También sugiere un título atractivo y profesional para este párrafo.`;
-            }
-
-            return especificaciones;
-        }
-
-        // Función para aplicar ejemplos
-        function aplicarEjemplo(ejemplo) {
-            const partes = ejemplo.split(' ');
-            
-            if (partes.includes('ventanas')) {
-                document.getElementById('productoEspecifico').value = 'ventanas aluminio';
-            } else if (partes.includes('puertas')) {
-                document.getElementById('productoEspecifico').value = 'puertas aluminio';
-            } else if (partes.includes('persianas')) {
-                document.getElementById('productoEspecifico').value = 'persianas';
-            }
-
-            if (partes.includes('eficiencia')) {
-                document.getElementById('tipoContenido').value = 'beneficios';
-                document.getElementById('enfoqueEspecifico').value = 'eficiencia';
-            } else if (partes.includes('seguridad')) {
-                document.getElementById('tipoContenido').value = 'beneficios';
-                document.getElementById('enfoqueEspecifico').value = 'seguridad';
-            } else if (partes.includes('durabilidad')) {
-                document.getElementById('tipoContenido').value = 'caracteristicas';
-                document.getElementById('enfoqueEspecifico').value = 'durabilidad';
-            }
-
-            if (partes.includes('profesional')) {
-                document.getElementById('tonoContenido').value = 'profesional';
-            }
-        }
-
-        // Función para obtener CSRF token
-        function getCSRFToken() {
-            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+            previewText.textContent = especificaciones + contextoInfo;
+            previewDiv.style.display = 'block';
+        } else {
+            showAlert('Completa al menos el tipo de contenido y producto para ver la vista previa', 'info');
         }
     });
 
-    // Extender las funciones de CRUD para incluir el campo título
-    function populateEditForm(data) {
-        document.getElementById('parrafoId').value = data.id;
-        document.getElementById('titulo').value = data.titulo || '';
-        document.getElementById('contenido').value = data.contenido || '';
-        
-        // Manejo de imagen en edición
-        const imagenPreview = document.getElementById('imagenPreview');
-        if (data.imagen_url) {
-            imagenPreview.innerHTML = `<img src="${data.imagen_url}" alt="Preview" class="img-fluid rounded">`;
-        } else {
-            imagenPreview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
-        }
-    }
-
-    function populateViewModal(data) {
-        document.getElementById('viewTitulo').innerHTML = data.titulo ? `<strong>${data.titulo}</strong>` : '<em class="text-muted">Sin título</em>';
-        document.getElementById('viewContenido').innerHTML = data.contenido || '<em class="text-muted">Sin contenido</em>';
-        
-        const viewImagen = document.getElementById('viewImagen');
-        if (data.imagen_url) {
-            viewImagen.innerHTML = `<img src="${data.imagen_url}" alt="Imagen del párrafo" class="img-fluid rounded">`;
-        } else {
-            viewImagen.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
-        }
-    }
-
-    // Preview de imagen al seleccionar archivo
-    document.getElementById('imagen').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const preview = document.getElementById('imagenPreview');
-        
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid rounded">`;
-            };
-            reader.readAsDataURL(file);
-        } else {
-            preview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
-        }
+    // Ejemplos rápidos
+    document.querySelectorAll('.ejemplo-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const ejemplo = this.getAttribute('data-ejemplo');
+            aplicarEjemplo(ejemplo);
+        });
     });
+
+    // NUEVAS FUNCIONES PARA OBTENER CONTEXTO
+    
+    /**
+     * Obtiene el ID del servicio o proyecto actual
+     */
+    function getItemId() {
+        // Buscar en campos ocultos del formulario
+        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
+        const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
+        
+        if (servicioIdInput && servicioIdInput.value) {
+            return servicioIdInput.value;
+        } else if (proyectoIdInput && proyectoIdInput.value) {
+            return proyectoIdInput.value;
+        }
+        
+        // Fallback: intentar extraer de la URL
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if ((pathParts[i] === 'servicios' || pathParts[i] === 'proyectos') && pathParts[i + 1]) {
+                const potentialId = parseInt(pathParts[i + 1]);
+                if (!isNaN(potentialId)) {
+                    return potentialId.toString();
+                }
+            }
+        }
+        
+        console.warn('No se pudo determinar el ID del item');
+        return null;
+    }
+
+    /**
+     * Determina si estamos trabajando con un servicio o proyecto
+     */
+    function getTipoContenido() {
+        // Buscar en campos ocultos del formulario
+        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
+        const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
+        
+        if (servicioIdInput && servicioIdInput.value) {
+            return 'servicio';
+        } else if (proyectoIdInput && proyectoIdInput.value) {
+            return 'proyecto';
+        }
+        
+        // Fallback: intentar extraer de la URL o título de página
+        if (window.location.pathname.includes('/servicios/') || 
+            document.title.includes('Servicio')) {
+            return 'servicio';
+        } else if (window.location.pathname.includes('/proyectos/') || 
+                   document.title.includes('Proyecto')) {
+            return 'proyecto';
+        }
+        
+        console.warn('No se pudo determinar el tipo de contenido, usando "servicio" por defecto');
+        return 'servicio';
+    }
+
+    // Función para construir las especificaciones - ACTUALIZADA
+    function construirEspecificaciones() {
+        const tipo = document.getElementById('tipoContenido').value;
+        const producto = document.getElementById('productoEspecifico').value;
+        const enfoque = document.getElementById('enfoqueEspecifico').value;
+        const tono = document.getElementById('tonoContenido').value;
+        const adicionales = document.getElementById('especificacionesAdicionales').value;
+
+        if (!tipo || !producto) {
+            return null;
+        }
+
+        let especificaciones = `Genera un párrafo sobre ${tipo} de ${producto}`;
+        
+        if (enfoque) {
+            especificaciones += ` ${enfoque}`;
+        }
+        
+        especificaciones += `. El tono debe ser ${tono}`;
+        
+        if (adicionales) {
+            especificaciones += `. Consideraciones adicionales: ${adicionales}`;
+        }
+
+        // Instrucciones para HTML enriquecido actualizadas para las nuevas clases CSS
+        especificaciones += `. IMPORTANTE: Usa HTML enriquecido con estas clases CSS específicas:`;
+        especificaciones += ` - <span class="importante">texto muy destacado</span> para conceptos clave`;
+        especificaciones += ` - <span class="destacado">texto destacado</span> para información relevante`;
+        especificaciones += ` - <span class="enfasis">texto técnico</span> para términos especializados`;
+        especificaciones += ` - <span class="marca">información destacada</span> para datos importantes`;
+
+        return especificaciones;
+    }
+
+    // Función para aplicar ejemplos - SIN CAMBIOS
+    function aplicarEjemplo(ejemplo) {
+        const partes = ejemplo.split(' ');
+        
+        if (partes.includes('ventanas')) {
+            document.getElementById('productoEspecifico').value = 'ventanas aluminio';
+        } else if (partes.includes('puertas')) {
+            document.getElementById('productoEspecifico').value = 'puertas aluminio';
+        } else if (partes.includes('persianas')) {
+            document.getElementById('productoEspecifico').value = 'persianas';
+        }
+
+        if (partes.includes('eficiencia')) {
+            document.getElementById('tipoContenido').value = 'beneficios';
+            document.getElementById('enfoqueEspecifico').value = 'eficiencia';
+        } else if (partes.includes('seguridad')) {
+            document.getElementById('tipoContenido').value = 'beneficios';
+            document.getElementById('enfoqueEspecifico').value = 'seguridad';
+        } else if (partes.includes('durabilidad')) {
+            document.getElementById('tipoContenido').value = 'caracteristicas';
+            document.getElementById('enfoqueEspecifico').value = 'durabilidad';
+        }
+
+        if (partes.includes('profesional')) {
+            document.getElementById('tonoContenido').value = 'profesional';
+        }
+    }
+
+    // Función para obtener CSRF token - SIN CAMBIOS
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    // Función auxiliar para mostrar información de contexto (opcional)
+    function mostrarInfoContexto() {
+        const itemId = getItemId();
+        const tipoContenido = getTipoContenido();
+        
+        if (itemId && console) {
+            console.log(`Contexto IA: ${tipoContenido} ID ${itemId}`);
+            console.log('La IA tendrá en cuenta los párrafos existentes para evitar repeticiones');
+        }
+    }
+    
+    // Mostrar info de contexto al cargar (solo en modo debug)
+    if (window.location.search.includes('debug=true')) {
+        mostrarInfoContexto();
+    }
+});
+
+// Extender las funciones de CRUD para incluir el campo título - SIN CAMBIOS
+function populateEditForm(data) {
+    document.getElementById('parrafoId').value = data.id;
+    document.getElementById('titulo').value = data.titulo || '';
+    document.getElementById('contenido').value = data.contenido || '';
+    
+    // Manejo de imagen en edición
+    const imagenPreview = document.getElementById('imagenPreview');
+    if (data.imagen_url) {
+        imagenPreview.innerHTML = `<img src="${data.imagen_url}" alt="Preview" class="img-fluid rounded">`;
+    } else {
+        imagenPreview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+    }
+}
+
+function populateViewModal(data) {
+    document.getElementById('viewTitulo').innerHTML = data.titulo ? `<strong>${data.titulo}</strong>` : '<em class="text-muted">Sin título</em>';
+    document.getElementById('viewContenido').innerHTML = data.contenido || '<em class="text-muted">Sin contenido</em>';
+    
+    const viewImagen = document.getElementById('viewImagen');
+    if (data.imagen_url) {
+        viewImagen.innerHTML = `<img src="${data.imagen_url}" alt="Imagen del párrafo" class="img-fluid rounded">`;
+    } else {
+        viewImagen.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+    }
+}
+
+// Preview de imagen al seleccionar archivo - SIN CAMBIOS
+document.getElementById('imagen').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('imagenPreview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid rounded">`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+    }
+});
 </script>
 {% endblock extra_js %}

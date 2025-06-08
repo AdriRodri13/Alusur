@@ -1,70 +1,85 @@
-{% extends "app/cliente_base.html" %}
+{% extends 'app/cliente_base.html' %}
 {% load static %}
 
-{% block title %}{{ item.titulo }} - ALUSUR{% endblock title %}
+{% block title %}
+    {% if tipo_contenido == 'servicio' %}
+        {{ item.titulo }} - Servicios de Aluminios del Sureste
+    {% else %}
+        {{ item.titulo }} - Proyectos de Aluminios del Sureste
+    {% endif %}
+{% endblock title %}
 
 {% block meta_description %}
-<meta name="description" content="{{ item.descripcion|truncatewords:30 }} - Aluminios del Sureste, especialistas en carpintería de aluminio en Alicante.">
+    <meta name="description" content="{{ item.descripcion|truncatewords:25 }} - Aluminios del Sureste, especialistas en carpintería de aluminio en Alicante.">
 {% endblock meta_description %}
 
 {% block meta_keywords %}
-<meta name="keywords" content="{{ item.titulo }}, {{ tipo_contenido }}, carpintería aluminio Alicante, ventanas, puertas, cerramientos">
+    <meta name="keywords" content="{{ item.titulo }}, {% if tipo_contenido == 'servicio' %}servicios{% else %}proyectos{% endif %} aluminio, carpintería metálica Alicante, ventanas aluminio, {{ item.titulo|lower }}">
 {% endblock meta_keywords %}
 
 {% block og_meta %}
-<meta property="og:title" content="{{ item.titulo }} - ALUSUR">
-<meta property="og:description" content="{{ item.descripcion|truncatewords:25 }}">
-<meta property="og:type" content="article">
-{% if item.imagen %}
-<meta property="og:image" content="{{ item.imagen.url }}">
-{% endif %}
+    <meta property="og:title" content="{{ item.titulo }} - Aluminios del Sureste">
+    <meta property="og:description" content="{{ item.descripcion|truncatewords:25 }}">
+    <meta property="og:type" content="article">
+    {% if item.imagen %}
+        <meta property="og:image" content="{{ request.build_absolute_uri }}{{ item.imagen.url }}">
+    {% endif %}
 {% endblock og_meta %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'app/detalle.css' %}">
+    <link rel="stylesheet" href="{% static 'app/detalle.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
     <!-- HEADER SECTION -->
-    <section class="detail-header">
+    <header class="detail-header">
         <div class="container">
-            <div class="detail-header-content">
-                <!-- Breadcrumb -->
-                <nav class="detail-breadcrumb" aria-label="breadcrumb">
-                    <a href="{% url 'inicio' %}">
-                        <i class="fas fa-home"></i>
-                        Inicio
+            <div class="detail-header-content" data-aos="fade-up" data-aos-duration="800">
+                <!-- Breadcrumb navigation -->
+                <nav class="detail-breadcrumb" aria-label="Navegación de ruta">
+                    <a href="{% url 'inicio' %}" aria-label="Ir a inicio">
+                        <i class="fas fa-home" aria-hidden="true"></i>
+                        <span>Inicio</span>
                     </a>
-                    <i class="fas fa-chevron-right"></i>
-                    <a href="{% url 'inicio' %}#{{ seccion_id }}">{{ tipo_contenido|capfirst }}s</a>
-                    <i class="fas fa-chevron-right"></i>
-                    <span>{{ item.titulo }}</span>
+                    <i class="fas fa-chevron-right breadcrumb-separator" aria-hidden="true"></i>
+                    <a href="{% url 'inicio' %}#{{ seccion_id }}" aria-label="Ir a sección de {% if tipo_contenido == 'servicio' %}servicios{% else %}proyectos{% endif %}">
+                        {% if tipo_contenido == 'servicio' %}
+                            <i class="fas fa-tools" aria-hidden="true"></i>
+                            <span>Servicios</span>
+                        {% else %}
+                            <i class="fas fa-images" aria-hidden="true"></i>
+                            <span>Proyectos</span>
+                        {% endif %}
+                    </a>
+                    <i class="fas fa-chevron-right breadcrumb-separator" aria-hidden="true"></i>
+                    <span class="current-page" aria-current="page">{{ item.titulo }}</span>
                 </nav>
 
                 <!-- Título principal -->
                 <h1 class="detail-title">{{ item.titulo }}</h1>
                 
-                <!-- Descripción general -->
+                <!-- Descripción -->
                 {% if item.descripcion %}
-                <div class="detail-description">
-                    {{ item.descripcion|linebreaks }}
-                </div>
+                    <p class="detail-description">{{ item.descripcion }}</p>
                 {% endif %}
             </div>
         </div>
-    </section>
+    </header>
 
-    <!-- CONTENT SECTION -->
-    <section class="detail-content">
+    <!-- MAIN CONTENT SECTION -->
+    <main class="detail-content">
         <div class="container">
             {% if parrafos %}
-                {% for parrafo in parrafos %}
-                    <div class="paragraph-section" data-aos="fade-up" data-aos-duration="800" data-aos-delay="{{ forloop.counter0|add:100 }}">
-                        {% if parrafo.imagen %}
-                            <!-- Párrafo con imagen -->
-                            <div class="row align-items-center paragraph-with-image">
-                                <!-- Contenido de texto -->
-                                <div class="col-lg-6 {% if forloop.counter|divisibleby:2 %}order-lg-2{% endif %}">
+                <div class="paragraphs-container">
+                    {% for parrafo in parrafos %}
+                        <article class="paragraph-section" 
+                                 data-aos="fade-up" 
+                                 data-aos-duration="600" 
+                                 data-aos-delay="{% widthratio forloop.counter 1 100 %}">
+                            
+                            {% if parrafo.imagen %}
+                                <!-- Párrafo con imagen -->
+                                <div class="paragraph-with-image {% if forloop.counter|divisibleby:2 %}image-left{% else %}image-right{% endif %}">
                                     <div class="paragraph-text-container">
                                         {% if parrafo.titulo %}
                                             <h2 class="titulo-parrafo">{{ parrafo.titulo }}</h2>
@@ -73,72 +88,178 @@
                                             {{ parrafo.contenido|safe }}
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <!-- Imagen -->
-                                <div class="col-lg-6 {% if forloop.counter|divisibleby:2 %}order-lg-1{% endif %}">
-                                    <div class="paragraph-image-container">
+                                    
+                                    <div class="paragraph-image-container d-flex justify-content-center align-items-center">
                                         <img src="{{ parrafo.imagen.url }}" 
-                                             alt="{{ parrafo.titulo|default:'Imagen para '}}{{ item.titulo }}" 
-                                             class="paragraph-image img-fluid">
-                                        <div class="image-overlay"></div>
+                                             alt="{% if parrafo.titulo %}{{ parrafo.titulo }}{% else %}{{ item.titulo }}{% endif %}" 
+                                             class="paragraph-image"
+                                             loading="lazy"
+                                             decoding="async">
+                                        <div class="image-overlay" aria-hidden="true"></div>
                                     </div>
                                 </div>
-                            </div>
-                        {% else %}
-                            <!-- Párrafo sin imagen - ancho completo -->
-                            <div class="paragraph-full-width">
-                                {% if parrafo.titulo %}
-                                    <h2 class="titulo-parrafo">{{ parrafo.titulo }}</h2>
-                                {% endif %}
-                                <div class="paragraph-content">
-                                    {{ parrafo.contenido|safe }}
+                            {% else %}
+                                <!-- Párrafo sin imagen - ancho completo -->
+                                <div class="paragraph-full-width">
+                                    {% if parrafo.titulo %}
+                                        <h2 class="titulo-parrafo">{{ parrafo.titulo }}</h2>
+                                    {% endif %}
+                                    <div class="paragraph-content">
+                                        {{ parrafo.contenido|safe }}
+                                    </div>
                                 </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Separador entre párrafos (excepto el último) -->
-                    {% if not forloop.last %}
-                        <hr class="paragraph-separator">
-                    {% endif %}
-                {% endfor %}
+                            {% endif %}
+
+                            <!-- Separador entre párrafos (excepto el último) -->
+                            {% if not forloop.last %}
+                                <hr class="paragraph-separator" aria-hidden="true">
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                </div>
             {% else %}
-                <!-- Si no hay párrafos, mostrar solo la descripción -->
-                <div class="paragraph-section" data-aos="fade-up">
-                    <div class="paragraph-full-width">
-                        <div class="paragraph-content">
-                            <p>{{ item.descripcion|default:"Información detallada próximamente." }}</p>
+                <!-- Estado vacío cuando no hay párrafos -->
+                <div class="empty-state" data-aos="fade-up">
+                    <div class="empty-state-content">
+                        <div class="empty-state-icon">
+                            {% if tipo_contenido == 'servicio' %}
+                                <i class="fas fa-tools" aria-hidden="true"></i>
+                            {% else %}
+                                <i class="fas fa-images" aria-hidden="true"></i>
+                            {% endif %}
                         </div>
+                        <h2 class="empty-state-title">Información en desarrollo</h2>
+                        <div class="empty-state-description">
+                            <p>Estamos trabajando en ampliar la información sobre <strong>{{ item.titulo|lower }}</strong>. 
+                            Pronto tendrás acceso a contenido detallado sobre este 
+                            {% if tipo_contenido == 'servicio' %}servicio{% else %}proyecto{% endif %}.</p>
+                            
+                            <p>Mientras tanto, no dudes en <a href="{% url 'inicio' %}#contacto" class="enlace-interno">contactarnos</a> 
+                            para obtener más información personalizada.</p>
+                        </div>
+                        <a href="{% url 'inicio' %}#contacto" class="btn-contact">
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            <span>Contactar ahora</span>
+                        </a>
                     </div>
                 </div>
             {% endif %}
         </div>
-    </section>
+    </main>
 
-    <!-- BACK SECTION -->
+    <!-- BACK NAVIGATION SECTION -->
     <section class="back-section">
         <div class="container">
-            <div class="text-center">
-                <a href="{% url 'inicio' %}#{{ seccion_id }}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i>
-                    Volver a {{ tipo_contenido|capfirst }}s
+            <nav class="back-navigation">
+                <a href="{% url 'inicio' %}#{{ seccion_id }}" 
+                   class="btn-back" 
+                   data-aos="zoom-in" 
+                   data-aos-duration="600"
+                   aria-label="Volver a la sección de {% if tipo_contenido == 'servicio' %}servicios{% else %}proyectos{% endif %}">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    <span>Volver a {% if tipo_contenido == 'servicio' %}Servicios{% else %}Proyectos{% endif %}</span>
                 </a>
-            </div>
+                
+                <!-- Opcional: Navegación adicional -->
+                <div class="additional-navigation">
+                    <a href="{% url 'inicio' %}#contacto" class="btn-secondary">
+                        <i class="fas fa-phone" aria-hidden="true"></i>
+                        <span>Contactar</span>
+                    </a>
+                    
+                    {% if tipo_contenido == 'servicio' %}
+                        <a href="{% url 'inicio' %}#proyectos" class="btn-secondary">
+                            <i class="fas fa-images" aria-hidden="true"></i>
+                            <span>Ver Proyectos</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'inicio' %}#servicios" class="btn-secondary">
+                            <i class="fas fa-tools" aria-hidden="true"></i>
+                            <span>Ver Servicios</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </nav>
         </div>
     </section>
 
+    <!-- Schema.org structured data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "{% if tipo_contenido == 'servicio' %}Service{% else %}CreativeWork{% endif %}",
+        "name": "{{ item.titulo }}",
+        "description": "{{ item.descripcion|default:'' }}",
+        "provider": {
+            "@type": "Organization",
+            "name": "Aluminios del Sureste",
+            "url": "{{ request.build_absolute_uri|slice:':-1' }}{% url 'inicio' %}"
+        }{% if item.imagen %},
+        "image": "{{ request.build_absolute_uri }}{{ item.imagen.url }}"{% endif %}
+    }
+    </script>
 {% endblock content %}
 
 {% block extra_js %}
-<!-- Inicializar AOS para animaciones -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        AOS.init({
-            duration: 800,
-            once: true,
-            offset: 100
+    <script>
+        // Lazy loading para imágenes (si no usas un polyfill)
+        if ('loading' in HTMLImageElement.prototype) {
+            // Browser soporta lazy loading nativo
+            console.log('Lazy loading nativo soportado');
+        } else {
+            // Fallback para browsers que no soportan lazy loading
+            const images = document.querySelectorAll('img[loading="lazy"]');
+            images.forEach(img => {
+                img.loading = 'eager';
+            });
+        }
+
+        // Mejorar navegación con teclado
+        document.addEventListener('DOMContentLoaded', function() {
+            const breadcrumbLinks = document.querySelectorAll('.detail-breadcrumb a');
+            const backButton = document.querySelector('.btn-back');
+            
+            // Añadir indicador visual al foco en breadcrumb
+            breadcrumbLinks.forEach(link => {
+                link.addEventListener('focus', function() {
+                    this.style.outline = '2px solid var(--color-acento)';
+                    this.style.outlineOffset = '2px';
+                });
+                
+                link.addEventListener('blur', function() {
+                    this.style.outline = 'none';
+                });
+            });
+
+            // Smooth scroll para enlaces internos
+            const internalLinks = document.querySelectorAll('a[href^="#"]');
+            internalLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
         });
-    });
-</script>
+
+        // Analytics tracking (opcional)
+        function trackDetailView() {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'view_item', {
+                    'item_id': '{{ item.id }}',
+                    'item_name': '{{ item.titulo }}',
+                    'item_category': '{% if tipo_contenido == "servicio" %}Servicio{% else %}Proyecto{% endif %}',
+                    'content_type': '{{ tipo_contenido }}'
+                });
+            }
+        }
+
+        // Ejecutar tracking al cargar la página
+        document.addEventListener('DOMContentLoaded', trackDetailView);
+    </script>
 {% endblock extra_js %}
