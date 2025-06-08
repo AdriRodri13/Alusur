@@ -10,12 +10,11 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
-
+DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
 #DEBUG = True
 #ALLOWED_HOSTS = ["*"]
 #CSRF_TRUSTED_ORIGINS = []
-#DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 #DEEPSEEK_API_KEY = "sk-235698e301a34fe19d18f2069a08fef8"
 
 
