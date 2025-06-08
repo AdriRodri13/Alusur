@@ -593,6 +593,7 @@ def construir_prompt_ia(especificaciones, incluir_titulo=False, contexto_parrafo
         "Eres un redactor SEO profesional especializado en carpintería de aluminio. "
         "Tu tarea es generar contenido optimizado para la web de Aluminios del Sureste (ALUSUR). "
         "NO uses emojis. Tu estilo es directo, profesional y técnico."
+        "Estamos buscando posicionarnos en la provicia de Alicante, concretamente en la zona de Elche, Aspe, Novelda y demás localidades cercanas. Por lo tanto inclute alguna si encaja bien con el texto, no es obligatorio.\n\n"
     )
     
     # Instrucciones para HTML enriquecido
