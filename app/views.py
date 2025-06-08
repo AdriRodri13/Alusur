@@ -725,7 +725,6 @@ def generacion_texto_ia(request):
             "Escribes párrafos CORTOS y CONCISOS. Usas HTML mínimo para destacar conceptos clave. "
             "Tu estilo es directo, profesional y técnico. NUNCA repites información ya existente."
         )
-        breakpoint()
         # Llamada a la API de DeepSeek
         response = requests.post(
             settings.DEEPSEEK_API_URL,
