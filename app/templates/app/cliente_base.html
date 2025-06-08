@@ -1,0 +1,338 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta tags específicos por página -->
+    {% block meta_description %}
+    <meta name="description" content="Aluminios del Sureste - Especialistas en ventanas, puertas y cerramientos de aluminio con eficiencia energética en Alicante. Más de 30 años de experiencia.">
+    {% endblock meta_description %}
+    
+    {% block meta_keywords %}
+    <meta name="keywords" content="ventanas aluminio Alicante, puertas aluminio, cerramientos aluminio, carpintería metálica Alicante, eficiencia energética">
+    {% endblock meta_keywords %}
+    
+    <meta name="author" content="Aluminios del Sureste">
+    
+    <!-- Open Graph -->
+    {% block og_meta %}
+    <meta property="og:title" content="Aluminios del Sureste - Carpintería de Aluminio en Alicante">
+    <meta property="og:description" content="Ventanas, puertas y cerramientos en aluminio con eficiencia energética en Alicante. Calidad y profesionalismo garantizados.">
+    <meta property="og:type" content="website">
+    {% endblock og_meta %}
+    
+    <link rel="icon" href="{% static 'app/images/favicon.ico' %}">
+
+    <!-- Título específico por página -->
+    <title>{% block title %}Aluminios del Sureste - Ventanas y Puertas de Aluminio en Alicante{% endblock title %}</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="{% static 'app/index.css' %}">
+    
+    <!-- CSS adicional específico por página -->
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top mb-4" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <div class="bg-white p-2 rounded" style="width: 200px;">
+                    <img src="{% static 'app/images/logoalusur.png' %}" class="img-fluid rounded" style="max-height: 60px;">
+                </div>
+            </a>
+
+            <!-- Botón toggler SEPARADO del brand -->
+            <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Botones sociales para móvil (fuera del menú) -->
+            <div class="d-lg-none social-mobile-nav">
+                <a href="https://www.instagram.com/aluminios_alusur/" class="social-btn-mobile instagram-mobile" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/alusur/" class="social-btn-mobile linkedin-mobile" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#presentacion">
+                                <i class="fas fa-users me-1"></i>
+                                Nosotros
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#presentacion">
+                                <i class="fas fa-users me-1"></i>
+                                Nosotros
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#servicios">
+                                <i class="fas fa-tools me-1"></i>
+                                Servicios
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#servicios">
+                                <i class="fas fa-tools me-1"></i>
+                                Servicios
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#empresas">
+                                <i class="fas fa-handshake me-1"></i>
+                                Clientes
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#empresas">
+                                <i class="fas fa-handshake me-1"></i>
+                                Clientes
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link smooth-scroll" href="#proyectos">
+                                <i class="fas fa-images me-1"></i>
+                                Proyectos
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'inicio' %}#proyectos">
+                                <i class="fas fa-images me-1"></i>
+                                Proyectos
+                            </a>
+                        {% endif %}
+                    </li>
+                    
+                    <li class="nav-item">
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            <a class="nav-link btn-nav-cta smooth-scroll" href="#contacto">
+                                <i class="fas fa-phone me-1"></i>
+                                Contacto
+                            </a>
+                        {% else %}
+                            <a class="nav-link btn-nav-cta" href="{% url 'inicio' %}#contacto">
+                                <i class="fas fa-phone me-1"></i>
+                                Contacto
+                            </a>
+                        {% endif %}
+                    </li>
+                    
+                    <!-- Botones sociales para escritorio (dentro del menú) -->
+                    <li class="nav-item mt-2 mt-sm-0 d-none d-lg-block">
+                        <div class="social-links">
+                            <a href="https://www.instagram.com/aluminios_alusur/" class="social-link instagram" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                                <span class="social-tooltip">Instagram</span>
+                            </a>
+                            <a href="https://www.linkedin.com/in/alusur/" class="social-link linkedin" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                                <span class="social-tooltip">LinkedIn</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main>
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="contacto" class="footer-section">
+        <div class="footer-waves">
+            <svg class="bg-primary" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path  d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"></path>
+            </svg>
+        </div>
+
+        <div class="container mt-4">
+            <!-- Sección principal del footer -->
+            <div class="row g-4 mb-5">
+                <!-- Información de la empresa -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="800">
+                    <div class="footer-content">
+                        <div class="footer-brand mb-4">
+                            <div class="footer-logo">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <h3 class="footer-title">
+                                Aluminios del Sureste
+                            </h3>
+                        </div>
+                        <p class="footer-description">
+                            Líderes en carpintería de aluminio en Alicante con más de 30 años de experiencia.
+                            Ofrecemos soluciones innovadoras que combinan calidad, diseño y eficiencia energética.
+                        </p>
+                        <div class="footer-certifications">
+                            <div class="certification-badge">
+                                <i class="fas fa-certificate"></i>
+                                <span>Calidad</span>
+                            </div>
+                            <div class="certification-badge">
+                                <i class="fas fa-leaf"></i>
+                                <span>Eco-friendly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Servicios rápidos -->
+                <div class="col-lg-2 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                    <div class="footer-content">
+                        <h4 class="footer-subtitle">Servicios</h4>
+                        <ul class="footer-links">
+                            {% if request.resolver_match.url_name == 'inicio' %}
+                                <li><a href="#servicios" class="smooth-scroll">Ventanas de Aluminio</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Puertas</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Cerramientos</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Mamparas</a></li>
+                                <li><a href="#servicios" class="smooth-scroll">Persianas</a></li>
+                            {% else %}
+                                <li><a href="{% url 'inicio' %}#servicios">Ventanas de Aluminio</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Puertas</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Cerramientos</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Mamparas</a></li>
+                                <li><a href="{% url 'inicio' %}#servicios">Persianas</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Información de contacto -->
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    <div class="footer-content">
+                        <h4 class="footer-subtitle">Contacto</h4>
+                        <ul class="footer-contact">
+                            <li class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-info">
+                                    <span class="contact-label">Teléfono</span>
+                                    <a href="tel:+34655 992 27" class="contact-value">+34 655 59 92 27</a>
+                                </div>
+                            </li>
+                            <li class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-info">
+                                    <span class="contact-label">Email</span>
+                                    <a href="mailto:alusur1@gmail.com" class="contact-value">alusur1@gmail.com</a>
+                                </div>
+                            </li>
+                            <li class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-info">
+                                    <span class="contact-label">Ubicación</span>
+                                    <span class="contact-value">Calle Azorin 44, Aspe, Alicante</span>
+                                </div>
+                            </li>
+                            <li class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="contact-info">
+                                    <span class="contact-label">Horario</span>
+                                    <span class="contact-value">Lun-Vie: 8:00-18:00</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Newsletter y redes sociales -->
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                    <div class="footer-content">
+                        <div class="footer-social">
+                            <h5 class="social-title">Síguenos</h5>
+                            <div class="social-links">
+                                <a href="https://www.instagram.com/aluminios_alusur/" class="social-link instagram" aria-label="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                    <span class="social-tooltip">Instagram</span>
+                                </a>
+                                <a href="https://www.linkedin.com/in/alusur/" class="social-link linkedin" aria-label="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                    <span class="social-tooltip">LinkedIn</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separador -->
+            <hr class="footer-divider">
+
+            <!-- Footer bottom -->
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="footer-copyright">
+                            &copy; 2025 Aluminios del Sureste. Todos los derechos reservados.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="footer-links-bottom">
+                            <a href="{% url 'aviso_privacidad' %}" class="footer-link-bottom">Política de Privacidad</a>
+                            <a href="{% url 'terminos_servicio' %}" class="footer-link-bottom">Términos de Servicio</a>
+                            <a href="{% url 'politica_cookies' %}" class="footer-link-bottom">Cookies</a>
+                            <!-- Acceso admin discreto -->
+                            <a href="{% url 'admin_login' %}" class="footer-link-bottom admin-access bg-primary rounded p-2" title="Panel de administración">Admin</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Script para acceso secreto con teclado (opcional) -->
+        <script>
+        // Combinación secreta: Ctrl + Shift + Q
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && (e.key === 'q' || e.key==='Q')) {
+                window.location.href = '{% url "admin_login" %}';
+            }
+        });
+        </script>
+    </footer>
+
+    <!-- SCRIPTS -->
+    {% include 'app/includes/scripts.html' %}
+    
+    <!-- Scripts adicionales específicos por página -->
+    {% block extra_js %}{% endblock extra_js %}
+
+</body>
+</html>

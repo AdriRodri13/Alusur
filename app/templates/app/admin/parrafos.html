@@ -1,0 +1,768 @@
+{% extends "app/admin/base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if servicio %}
+        Gestión de Párrafos - {{ servicio.titulo }} - ALUSUR
+    {% else %}
+        Gestión de Párrafos - {{ proyecto.titulo }} - ALUSUR
+    {% endif %}
+{% endblock title %}
+
+{% block page_title %}
+    {% if servicio %}
+        Párrafos del Servicio: {{ servicio.titulo }}
+    {% else %}
+        Párrafos del Proyecto: {{ proyecto.titulo }}
+    {% endif %}
+{% endblock page_title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/admin/crud.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div class="crud-container">
+    <!-- Header con botón crear y volver -->
+    <div class="crud-header">
+        <div class="crud-header-left">
+            <h5 class="crud-title">
+                <i class="fas fa-paragraph"></i>
+                {% if servicio %}
+                    Párrafos del Servicio: {{ servicio.titulo }}
+                {% else %}
+                    Párrafos del Proyecto: {{ proyecto.titulo }}
+                {% endif %}
+            </h5>
+            <p class="crud-subtitle">
+                {% if servicio %}
+                    Gestiona el contenido detallado del servicio
+                {% else %}
+                    Gestiona el contenido detallado del proyecto
+                {% endif %}
+            </p>
+        </div>
+        <div class="crud-header-right">
+            <a href="{% if servicio %}{% url 'admin_servicios' %}{% else %}{% url 'admin_proyectos' %}{% endif %}" class="btn btn-secondary me-2">
+                <i class="fas fa-arrow-left"></i>
+                Volver
+            </a>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#parrafoModal" onclick="openCreateModal()">
+                <i class="fas fa-plus"></i>
+                Nuevo Párrafo
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="crud-filters">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar en párrafos...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="filter-actions">
+                    <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                        <i class="fas fa-filter"></i>
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de párrafos -->
+    <div class="crud-table-container">
+        <div class="table-responsive">
+            <table class="table crud-table" id="parrafosTable">
+                <thead>
+                    <tr>
+                        <th width="50">#</th>
+                        <th>Título</th>
+                        <th>Imagen</th>
+                        <th>Contenido</th>
+                        <th width="120">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for parrafo in parrafos %}
+                    <tr>
+                        <td>{{ parrafo.id }}</td>
+                        <td>
+                            <div class="table-title">
+                                {% if parrafo.titulo %}
+                                    <strong>{{ parrafo.titulo|truncatechars:40 }}</strong>
+                                {% else %}
+                                    <em class="text-muted">Sin título</em>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-image">
+                                {% if parrafo.imagen %}
+                                    <img src="{{ parrafo.imagen.url }}" alt="Párrafo {{ parrafo.id }}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% else %}
+                                    <i class="fas fa-image text-muted"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-description">
+                                {{ parrafo.contenido|striptags|truncatechars:120 }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editParrafo({{ parrafo.id }})" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="viewParrafo({{ parrafo.id }})" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteParrafo({{ parrafo.id }})" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <div class="py-5">
+                                <i class="fas fa-paragraph fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No hay párrafos registrados</h5>
+                                <p class="text-muted">Comienza creando el primer párrafo</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    {% if parrafos.count > 0 %}
+    <div class="crud-pagination">
+        <nav aria-label="Paginación">
+            <div class="d-flex justify-content-center">
+                <span class="text-muted">Mostrando {{ parrafos.count }} párrafo{{ parrafos.count|pluralize:"s" }}</span>
+            </div>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Crear/Editar Párrafo -->
+<div class="modal fade" id="parrafoModal" tabindex="-1" aria-labelledby="parrafoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="parrafoModalLabel">
+                    <i class="fas fa-paragraph"></i>
+                    <span id="modalTitle">Nuevo Párrafo</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="parrafoForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <input type="hidden" id="parrafoId" name="id">
+                    {% if servicio %}
+                        <input type="hidden" name="servicio_id" value="{{ servicio.id }}">
+                    {% else %}
+                        <input type="hidden" name="proyecto_id" value="{{ proyecto.id }}">
+                    {% endif %}
+                    
+                    <!-- Campo Título -->
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="titulo" class="form-label">Título del Párrafo (Opcional)</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Ventanas de Alta Eficiencia Energética">
+                            <small class="form-text text-muted">Este título aparecerá como H2 encima del contenido</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="contenido" class="form-label">Contenido del Párrafo *</label>
+                            
+                            <!-- Sección de generación de IA -->
+                            <div class="ia-generation-section mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <button type="button" class="btn btn-outline-info btn-sm" id="toggleIaGenerator">
+                                        <i class="fas fa-robot"></i>
+                                        Generar con IA
+                                    </button>
+                                    <small class="text-muted ms-2">Usa inteligencia artificial para generar párrafos cortos y concisos</small>
+                                </div>
+                                
+                                <div id="iaGeneratorPanel" class="card border-info" style="display: none;">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-info mb-3">
+                                            <i class="fas fa-robot"></i>
+                                            Generador de Contenido con IA
+                                        </h6>
+                                        
+                                        <!-- Tipo de contenido -->
+                                        <div class="mb-3">
+                                            <label for="tipoContenido" class="form-label">Tipo de contenido</label>
+                                            <select class="form-select" id="tipoContenido">
+                                                <option value="">Selecciona el tipo...</option>
+                                                <option value="beneficios">Beneficios y ventajas</option>
+                                                <option value="caracteristicas">Características técnicas</option>
+                                                <option value="aplicaciones">Aplicaciones y usos</option>
+                                                <option value="proceso">Proceso de instalación</option>
+                                                <option value="mantenimiento">Mantenimiento y cuidado</option>
+                                                <option value="comparativa">Comparativa con otros materiales</option>
+                                                <option value="personalizado">Contenido personalizado</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Producto/Servicio específico -->
+                                        <div class="mb-3">
+                                            <label for="productoEspecifico" class="form-label">Producto/Servicio específico</label>
+                                            <select class="form-select" id="productoEspecifico">
+                                                <option value="">Selecciona el producto...</option>
+                                                <option value="ventanas aluminio">Ventanas de aluminio</option>
+                                                <option value="puertas aluminio">Puertas de aluminio</option>
+                                                <option value="cerramientos">Cerramientos</option>
+                                                <option value="persianas">Persianas</option>
+                                                <option value="barandillas">Barandillas</option>
+                                                <option value="mamparas">Mamparas</option>
+                                                <option value="rejas">Rejas de seguridad</option>
+                                                <option value="mosquiteras">Mosquiteras</option>
+                                                <option value="carpinteria general">Carpintería de aluminio en general</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Enfoque específico -->
+                                        <div class="mb-3">
+                                            <label for="enfoqueEspecifico" class="form-label">Enfoque específico (opcional)</label>
+                                            <select class="form-select" id="enfoqueEspecifico">
+                                                <option value="">Sin enfoque específico</option>
+                                                <option value="hogares">Para hogares residenciales</option>
+                                                <option value="oficinas">Para oficinas y comercios</option>
+                                                <option value="cocinas">Para cocinas</option>
+                                                <option value="baños">Para baños</option>
+                                                <option value="terrazas">Para terrazas y balcones</option>
+                                                <option value="seguridad">Enfoque en seguridad</option>
+                                                <option value="eficiencia">Enfoque en eficiencia energética</option>
+                                                <option value="diseño">Enfoque en diseño y estética</option>
+                                                <option value="durabilidad">Enfoque en durabilidad</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Tono del contenido -->
+                                        <div class="mb-3">
+                                            <label for="tonoContenido" class="form-label">Tono del contenido</label>
+                                            <select class="form-select" id="tonoContenido">
+                                                <option value="profesional">Profesional y técnico</option>
+                                                <option value="cercano">Cercano y accesible</option>
+                                                <option value="comercial">Comercial y persuasivo</option>
+                                                <option value="informativo">Informativo y educativo</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Especificaciones adicionales -->
+                                        <div class="mb-3">
+                                            <label for="especificacionesAdicionales" class="form-label">Especificaciones adicionales</label>
+                                            <textarea class="form-control" id="especificacionesAdicionales" rows="3" placeholder="Añade cualquier detalle específico que quieras incluir (colores, medidas, ubicación geográfica, etc.)"></textarea>
+                                        </div>
+
+                                        <!-- Incluir título en generación -->
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="incluirTitulo" checked>
+                                                <label class="form-check-label" for="incluirTitulo">
+                                                    Sugerir título para el párrafo
+                                                </label>
+                                                <small class="form-text text-muted d-block">Si está marcado, la IA también sugerirá un título</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botones y ejemplos -->
+                                        <div class="mb-3">
+                                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                                <small class="text-muted">Ejemplos rápidos:</small>
+                                                <button type="button" class="btn btn-outline-info btn-xs ejemplo-btn" data-ejemplo="ventanas eficiencia energética hogares">
+                                                    Ventanas eficientes
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info btn-xs ejemplo-btn" data-ejemplo="puertas seguridad comercios profesional">
+                                                    Puertas seguras
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info btn-xs ejemplo-btn" data-ejemplo="persianas terrazas durabilidad">
+                                                    Persianas duraderas
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-info btn-sm" id="generateTextBtn">
+                                                <i class="fas fa-magic"></i>
+                                                Generar Párrafo
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" id="clearIaBtn">
+                                                <i class="fas fa-eraser"></i>
+                                                Limpiar Todo
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info btn-sm" id="previewSpecsBtn">
+                                                <i class="fas fa-eye"></i>
+                                                Vista Previa
+                                            </button>
+                                        </div>
+
+                                        <!-- Vista previa de especificaciones -->
+                                        <div id="especificacionesPreview" class="mt-3" style="display: none;">
+                                            <small class="text-muted">Especificaciones que se enviarán a la IA:</small>
+                                            <div class="bg-light p-2 rounded mt-1">
+                                                <small id="previewText" class="text-dark"></small>
+                                            </div>
+                                        </div>
+
+                                        <div id="iaLoadingIndicator" class="text-center mt-3" style="display: none;">
+                                            <div class="spinner-border spinner-border-sm text-info" role="status">
+                                                <span class="visually-hidden">Generando...</span>
+                                            </div>
+                                            <small class="text-muted ms-2">Generando contenido con IA...</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <textarea class="form-control" id="contenido" name="contenido" rows="8" required placeholder="Escribe el contenido del párrafo aquí o usa la IA para generarlo...&#10;&#10;Puedes usar HTML simple:&#10;- &lt;span class=&quot;importante&quot;&gt;texto destacado&lt;/span&gt;&#10;- &lt;span class=&quot;destacado&quot;&gt;texto resaltado&lt;/span&gt;"></textarea>
+                            <small class="form-text text-muted">
+                                <strong>HTML simple disponible:</strong><br>
+                                • <code>&lt;span class="importante"&gt;</code> para texto muy destacado<br>
+                                • <code>&lt;span class="destacado"&gt;</code> para texto resaltado
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="imagen" class="form-label">Imagen (Opcional)</label>
+                            <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                            <small class="form-text text-muted">Formatos: JPG, PNG, WebP (máx. 5MB)</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Vista previa</label>
+                            <div class="image-preview" id="imagenPreview">
+                                <i class="fas fa-image"></i>
+                                <span>Sin imagen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveButton">
+                        <i class="fas fa-save"></i>
+                        <span id="saveButtonText">Guardar Párrafo</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ver Párrafo -->
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalLabel">
+                    <i class="fas fa-eye"></i>
+                    Detalles del Párrafo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="view-content">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <h6>Título:</h6>
+                            <p id="viewTitulo" class="view-field"><em class="text-muted">Sin título</em></p>
+                        </div>
+                        <div class="col-md-8">
+                            <h6>Contenido:</h6>
+                            <div id="viewContenido" class="view-field content-box"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Imagen:</h6>
+                            <div class="view-image" id="viewImagen">
+                                <i class="fas fa-image"></i>
+                                <span>Sin imagen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'app/admin/crud.js' %}"></script>
+<script>
+    // Configuración específica para párrafos
+    const CRUD_CONFIG = {
+        modelName: 'parrafo',
+        ajaxUrls: {
+            get: '{% url "admin_ajax_get_item" "parrafo" 0 %}',
+            save: '{% url "admin_ajax_save_item" "parrafo" %}',
+            delete: '{% url "admin_ajax_delete_item" "parrafo" 0 %}'
+        }
+    };
+
+    // Funciones específicas para párrafos
+    function editParrafo(id) {
+        editItem(id);
+    }
+
+    function viewParrafo(id) {
+        viewItem(id);
+    }
+
+    function deleteParrafo(id) {
+        deleteItem(id);
+    }
+
+    function openCreateModal() {
+        openCreateModalGeneric();
+        // Limpiar campos específicos
+        document.getElementById('titulo').value = '';
+        // Ocultar el panel de IA al abrir modal para crear
+        document.getElementById('iaGeneratorPanel').style.display = 'none';
+        document.getElementById('toggleIaGenerator').innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
+    }
+
+    // Funcionalidad de generación de texto con IA
+// Script completo para el template de párrafos con IA mejorada
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggleIaGenerator');
+    const iaPanel = document.getElementById('iaGeneratorPanel');
+    const generateBtn = document.getElementById('generateTextBtn');
+    const clearBtn = document.getElementById('clearIaBtn');
+    const loadingIndicator = document.getElementById('iaLoadingIndicator');
+    const contenidoTextarea = document.getElementById('contenido');
+    const tituloInput = document.getElementById('titulo');
+
+    // Toggle del panel de IA
+    toggleBtn.addEventListener('click', function() {
+        if (iaPanel.style.display === 'none') {
+            iaPanel.style.display = 'block';
+            toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Ocultar IA';
+        } else {
+            iaPanel.style.display = 'none';
+            toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
+        }
+    });
+
+    // Generar texto con IA - VERSIÓN MEJORADA
+    generateBtn.addEventListener('click', function() {
+        const especificaciones = construirEspecificaciones();
+        
+        if (!especificaciones) {
+            showAlert('Por favor, selecciona al menos el tipo de contenido y el producto', 'warning');
+            return;
+        }
+
+        // Mostrar loading
+        loadingIndicator.style.display = 'block';
+        generateBtn.disabled = true;
+
+        // Obtener información del contexto actual
+        const itemId = getItemId();
+        const tipoContenido = getTipoContenido();
+        
+        // Preparar datos para enviar
+        const formData = new FormData();
+        formData.append('especificaciones', especificaciones);
+        formData.append('incluir_titulo', document.getElementById('incluirTitulo').checked);
+        formData.append('item_id', itemId);
+        formData.append('tipo_contenido', tipoContenido);
+        formData.append('csrfmiddlewaretoken', getCSRFToken());
+
+        // Realizar petición AJAX
+        fetch('{% url "generacion_texto_ia" %}', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.texto) {
+                contenidoTextarea.value = data.texto;
+                
+                // Si viene título sugerido, añadirlo
+                if (data.titulo && document.getElementById('incluirTitulo').checked) {
+                    tituloInput.value = data.titulo;
+                }
+                
+                showAlert('Párrafo generado exitosamente con IA (contexto incluido)', 'success');
+                
+                // Mostrar información de debug si está disponible
+                if (data.debug_info && console) {
+                    console.log('Debug IA:', data.debug_info);
+                }
+                
+                // Ocultar panel después de generar
+                iaPanel.style.display = 'none';
+                toggleBtn.innerHTML = '<i class="fas fa-robot"></i> Generar con IA';
+            } else {
+                showAlert('Error: ' + (data.error || 'No se pudo generar el párrafo'), 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Error de conexión al generar párrafo con IA', 'danger');
+        })
+        .finally(() => {
+            loadingIndicator.style.display = 'none';
+            generateBtn.disabled = false;
+        });
+    });
+
+    // Limpiar campos de IA
+    clearBtn.addEventListener('click', function() {
+        document.getElementById('tipoContenido').value = '';
+        document.getElementById('productoEspecifico').value = '';
+        document.getElementById('enfoqueEspecifico').value = '';
+        document.getElementById('tonoContenido').value = 'profesional';
+        document.getElementById('especificacionesAdicionales').value = '';
+        document.getElementById('incluirTitulo').checked = true;
+        contenidoTextarea.value = '';
+        tituloInput.value = '';
+        document.getElementById('especificacionesPreview').style.display = 'none';
+    });
+
+    // Vista previa de especificaciones
+    const previewBtn = document.getElementById('previewSpecsBtn');
+    previewBtn.addEventListener('click', function() {
+        const especificaciones = construirEspecificaciones();
+        const previewDiv = document.getElementById('especificacionesPreview');
+        const previewText = document.getElementById('previewText');
+        
+        if (especificaciones) {
+            // Añadir información de contexto a la vista previa
+            const itemId = getItemId();
+            const tipoContenido = getTipoContenido();
+            const contextoInfo = `\n\n[CONTEXTO: ${tipoContenido} ID ${itemId} - La IA tendrá en cuenta los párrafos existentes para evitar repeticiones]`;
+            
+            previewText.textContent = especificaciones + contextoInfo;
+            previewDiv.style.display = 'block';
+        } else {
+            showAlert('Completa al menos el tipo de contenido y producto para ver la vista previa', 'info');
+        }
+    });
+
+    // Ejemplos rápidos
+    document.querySelectorAll('.ejemplo-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const ejemplo = this.getAttribute('data-ejemplo');
+            aplicarEjemplo(ejemplo);
+        });
+    });
+
+    // NUEVAS FUNCIONES PARA OBTENER CONTEXTO
+    
+    /**
+     * Obtiene el ID del servicio o proyecto actual
+     */
+    function getItemId() {
+        // Buscar en campos ocultos del formulario
+        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
+        const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
+        
+        if (servicioIdInput && servicioIdInput.value) {
+            return servicioIdInput.value;
+        } else if (proyectoIdInput && proyectoIdInput.value) {
+            return proyectoIdInput.value;
+        }
+        
+        // Fallback: intentar extraer de la URL
+        const pathParts = window.location.pathname.split('/');
+        for (let i = 0; i < pathParts.length; i++) {
+            if ((pathParts[i] === 'servicios' || pathParts[i] === 'proyectos') && pathParts[i + 1]) {
+                const potentialId = parseInt(pathParts[i + 1]);
+                if (!isNaN(potentialId)) {
+                    return potentialId.toString();
+                }
+            }
+        }
+        
+        console.warn('No se pudo determinar el ID del item');
+        return null;
+    }
+
+    /**
+     * Determina si estamos trabajando con un servicio o proyecto
+     */
+    function getTipoContenido() {
+        // Buscar en campos ocultos del formulario
+        const servicioIdInput = document.querySelector('input[name="servicio_id"]');
+        const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
+        
+        if (servicioIdInput && servicioIdInput.value) {
+            return 'servicio';
+        } else if (proyectoIdInput && proyectoIdInput.value) {
+            return 'proyecto';
+        }
+        
+        // Fallback: intentar extraer de la URL o título de página
+        if (window.location.pathname.includes('/servicios/') || 
+            document.title.includes('Servicio')) {
+            return 'servicio';
+        } else if (window.location.pathname.includes('/proyectos/') || 
+                   document.title.includes('Proyecto')) {
+            return 'proyecto';
+        }
+        
+        console.warn('No se pudo determinar el tipo de contenido, usando "servicio" por defecto');
+        return 'servicio';
+    }
+
+    // Función para construir las especificaciones - ACTUALIZADA
+    function construirEspecificaciones() {
+        const tipo = document.getElementById('tipoContenido').value;
+        const producto = document.getElementById('productoEspecifico').value;
+        const enfoque = document.getElementById('enfoqueEspecifico').value;
+        const tono = document.getElementById('tonoContenido').value;
+        const adicionales = document.getElementById('especificacionesAdicionales').value;
+
+        if (!tipo || !producto) {
+            return null;
+        }
+
+        let especificaciones = `Genera un párrafo sobre ${tipo} de ${producto}`;
+        
+        if (enfoque) {
+            especificaciones += ` ${enfoque}`;
+        }
+        
+        especificaciones += `. El tono debe ser ${tono}`;
+        
+        if (adicionales) {
+            especificaciones += `. Consideraciones adicionales: ${adicionales}`;
+        }
+
+        // Instrucciones para HTML enriquecido actualizadas para las nuevas clases CSS
+        especificaciones += `. IMPORTANTE: Usa HTML enriquecido con estas clases CSS específicas:`;
+        especificaciones += ` - <span class="importante">texto muy destacado</span> para conceptos clave`;
+        especificaciones += ` - <span class="destacado">texto destacado</span> para información relevante`;
+        especificaciones += ` - <span class="enfasis">texto técnico</span> para términos especializados`;
+        especificaciones += ` - <span class="marca">información destacada</span> para datos importantes`;
+
+        return especificaciones;
+    }
+
+    // Función para aplicar ejemplos - SIN CAMBIOS
+    function aplicarEjemplo(ejemplo) {
+        const partes = ejemplo.split(' ');
+        
+        if (partes.includes('ventanas')) {
+            document.getElementById('productoEspecifico').value = 'ventanas aluminio';
+        } else if (partes.includes('puertas')) {
+            document.getElementById('productoEspecifico').value = 'puertas aluminio';
+        } else if (partes.includes('persianas')) {
+            document.getElementById('productoEspecifico').value = 'persianas';
+        }
+
+        if (partes.includes('eficiencia')) {
+            document.getElementById('tipoContenido').value = 'beneficios';
+            document.getElementById('enfoqueEspecifico').value = 'eficiencia';
+        } else if (partes.includes('seguridad')) {
+            document.getElementById('tipoContenido').value = 'beneficios';
+            document.getElementById('enfoqueEspecifico').value = 'seguridad';
+        } else if (partes.includes('durabilidad')) {
+            document.getElementById('tipoContenido').value = 'caracteristicas';
+            document.getElementById('enfoqueEspecifico').value = 'durabilidad';
+        }
+
+        if (partes.includes('profesional')) {
+            document.getElementById('tonoContenido').value = 'profesional';
+        }
+    }
+
+    // Función para obtener CSRF token - SIN CAMBIOS
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    // Función auxiliar para mostrar información de contexto (opcional)
+    function mostrarInfoContexto() {
+        const itemId = getItemId();
+        const tipoContenido = getTipoContenido();
+        
+        if (itemId && console) {
+            console.log(`Contexto IA: ${tipoContenido} ID ${itemId}`);
+            console.log('La IA tendrá en cuenta los párrafos existentes para evitar repeticiones');
+        }
+    }
+    
+    // Mostrar info de contexto al cargar (solo en modo debug)
+    if (window.location.search.includes('debug=true')) {
+        mostrarInfoContexto();
+    }
+});
+
+// Extender las funciones de CRUD para incluir el campo título - SIN CAMBIOS
+function populateEditForm(data) {
+    document.getElementById('parrafoId').value = data.id;
+    document.getElementById('titulo').value = data.titulo || '';
+    document.getElementById('contenido').value = data.contenido || '';
+    
+    // Manejo de imagen en edición
+    const imagenPreview = document.getElementById('imagenPreview');
+    if (data.imagen_url) {
+        imagenPreview.innerHTML = `<img src="${data.imagen_url}" alt="Preview" class="img-fluid rounded">`;
+    } else {
+        imagenPreview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+    }
+}
+
+function populateViewModal(data) {
+    document.getElementById('viewTitulo').innerHTML = data.titulo ? `<strong>${data.titulo}</strong>` : '<em class="text-muted">Sin título</em>';
+    document.getElementById('viewContenido').innerHTML = data.contenido || '<em class="text-muted">Sin contenido</em>';
+    
+    const viewImagen = document.getElementById('viewImagen');
+    if (data.imagen_url) {
+        viewImagen.innerHTML = `<img src="${data.imagen_url}" alt="Imagen del párrafo" class="img-fluid rounded">`;
+    } else {
+        viewImagen.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+    }
+}
+
+// Preview de imagen al seleccionar archivo - SIN CAMBIOS
+document.getElementById('imagen').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('imagenPreview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid rounded">`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+    }
+});
+</script>
+{% endblock extra_js %}

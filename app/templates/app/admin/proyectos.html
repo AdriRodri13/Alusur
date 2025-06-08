@@ -5,9 +5,7 @@
 
 {% block page_title %}Proyectos Finalizados{% endblock page_title %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'app/admin/crud.css' %}">
-{% endblock extra_css %}
+
 
 {% block content %}
 <div class="crud-container">
@@ -82,19 +80,23 @@
                                 {{ proyecto.descripcion|truncatechars:100 }}
                             </div>
                         </td>
-                        <td>
+                                                <td>
                             <div class="action-buttons">
-                                <button class="btn btn-sm btn-outline-primary" onclick="editProyecto({{ proyecto.id }})" title="Editar">
+                                <a href="{% url 'admin_servicio_parrafos' servicio.id %}" class="btn btn-sm btn-outline-success" title="Gestionar Párrafos">
+                                    <i class="fas fa-paragraph"></i>
+                                </a>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editServicio({{ servicio.id }})" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-info" onclick="viewProyecto({{ proyecto.id }})" title="Ver">
+                                <button class="btn btn-sm btn-outline-info" onclick="viewServicio({{ servicio.id }})" title="Ver">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteProyecto({{ proyecto.id }})" title="Eliminar">
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteServicio({{ servicio.id }})" title="Eliminar">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
+
                     </tr>
                     {% empty %}
                     <tr>

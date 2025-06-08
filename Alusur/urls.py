@@ -18,11 +18,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.sitemaps.views import sitemap
-from app.sitemaps import ServicioSitemap, ProyectoFinalizadoSitemap
+from app.sitemaps import ServicioSitemap, ProyectoFinalizadoSitemap, StaticViewSitemap
 
 sitemaps = {
+    'static': StaticViewSitemap,
     'servicios': ServicioSitemap,
     'proyectos': ProyectoFinalizadoSitemap,
+    # 'presentacion': TextoPresentacionSitemap,  # Descomenta si tienes URLs individuales
 }
 
 urlpatterns = [
