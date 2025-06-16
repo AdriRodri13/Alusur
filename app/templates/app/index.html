@@ -500,6 +500,47 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     const csrftoken = getCookie('csrftoken');
     
+    // Inyectar CSS para la animación de escritura
+    function injectTypewriterCSS() {
+        const additionalCSS = `
+        /* Cursor parpadeante para efecto de escritura */
+        .ai-typing-cursor {
+            display: inline-block;
+            background-color: var(--color-primario);
+            width: 2px;
+            height: 1.2em;
+            margin-left: 2px;
+            animation: ai-cursor-blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes ai-cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Asegurar que el texto se muestre en línea */
+        .ai-message-text {
+            display: inline;
+            line-height: 1.5;
+        }
+
+        /* Efecto de fade-in suave para cada carácter */
+        .ai-message-text * {
+            animation: ai-char-fade-in 0.3s ease-in;
+        }
+
+        @keyframes ai-char-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = additionalCSS;
+        document.head.appendChild(style);
+    }
+    
     // Función para abrir/cerrar el chat
     function toggleChat() {
         if (isChatOpen) {
@@ -577,6 +618,149 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${hours}:${minutes}`;
     }
     
+    // Función para calcular velocidad según longitud del texto
+    function calculateTypingSpeed(textLength) {
+        if (textLength < 50) return 35;      // Textos cortos: más lento
+        if (textLength < 150) return 25;     // Textos medianos: velocidad normal
+        if (textLength < 300) return 20;     // Textos largos: más rápido
+        return 15;                           // Textos muy largos: muy rápido
+    }
+    
+    // Función para limpiar y corregir HTML malformado
+    function cleanHtmlText(text) {
+        // Corregir tags malformados comunes
+        text = text.replace(/([^>])<\/span>/g, '$1</span>'); // Corregir </span> sueltos
+        text = text.replace(/<span class="([^"]*)"([^>]*?)>/g, '<span class="$1">'); // Limpiar atributos extra
+        
+        // Remover emojis problemáticos que pueden causar errores de encoding
+        text = text.replace(/��/g, '😊'); // Reemplazar emojis rotos
+        
+        // Asegurar que los spans estén bien cerrados
+        const openSpans = (text.match(/<span/g) || []).length;
+        const closeSpans = (text.match(/<\/span>/g) || []).length;
+        
+        if (openSpans > closeSpans) {
+            // Añadir </span> faltantes
+            for (let i = 0; i < (openSpans - closeSpans); i++) {
+                text += '</span>';
+            }
+        }
+        
+        return text;
+    }
+
+    // Función mejorada para animar escritura letra por letra
+    function typeWriterEffect(element, text, speed = 30, callback = null) {
+        // Limpiar y corregir el HTML
+        text = cleanHtmlText(text);
+        
+        // Crear un contenedor temporal para parsear el HTML
+        const tempContainer = document.createElement('div');
+        tempContainer.innerHTML = text;
+        
+        // Extraer todos los nodos de texto y mantener información de sus elementos padre
+        const textSequence = [];
+        
+        function extractTextNodes(node, parentClasses = []) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const textContent = node.textContent;
+                for (let i = 0; i < textContent.length; i++) {
+                    textSequence.push({
+                        char: textContent[i],
+                        classes: [...parentClasses]
+                    });
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const nodeClasses = [...parentClasses];
+                if (node.className) {
+                    nodeClasses.push(node.className);
+                }
+                
+                for (let child of node.childNodes) {
+                    extractTextNodes(child, nodeClasses);
+                }
+            }
+        }
+        
+        extractTextNodes(tempContainer);
+        
+        // Limpiar el elemento destino
+        element.innerHTML = '';
+        
+        // Crear cursor
+        const cursor = document.createElement('span');
+        cursor.className = 'ai-typing-cursor';
+        cursor.innerHTML = '|';
+        
+        let currentIndex = 0;
+        let currentSpan = null;
+        let currentClasses = '';
+        
+        function typeNextChar() {
+            if (currentIndex < textSequence.length) {
+                const charData = textSequence[currentIndex];
+                const newClasses = charData.classes.join(' ');
+                
+                // Si las clases han cambiado, crear nuevo span
+                if (newClasses !== currentClasses) {
+                    currentClasses = newClasses;
+                    
+                    if (newClasses) {
+                        currentSpan = document.createElement('span');
+                        currentSpan.className = newClasses;
+                        element.appendChild(currentSpan);
+                    } else {
+                        currentSpan = null;
+                    }
+                }
+                
+                // Añadir el carácter
+                const textNode = document.createTextNode(charData.char);
+                if (currentSpan) {
+                    currentSpan.appendChild(textNode);
+                } else {
+                    element.appendChild(textNode);
+                }
+                
+                // Remover cursor y volver a añadir al final
+                if (cursor.parentNode) {
+                    cursor.remove();
+                }
+                element.appendChild(cursor);
+                
+                currentIndex++;
+                
+                // Calcular delay
+                let delay = speed;
+                const char = charData.char;
+                if (char === '.' || char === '!' || char === '?') {
+                    delay = speed * 4;
+                } else if (char === ',' || char === ';') {
+                    delay = speed * 2;
+                } else if (char === ' ') {
+                    delay = speed * 0.5;
+                }
+                
+                setTimeout(typeNextChar, delay + Math.random() * 15);
+                
+                // Scroll periódico
+                if (currentIndex % 15 === 0) {
+                    scrollToBottom();
+                }
+            } else {
+                // Animación completada
+                if (cursor.parentNode) {
+                    cursor.remove();
+                }
+                if (callback) callback();
+            }
+        }
+        
+        // Iniciar animación
+        element.appendChild(cursor);
+        typeNextChar();
+    }
+    
     // Función para añadir mensaje del usuario
     function addUserMessage(message) {
         const messageHtml = `
@@ -594,8 +778,9 @@ document.addEventListener('DOMContentLoaded', function() {
         scrollToBottom();
     }
     
-    // Función para añadir mensaje del bot
-    function addBotMessage(message) {
+    // Función para añadir mensaje del bot con animación de escritura
+    function addBotMessageAnimated(message) {
+        // Crear estructura del mensaje
         const messageHtml = `
             <div class="ai-message ai-message-bot">
                 <div class="ai-message-avatar">
@@ -603,15 +788,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="ai-message-content">
                     <div class="ai-message-bubble">
-                        <p>${message}</p>
+                        <div class="ai-message-text"></div>
                     </div>
                     <div class="ai-message-time">${getCurrentTime()}</div>
                 </div>
             </div>
         `;
         
+        // Añadir al DOM
         aiChatMessages.insertAdjacentHTML('beforeend', messageHtml);
+        
+        // Obtener el elemento donde escribir
+        const messageElement = aiChatMessages.lastElementChild.querySelector('.ai-message-text');
+        
+        // Scroll inicial
         scrollToBottom();
+        
+        // Calcular velocidad según longitud
+        const speed = calculateTypingSpeed(message.length);
+        
+        // Iniciar animación de escritura
+        typeWriterEffect(messageElement, message, speed, () => {
+            // Callback cuando termine la animación
+            scrollToBottom();
+        });
     }
     
     // Función para mostrar indicador de typing
@@ -664,7 +864,7 @@ document.addEventListener('DOMContentLoaded', function() {
         scrollToBottom();
     }
     
-    // Función principal para enviar mensaje a la IA
+    // Función principal para enviar mensaje a la IA (CON ANIMACIÓN)
     async function sendMessageToAI(userMessage) {
         if (isTyping) return;
         
@@ -696,8 +896,8 @@ document.addEventListener('DOMContentLoaded', function() {
             removeTypingIndicator();
             
             if (data.success) {
-                // Añadir respuesta de la IA
-                addBotMessage(data.respuesta);
+                // Añadir respuesta con animación de escritura
+                addBotMessageAnimated(data.respuesta);
                 
                 // Guardar en historial
                 conversationHistory.push({
@@ -705,7 +905,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     respuesta: data.respuesta
                 });
                 
-                // Limitar historial a últimos 10 intercambios para evitar prompts muy largos
+                // Limitar historial a últimos 10 intercambios
                 if (conversationHistory.length > 10) {
                     conversationHistory = conversationHistory.slice(-10);
                 }
@@ -734,6 +934,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Limpiar input
         aiChatInput.value = '';
+        
+        // Actualizar estado del botón
+        aiSendBtn.style.opacity = '0.5';
+        aiSendBtn.style.cursor = 'not-allowed';
         
         // Enviar a la IA
         sendMessageToAI(message);
@@ -796,8 +1000,12 @@ document.addEventListener('DOMContentLoaded', function() {
         aiSendBtn.style.cursor = 'not-allowed';
     }
     
+    // Inicializar CSS de animación
+    injectTypewriterCSS();
+    
     // Log para debugging
     console.log('🤖 AluAI Assistant cargado correctamente');
+    console.log('✍️ Animación de escritura activada');
 });
 </script>
 {% endblock extra_js %}
