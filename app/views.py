@@ -971,7 +971,7 @@ def get_system_prompt():
     DATOS DE CONTACTO:
     - Teléfono: [655599227]
     - Email: [alusur1@gmail.com]
-    - Dirección: [Calle Azorin 44]
+    - Dirección: [Calle Azorin 44, aspe, alicante]
     - Horarios: [L-J: 8-13 15-18, V:8-13]
 
     RESPONDE SIEMPRE como AluAI, el asistente experto en carpintería de aluminio de ALUSUR.
