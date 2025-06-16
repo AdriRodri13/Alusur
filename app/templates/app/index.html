@@ -382,4 +382,422 @@
             </div>
         </div>
     </section>
+
+    <!-- ASISTENTE PERSONAL FLOTANTE -->
+    <div class="ai-assistant-container" id="aiAssistant">
+        <!-- Botón flotante del asistente -->
+        <div class="ai-assistant-toggle" id="aiToggle">
+            <div class="ai-assistant-icon">
+                <img src="{% static 'app/images/imagen_asistente.png' %}" alt="Asistente ALUSUR" class="ai-avatar">
+                <div class="ai-pulse-ring"></div>
+                <div class="ai-notification-badge" id="aiNotificationBadge">1</div>
+            </div>
+        </div>
+
+        <!-- Chat del asistente -->
+        <div class="ai-chat-window" id="aiChatWindow">
+            <!-- Header del chat -->
+            <div class="ai-chat-header">
+                <div class="ai-header-info">
+                    <div class="ai-header-avatar">
+                        <img src="{% static 'app/images/imagen_asistente.png' %}" alt="Asistente ALUSUR">
+                        <div class="ai-status-indicator"></div>
+                    </div>
+                    <div class="ai-header-text">
+                        <h4 class="ai-assistant-name">AluAI</h4>
+                        <span class="ai-status-text">En línea • Responde al instante</span>
+                    </div>
+                </div>
+                <div class="ai-header-actions">
+                    <button class="ai-minimize-btn" id="aiMinimize">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="ai-close-btn" id="aiClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Área de mensajes -->
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <!-- Mensaje de bienvenida -->
+                <div class="ai-message ai-message-bot">
+                    <div class="ai-message-avatar">
+                        <img src="{% static 'app/images/imagen_asistente.png' %}" alt="Asistente">
+                    </div>
+                    <div class="ai-message-content">
+                        <div class="ai-message-bubble">
+                            <p>¡Hola! 👋 Soy el asistente virtual de <strong>Aluminios del Sureste</strong>.</p>
+                            <p>Estoy aquí para ayudarte con:</p>
+                            <ul>
+                                <li>Información sobre nuestros servicios</li>
+                                <li>Asesoramiento técnico</li>
+                                <li>Dudas sobre proyectos</li>
+                            </ul>
+                            <p>¿En qué puedo ayudarte hoy?</p>
+                        </div>
+                        <div class="ai-message-time">Ahora</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área de escritura -->
+            <div class="ai-chat-input-area">
+                <div class="ai-input-container">
+                    <div class="ai-input-wrapper">
+                        <input type="text" class="ai-chat-input" placeholder="Escribe tu mensaje..." id="aiChatInput">
+                        <button class="ai-emoji-btn" type="button">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                    </div>
+                    <button class="ai-send-btn" id="aiSendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="ai-input-footer">
+                    <span class="ai-powered-by">
+                        <i class="fas fa-robot"></i>
+                        Powered by ALUSUR IA
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos del DOM
+    const aiToggle = document.getElementById('aiToggle');
+    const aiChatWindow = document.getElementById('aiChatWindow');
+    const aiClose = document.getElementById('aiClose');
+    const aiMinimize = document.getElementById('aiMinimize');
+    const aiSendBtn = document.getElementById('aiSendBtn');
+    const aiChatInput = document.getElementById('aiChatInput');
+    const aiChatMessages = document.getElementById('aiChatMessages');
+    const aiNotificationBadge = document.getElementById('aiNotificationBadge');
+    
+    // Estado del chat
+    let isChatOpen = false;
+    let isMinimized = false;
+    let isTyping = false;
+    let conversationHistory = []; // Array para almacenar {pregunta, respuesta}
+    
+    // CSRF Token para Django
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    
+    // Función para abrir/cerrar el chat
+    function toggleChat() {
+        if (isChatOpen) {
+            closeChat();
+        } else {
+            openChat();
+        }
+    }
+    
+    function openChat() {
+        aiChatWindow.style.display = 'flex';
+        aiChatWindow.classList.add('show');
+        isChatOpen = true;
+        isMinimized = false;
+        aiChatWindow.classList.remove('minimized');
+        
+        // Ocultar badge de notificación
+        if (aiNotificationBadge) {
+            aiNotificationBadge.style.display = 'none';
+        }
+        
+        // Focus en el input
+        setTimeout(() => {
+            aiChatInput.focus();
+        }, 300);
+    }
+    
+    function closeChat() {
+        aiChatWindow.style.display = 'none';
+        aiChatWindow.classList.remove('show');
+        isChatOpen = false;
+        isMinimized = false;
+        aiChatWindow.classList.remove('minimized');
+    }
+    
+    // Función para minimizar/restaurar
+    function toggleMinimize() {
+        if (isMinimized) {
+            // Restaurar
+            aiChatWindow.classList.remove('minimized');
+            isMinimized = false;
+            aiMinimize.innerHTML = '<i class="fas fa-minus"></i>';
+        } else {
+            // Minimizar
+            aiChatWindow.classList.add('minimized');
+            isMinimized = true;
+            aiMinimize.innerHTML = '<i class="fas fa-window-restore"></i>';
+        }
+    }
+    
+    // Función para scroll al final de los mensajes
+    function scrollToBottom() {
+        setTimeout(() => {
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+        }, 100);
+    }
+    
+    // Función para escapar HTML
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+    
+    // Función para formatear tiempo
+    function getCurrentTime() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+    
+    // Función para añadir mensaje del usuario
+    function addUserMessage(message) {
+        const messageHtml = `
+            <div class="ai-message ai-message-user">
+                <div class="ai-message-content">
+                    <div class="ai-message-bubble">
+                        <p>${escapeHtml(message)}</p>
+                    </div>
+                    <div class="ai-message-time">${getCurrentTime()}</div>
+                </div>
+            </div>
+        `;
+        
+        aiChatMessages.insertAdjacentHTML('beforeend', messageHtml);
+        scrollToBottom();
+    }
+    
+    // Función para añadir mensaje del bot
+    function addBotMessage(message) {
+        const messageHtml = `
+            <div class="ai-message ai-message-bot">
+                <div class="ai-message-avatar">
+                    <img src="/static/app/images/imagen_asistente.png" alt="AluAI">
+                </div>
+                <div class="ai-message-content">
+                    <div class="ai-message-bubble">
+                        <p>${message}</p>
+                    </div>
+                    <div class="ai-message-time">${getCurrentTime()}</div>
+                </div>
+            </div>
+        `;
+        
+        aiChatMessages.insertAdjacentHTML('beforeend', messageHtml);
+        scrollToBottom();
+    }
+    
+    // Función para mostrar indicador de typing
+    function showTypingIndicator() {
+        const typingHtml = `
+            <div class="ai-message ai-message-bot ai-typing-message">
+                <div class="ai-message-avatar">
+                    <img src="/static/app/images/imagen_asistente.png" alt="AluAI">
+                </div>
+                <div class="ai-message-content">
+                    <div class="ai-typing-indicator">
+                        <div class="ai-typing-dot"></div>
+                        <div class="ai-typing-dot"></div>
+                        <div class="ai-typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        aiChatMessages.insertAdjacentHTML('beforeend', typingHtml);
+        scrollToBottom();
+    }
+    
+    // Función para remover indicador de typing
+    function removeTypingIndicator() {
+        const typingMessage = document.querySelector('.ai-typing-message');
+        if (typingMessage) {
+            typingMessage.remove();
+        }
+    }
+    
+    // Función para mostrar error
+    function showError(errorMessage) {
+        const errorHtml = `
+            <div class="ai-message ai-message-bot">
+                <div class="ai-message-avatar">
+                    <img src="/static/app/images/imagen_asistente.png" alt="AluAI">
+                </div>
+                <div class="ai-message-content">
+                    <div class="ai-message-bubble" style="background: #fee; border-left: 4px solid #e74c3c;">
+                        <p>❌ Lo siento, ha ocurrido un error: ${escapeHtml(errorMessage)}</p>
+                        <p>Por favor, intenta nuevamente o contacta directamente con ALUSUR.</p>
+                    </div>
+                    <div class="ai-message-time">${getCurrentTime()}</div>
+                </div>
+            </div>
+        `;
+        
+        aiChatMessages.insertAdjacentHTML('beforeend', errorHtml);
+        scrollToBottom();
+    }
+    
+    // Función principal para enviar mensaje a la IA
+    async function sendMessageToAI(userMessage) {
+        if (isTyping) return;
+        
+        isTyping = true;
+        
+        try {
+            // Mostrar indicador de typing
+            showTypingIndicator();
+            
+            // Preparar datos para enviar
+            const requestData = {
+                mensaje: userMessage,
+                historial: conversationHistory
+            };
+            
+            // Hacer petición al backend
+            const response = await fetch('/asistente-chat/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(requestData)
+            });
+            
+            const data = await response.json();
+            
+            // Remover indicador de typing
+            removeTypingIndicator();
+            
+            if (data.success) {
+                // Añadir respuesta de la IA
+                addBotMessage(data.respuesta);
+                
+                // Guardar en historial
+                conversationHistory.push({
+                    pregunta: userMessage,
+                    respuesta: data.respuesta
+                });
+                
+                // Limitar historial a últimos 10 intercambios para evitar prompts muy largos
+                if (conversationHistory.length > 10) {
+                    conversationHistory = conversationHistory.slice(-10);
+                }
+                
+            } else {
+                throw new Error(data.error || 'Error desconocido');
+            }
+            
+        } catch (error) {
+            console.error('Error al comunicarse con la IA:', error);
+            removeTypingIndicator();
+            showError(error.message || 'No se pudo conectar con el servidor');
+        } finally {
+            isTyping = false;
+        }
+    }
+    
+    // Función para enviar mensaje
+    function sendMessage() {
+        const message = aiChatInput.value.trim();
+        
+        if (message === '' || isTyping) return;
+        
+        // Añadir mensaje del usuario
+        addUserMessage(message);
+        
+        // Limpiar input
+        aiChatInput.value = '';
+        
+        // Enviar a la IA
+        sendMessageToAI(message);
+    }
+    
+    // Event listeners
+    if (aiToggle) {
+        aiToggle.addEventListener('click', toggleChat);
+    }
+    
+    if (aiClose) {
+        aiClose.addEventListener('click', closeChat);
+    }
+    
+    if (aiMinimize) {
+        aiMinimize.addEventListener('click', toggleMinimize);
+    }
+    
+    if (aiSendBtn) {
+        aiSendBtn.addEventListener('click', sendMessage);
+    }
+    
+    if (aiChatInput) {
+        // Enviar con Enter
+        aiChatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Deshabilitar/habilitar botón según contenido
+        aiChatInput.addEventListener('input', function() {
+            const hasText = this.value.trim().length > 0;
+            aiSendBtn.style.opacity = hasText ? '1' : '0.5';
+            aiSendBtn.style.cursor = hasText ? 'pointer' : 'not-allowed';
+        });
+    }
+    
+    // Event listeners para sugerencias rápidas (si existen)
+    const suggestionItems = document.querySelectorAll('.ai-suggestion-item');
+    suggestionItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const suggestionText = this.querySelector('span').textContent;
+            aiChatInput.value = suggestionText;
+            sendMessage();
+        });
+    });
+    
+    // Mostrar badge de notificación después de 10 segundos si no ha abierto el chat
+    setTimeout(() => {
+        if (!isChatOpen && aiNotificationBadge) {
+            aiNotificationBadge.style.display = 'flex';
+        }
+    }, 10000);
+    
+    // Estado inicial del botón de envío
+    if (aiSendBtn) {
+        aiSendBtn.style.opacity = '0.5';
+        aiSendBtn.style.cursor = 'not-allowed';
+    }
+    
+    // Log para debugging
+    console.log('🤖 AluAI Assistant cargado correctamente');
+});
+</script>
+{% endblock extra_js %}

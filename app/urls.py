@@ -42,6 +42,9 @@ urlpatterns = [
     
     path('servicio/<int:pk>/', views.servicio_detalle, name='servicio_detalle'),
     path('proyecto/<int:pk>/', views.proyecto_detalle, name='proyecto_detalle'),
+
+    #Asistente IA
+    path('asistente-chat/', views.asistente_chat, name='asistente_chat'),
 ]
 
 

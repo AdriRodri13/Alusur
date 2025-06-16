@@ -803,3 +803,163 @@ def generacion_texto_ia(request):
             "error": f"Error interno del servidor: {str(e)}"
         }, status=500)
     
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def asistente_chat(request):
+    """
+    Endpoint del asistente de chat que recibe el historial completo desde el frontend
+    """
+    try:
+        # Obtener datos del POST
+        data = json.loads(request.body)
+        mensaje_actual = data.get("mensaje", "").strip()
+        historial_conversacion = data.get("historial", [])  # Array de objetos {pregunta, respuesta}
+        
+        # Validaciones
+        if not mensaje_actual:
+            return JsonResponse({"error": "Debes proporcionar un mensaje."}, status=400)
+        
+        # Construir el prompt con historial
+        prompt_completo = construir_prompt_con_historial(mensaje_actual, historial_conversacion)
+        
+        # Mensaje del sistema con especificaciones de ALUSUR
+        system_message = get_system_prompt()
+        
+        # Llamada a la API de DeepSeek
+        response = requests.post(
+            settings.DEEPSEEK_API_URL,
+            headers={
+                "Authorization": f"Bearer {settings.DEEPSEEK_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "deepseek-chat",
+                "messages": [
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": prompt_completo}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 350,
+                "top_p": 0.9,
+                "frequency_penalty": 0.3,
+                "presence_penalty": 0.2
+            },
+            timeout=30
+        )
+        
+        if response.status_code != 200:
+            error_detail = ""
+            try:
+                error_data = response.json()
+                error_detail = error_data.get('error', {}).get('message', 'Error desconocido')
+            except:
+                error_detail = f"Status code: {response.status_code}"
+            
+            return JsonResponse({
+                "error": f"Error al comunicarse con la IA: {error_detail}"
+            }, status=500)
+        
+        # Procesar respuesta
+        ai_response_data = response.json()
+        respuesta_ia = ai_response_data["choices"][0]["message"]["content"].strip()
+        
+        return JsonResponse({
+            "respuesta": respuesta_ia,
+            "success": True
+        })
+    
+    except requests.Timeout:
+        return JsonResponse({
+            "error": "Timeout: La IA tardó demasiado en responder. Intenta nuevamente."
+        }, status=500)
+    
+    except requests.RequestException as e:
+        return JsonResponse({
+            "error": f"Error de conexión con la IA: {str(e)}"
+        }, status=500)
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "error": "Formato de datos inválido."
+        }, status=400)
+    
+    except Exception as e:
+        return JsonResponse({
+            "error": f"Error interno del servidor: {str(e)}"
+        }, status=500)
+
+def construir_prompt_con_historial(mensaje_actual, historial):
+    """
+    Construye el prompt incluyendo el historial de conversación
+    """
+    prompt_parts = []
+    
+    # Añadir historial si existe
+    if historial:
+        prompt_parts.append("CONVERSACIÓN PREVIA:")
+        for i, intercambio in enumerate(historial, 1):
+            pregunta_previa = intercambio.get('pregunta', '')
+            respuesta_previa = intercambio.get('respuesta', '')
+            
+            if pregunta_previa and respuesta_previa:
+                prompt_parts.append(f"Pregunta previa {i}: {pregunta_previa}")
+                prompt_parts.append(f"Respuesta previa {i}: {respuesta_previa}")
+        
+        prompt_parts.append("\n---\n")
+    
+    # Añadir mensaje actual
+    prompt_parts.append(f"PREGUNTA ACTUAL: {mensaje_actual}")
+    
+    return "\n".join(prompt_parts)
+
+def get_system_prompt():
+    """
+    PROMPT DEL SISTEMA - PERSONALIZA AQUÍ LAS ESPECIFICACIONES DEL ASISTENTE
+    """
+    return """
+    Eres AluAI, el asistente virtual especializado de Aluminios del Sureste (ALUSUR), una empresa con más de 30 años de experiencia en carpintería de aluminio en Alicante.
+    
+
+    INFORMACIÓN DE LA EMPRESA:
+    - Nombre: Aluminios del Sureste (ALUSUR)
+    - Especialidad: Carpinteria de aluminio
+    - Experiencia: Más de 30 años en el sector
+    - Ubicación: Aspe, Alicante
+    - Valores: Calidad garantizada, eficiencia energética, profesionalidad
+
+    SERVICIOS PRINCIPALES:
+    - Ventanas de aluminio (oscilobatientes, correderas, abatibles)
+    - Puertas de aluminio (entrada, terraza, seguridad)
+    - Cerramientos de terrazas y balcones
+    - Mamparas de baño
+    - Persianas y toldos
+    - Carpintería metálica personalizada
+
+    INSTRUCCIONES DE COMPORTAMIENTO:
+    1. Mantente SIEMPRE dentro del ámbito de carpintería de aluminio y servicios de ALUSUR
+    2. Sé profesional, técnico pero cercano y amigable
+    3. Ofrece presupuestos gratuitos y consultas
+    4. Si se pregunta por presupuesto, indica el telefono y el mail de contacto, indica que es dificil indicar un presupuesto desde aqui
+    5. Menciona la eficiencia energética como ventaja clave
+    6. Si preguntan algo fuera del ámbito, redirige amablemente hacia los servicios de ALUSUR
+    7. Usa emojis ocasionalmente para ser más cercano
+    8. Sé conciso pero informativo
+    9. Siempre ofrece contactar para más información o presupuesto
+    10. Recuerda el contexto de conversaciones previas
+    11. Es importante que los mensajes sean cortos y concisos, estas para echar un cable, no sobrepases las 50 palabras.
+    12. No añadas cosas como **, si quieres que algo resalte usa alguna de estas clases : 
+        .negrita: Texto en negrita con color primario
+        .destacado: Fondo destacado con borde izquierdo
+        .importante: Para información crítica (rojo)
+        .telefono: Para números de teléfono con hover
+        las debes incluir con un <span class="negrita">texto a destacar</span>
+
+    DATOS DE CONTACTO:
+    - Teléfono: [655599226]
+    - Email: [alusur1@gmail.com]
+    - Dirección: [Calle Azorin 44]
+    - Horarios: [L-J: 8-13 15-18, V:8-13]
+
+    RESPONDE SIEMPRE como AluAI, el asistente experto en carpintería de aluminio de ALUSUR.
+    """
