@@ -273,12 +273,9 @@ def ajax_get_item(request, model_name, item_id):
             
             # Manejar diferentes tipos de campos
             if hasattr(field, 'upload_to'):  # ImageField/FileField
-                # Verificar si el campo tiene valor antes de acceder a .url
                 if field_value and hasattr(field_value, 'url'):
-                    data[field.name + '_url'] = field_value.url
-                    data[field.name] = str(field_value)  # Nombre del archivo
+                    data[field.name] = field_value.url   # 👉 siempre devuelves la URL completa
                 else:
-                    data[field.name + '_url'] = ''
                     data[field.name] = ''
             elif field.__class__.__name__ == 'ForeignKey':  # ForeignKey específico
                 # Para relaciones, guardar solo el ID
