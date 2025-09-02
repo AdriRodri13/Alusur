@@ -18,6 +18,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initLazyLoading();
     initContactForm();
 
+    // Inicializar Swiper cuando esté disponible
+    if (typeof Swiper !== 'undefined') {
+        initProjectsSwiper();
+    } else {
+        // Esperar a que Swiper se cargue
+        setTimeout(function() {
+            if (typeof Swiper !== 'undefined') {
+                initProjectsSwiper();
+            }
+        }, 200);
+    }
+
     // Preloader (opcional)
     hidePreloader();
 });
@@ -210,6 +222,122 @@ function initContactForm() {
     });
 }
 
+// INICIALIZACIÓN DE SWIPER PARA PROYECTOS
+function initProjectsSwiper() {
+    const swiperElement = document.querySelector('.projects-swiper');
+    
+    if (!swiperElement) {
+        console.log('Projects swiper element not found');
+        return;
+    }
+
+    try {
+        const swiper = new Swiper('.projects-swiper', {
+            // Slides por vista según pantalla
+            slidesPerView: 1,
+            spaceBetween: 20,
+            
+            // Responsive breakpoints
+            breakpoints: {
+                576: {
+                    slidesPerView: 2,
+                    spaceBetween: 20
+                },
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 25
+                },
+                992: {
+                    slidesPerView: 4,
+                    spaceBetween: 30
+                }
+            },
+            
+            // Navigation
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            
+            // Pagination
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+                dynamicBullets: true
+            },
+            
+            // Auto height
+            autoHeight: false,
+            
+            // Loop si hay suficientes slides
+            loop: false,
+            
+            // Centrar slides incompletas
+            centeredSlides: false,
+            
+            // Efecto de transición
+            effect: 'slide',
+            speed: 500,
+            
+            // Touch/swipe
+            touchRatio: 1,
+            touchAngle: 45,
+            grabCursor: true,
+            
+            // Lazy loading
+            lazy: {
+                loadPrevNext: true,
+                loadOnTransitionStart: false,
+            },
+            
+            // A11y
+            a11y: {
+                enabled: true,
+                nextSlideMessage: 'Siguiente proyecto',
+                prevSlideMessage: 'Proyecto anterior',
+                firstSlideMessage: 'Este es el primer proyecto',
+                lastSlideMessage: 'Este es el último proyecto'
+            },
+            
+            // Keyboard control
+            keyboard: {
+                enabled: true,
+                onlyInViewport: true,
+            },
+            
+            // Mouse wheel
+            mousewheel: {
+                enabled: false,
+            },
+            
+            // Autoplay (opcional - descomentad para activar)
+            /*
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true
+            },
+            */
+            
+            // Callbacks
+            on: {
+                init: function() {
+                    console.log('Swiper initialized successfully');
+                },
+                slideChange: function() {
+                    // Se ejecuta cuando cambia de slide
+                }
+            }
+        });
+        
+        // Guardar referencia para uso posterior si es necesario
+        window.projectsSwiper = swiper;
+        
+    } catch (error) {
+        console.error('Error initializing Swiper:', error);
+    }
+}
+
 // SISTEMA DE NOTIFICACIONES
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
@@ -337,10 +465,6 @@ function initIntersectionAnimations() {
     });
 }
 
-
-
-
-
 // PERFORMANCE OPTIMIZATION
 function optimizePerformance() {
     // Debounce para resize y scroll
@@ -349,6 +473,11 @@ function optimizePerformance() {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(function() {
             AOS.refresh();
+            
+            // Reinicializar Swiper si existe
+            if (window.projectsSwiper) {
+                window.projectsSwiper.update();
+            }
         }, 250);
     });
 
@@ -391,5 +520,5 @@ document.addEventListener('DOMContentLoaded', function() {
     initIntersectionAnimations();
     optimizePerformance();
 
-    console.log('🚀 SPA Aluminios del Sureste cargada correctamente');
+    console.log('SPA Aluminios del Sureste cargada correctamente');
 });

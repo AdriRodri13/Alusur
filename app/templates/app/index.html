@@ -319,52 +319,77 @@
         </div>
     </section>
 
-    <!-- PROYECTOS FINALIZADOS -->
-    <section id="proyectos" class="section-padding">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center" data-aos="fade-up">
-                    <h2 class="section-title mb-3">Proyectos Realizados</h2>
-                    <p class="section-subtitle">Algunos de nuestros trabajos más destacados</p>
+<!-- PROYECTOS CON LAYOUT: BOTÓN | CONTENIDO | BOTÓN -->
+<section id="proyectos" class="section-padding">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center" data-aos="fade-up">
+                <h2 class="section-title mb-3">Proyectos Realizados</h2>
+                <p class="section-subtitle">Algunos de nuestros trabajos más destacados</p>
+            </div>
+        </div>
+
+        <!-- Layout Horizontal: Botón - Swiper - Botón -->
+        <div class="projects-layout" data-aos="fade-up" data-aos-delay="200">
+            <!-- Botón Izquierdo -->
+            <div class="swiper-navigation-container">
+                <button class="swiper-button-prev projects-btn-prev">
+                    
+                </button>
+            </div>
+
+            <!-- Swiper Container -->
+            <div class="projects-swiper-wrapper">
+                <div class="swiper projects-swiper">
+                    <div class="swiper-wrapper">
+                        {% for proyecto in proyecto_finalizado %}
+                        <div class="swiper-slide">
+                            <a href="{{ proyecto.get_absolute_url }}" class="project-card h-100 d-flex flex-column text-decoration-none">
+                                <div class="project-image-container">
+                                    {% if proyecto.imagen %}
+                                    <div class="project-image">
+                                        <img src="{{ proyecto.imagen.url }}" alt="{{ proyecto.titulo }}" class="img-fluid">
+                                        <div class="project-overlay">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="project-image project-placeholder">
+                                        <i class="fas fa-image project-placeholder-icon"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="project-content flex-grow-1 d-flex flex-column">
+                                    <h3 class="project-title">{{ proyecto.titulo }}</h3>
+                                    <div class="project-description flex-grow-1">
+                                        <p>{{ proyecto.descripcion|truncatewords:20 }}</p>
+                                    </div>
+                                    <div class="project-meta mt-auto">
+                                        <div class="project-category">
+                                            <i class="fas fa-tag me-1"></i>
+                                            Carpintería de Aluminio
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
 
-            <div class="row g-4">
-                {% for proyecto in proyecto_finalizado %}
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="800" data-aos-delay="{{ forloop.counter|add:100 }}">
-                    <a href="{{ proyecto.get_absolute_url }}" class="project-card h-100 d-flex flex-column text-decoration-none">
-                        <div class="project-image-container">
-                            {% if proyecto.imagen %}
-                            <div class="project-image">
-                                <img src="{{ proyecto.imagen.url }}" alt="{{ proyecto.titulo }}" class="img-fluid">
-                                <div class="project-overlay">
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                            </div>
-                            {% else %}
-                            <div class="project-image project-placeholder">
-                                <i class="fas fa-image project-placeholder-icon"></i>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="project-content flex-grow-1 d-flex flex-column">
-                            <h3 class="project-title">{{ proyecto.titulo }}</h3>
-                            <div class="project-description flex-grow-1">
-                                <p>{{ proyecto.descripcion|truncatewords:20 }}</p>
-                            </div>
-                            <div class="project-meta mt-auto">
-                                <div class="project-category">
-                                    <i class="fas fa-tag me-1"></i>
-                                    Carpintería de Aluminio
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
+            <!-- Botón Derecho -->
+            <div class="swiper-navigation-container">
+                <button class="swiper-button-next projects-btn-next">
+                    
+                </button>
             </div>
         </div>
-    </section>
+
+        <!-- Pagination -->
+        <div class="swiper-pagination projects-pagination"></div>
+    </div>
+</section>
 
     <!-- CONTACTO VISUAL -->
     <section id="contacto-visual" class="section-padding bg-light">

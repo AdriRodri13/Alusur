@@ -24,6 +24,7 @@
     {% endblock og_meta %}
     
     <link rel="icon" href="{% static 'app/images/favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <!-- Título específico por página -->
     <title>{% block title %}Aluminios del Sureste - Ventanas y Puertas de Aluminio en Alicante{% endblock title %}</title>
@@ -330,6 +331,7 @@
 
     <!-- SCRIPTS -->
     {% include 'app/includes/scripts.html' %}
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     
     <!-- Scripts adicionales específicos por página -->
     {% block extra_js %}{% endblock extra_js %}
