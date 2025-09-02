@@ -5,6 +5,7 @@ from .models import Servicio, ProyectoFinalizado, TextoPresentacion
 
 class StaticViewSitemap(Sitemap):
     """Sitemap para páginas estáticas del sitio"""
+    protocol = "https"
     priority = 1.0
     changefreq = 'weekly'
 
@@ -25,6 +26,7 @@ class StaticViewSitemap(Sitemap):
 
 class ServicioSitemap(Sitemap):
     """Sitemap para servicios"""
+    protocol = "https"
     changefreq = "weekly"
     priority = 0.9
 
@@ -48,6 +50,7 @@ class ServicioSitemap(Sitemap):
 
 class ProyectoFinalizadoSitemap(Sitemap):
     """Sitemap para proyectos finalizados"""
+    protocol = "https"
     changefreq = "monthly"
     priority = 0.8
 
@@ -71,6 +74,7 @@ class ProyectoFinalizadoSitemap(Sitemap):
 
 class TextoPresentacionSitemap(Sitemap):
     """Sitemap para textos de presentación (si tienen URLs individuales)"""
+    protocol = "https"
     changefreq = "monthly"
     priority = 0.6
 
