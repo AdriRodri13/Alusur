@@ -465,7 +465,15 @@ def get_model_display_name(model_name):
 def robots_txt(request):
     lines = [
         "User-agent: *",
-        "Disallow:",
+        "Disallow: /asistente-chat/",
+        "Disallow: /admin/",
+        "Disallow: /Productos.html",
+        "Disallow: /contacto.html",
+        "Disallow: /empresa",
+        "Disallow: /paginas/servicios.html",
+        "Disallow: /index.html",
+        "Disallow: /servicios.html",
+        "Disallow: /cdn-cgi/",
         "Sitemap: https://aluminiosalusur.com/sitemap.xml"
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
