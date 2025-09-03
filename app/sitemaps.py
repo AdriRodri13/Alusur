@@ -73,24 +73,24 @@ class ProyectoFinalizadoSitemap(Sitemap):
             return 0.8
         return 0.7
 
-class TextoPresentacionSitemap(Sitemap):
-    """Sitemap para textos de presentación (si tienen URLs individuales)"""
-    protocol = "https"
-    changefreq = "monthly"
-    priority = 0.6
-
-    def items(self):
-        # Solo incluir si los textos de presentación tienen URLs propias
-        # Si no, puedes comentar esta clase completa
-        return TextoPresentacion.objects.all()
-
-    def location(self, obj):
-        # Asume que tienes URLs para textos individuales
-        # Si no las tienes, comenta esta clase
-        return f'/presentacion/{obj.id}/'
-
-    def lastmod(self, obj):
-        return timezone.now()
+# class TextoPresentacionSitemap(Sitemap):
+#     """Sitemap para textos de presentación (si tienen URLs individuales)"""
+#     protocol = "https"
+#     changefreq = "monthly"
+#     priority = 0.6
+# 
+#     def items(self):
+#         # Solo incluir si los textos de presentación tienen URLs propias
+#         # Si no, puedes comentar esta clase completa
+#         return TextoPresentacion.objects.all()
+# 
+#     def location(self, obj):
+#         # Asume que tienes URLs para textos individuales
+#         # Si no las tienes, comenta esta clase
+#         return f'/presentacion/{obj.id}/'
+# 
+#     def lastmod(self, obj):
+#         return timezone.now()
 
 
 class EntradaBlogSitemap(Sitemap):

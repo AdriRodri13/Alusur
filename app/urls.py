@@ -3,13 +3,12 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
-from .sitemaps import StaticViewSitemap, ServicioSitemap, ProyectoFinalizadoSitemap, TextoPresentacionSitemap, EntradaBlogSitemap
+from .sitemaps import StaticViewSitemap, ServicioSitemap, ProyectoFinalizadoSitemap, EntradaBlogSitemap
 
 sitemaps = {
     'static': StaticViewSitemap,
     'servicios': ServicioSitemap,
     'proyectos': ProyectoFinalizadoSitemap,
-    'presentaciones': TextoPresentacionSitemap,
     'blog': EntradaBlogSitemap,
 }
 
