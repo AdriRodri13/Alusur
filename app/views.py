@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import TextoPresentacion, Servicio, ProyectoFinalizado, Parrafo
+from .models import TextoPresentacion, Servicio, ProyectoFinalizado, Parrafo, EntradaBlog
 import requests
 from django.conf import settings
 
@@ -47,9 +47,17 @@ def inicio(request):
     texto_presentacion = TextoPresentacion.objects.all()
     servicios = Servicio.objects.all()
     proyecto_finalizado = ProyectoFinalizado.objects.all()
+    
+    # Obtener las últimas 3 entradas del blog publicadas para la vista previa
+    ultimas_entradas = EntradaBlog.objects.filter(publicado=True).order_by('-fecha_creacion')[:3]
 
 
-    context = {"texto_presentacion": texto_presentacion, "servicios": servicios, "proyecto_finalizado": proyecto_finalizado}
+    context = {
+        "texto_presentacion": texto_presentacion, 
+        "servicios": servicios, 
+        "proyecto_finalizado": proyecto_finalizado,
+        "ultimas_entradas": ultimas_entradas,
+    }
 
     return render(request, template_name, context)
 
@@ -231,6 +239,111 @@ def admin_proyecto_parrafos(request, proyecto_id):
     
     return render(request, 'app/admin/parrafos.html', context)
 
+@login_required(login_url='admin_login')
+def admin_blog(request):
+    """
+    Vista para gestionar entradas del blog
+    """
+    entradas = EntradaBlog.objects.all().order_by('-fecha_creacion')
+    
+    context = {
+        'entradas': entradas,
+    }
+    
+    return render(request, 'app/admin/blog.html', context)
+
+# Vista para gestionar párrafos de una entrada de blog específica
+@login_required(login_url='admin_login')
+def admin_entrada_blog_parrafos(request, entrada_id):
+    """
+    Vista para gestionar párrafos de una entrada de blog específica
+    """
+    try:
+        entrada = EntradaBlog.objects.get(id=entrada_id)
+    except EntradaBlog.DoesNotExist:
+        messages.error(request, 'Entrada de blog no encontrada')
+        return redirect('admin_blog')
+    
+    parrafos = Parrafo.objects.filter(entrada_blog=entrada).order_by('id')
+    
+    context = {
+        'entrada_blog': entrada,
+        'parrafos': parrafos,
+        'tipo_contenido': 'entrada_blog'
+    }
+    
+    return render(request, 'app/admin/parrafos.html', context)
+
+
+# ========== VISTAS DEL BLOG PÚBLICO ==========
+
+def blog_lista(request):
+    """
+    Vista para mostrar el listado de entradas del blog
+    """
+    # Obtener solo entradas publicadas, ordenadas por fecha
+    entradas = EntradaBlog.objects.filter(publicado=True).order_by('-fecha_creacion')
+    
+    # Entradas recientes para sidebar (las 5 más recientes)
+    entradas_recientes = entradas[:5]
+    
+    # Total de entradas para mostrar en categorías
+    total_entradas = entradas.count()
+    
+    context = {
+        'entradas': entradas,
+        'entradas_recientes': entradas_recientes,
+        'total_entradas': total_entradas,
+    }
+    
+    return render(request, 'app/blog/blog_lista.html', context)
+
+
+def blog_detalle(request, slug):
+    """
+    Vista para mostrar una entrada individual del blog
+    """
+    try:
+        # Obtener la entrada por slug (solo si está publicada)
+        entrada = EntradaBlog.objects.get(slug=slug, publicado=True)
+    except EntradaBlog.DoesNotExist:
+        # Si no existe, mostrar 404
+        from django.http import Http404
+        raise Http404("La entrada del blog no existe")
+    
+    # Obtener párrafos de esta entrada
+    parrafos = Parrafo.objects.filter(entrada_blog=entrada).order_by('id')
+    
+    # Calcular tiempo de lectura aproximado (palabras promedio por minuto: 200)
+    total_palabras = len(entrada.descripcion.split())
+    for parrafo in parrafos:
+        # Contar palabras del contenido sin HTML
+        from bs4 import BeautifulSoup
+        texto_limpio = BeautifulSoup(parrafo.contenido, 'html.parser').get_text()
+        total_palabras += len(texto_limpio.split())
+    
+    reading_time = max(1, round(total_palabras / 200))  # Mínimo 1 minuto
+    
+    # Entradas relacionadas (últimas 2 entradas excluyendo la actual)
+    entradas_relacionadas = EntradaBlog.objects.filter(
+        publicado=True
+    ).exclude(id=entrada.id).order_by('-fecha_creacion')[:2]
+    
+    # Entradas recientes para sidebar
+    entradas_recientes = EntradaBlog.objects.filter(
+        publicado=True
+    ).exclude(id=entrada.id).order_by('-fecha_creacion')[:3]
+    
+    context = {
+        'entrada': entrada,
+        'parrafos': parrafos,
+        'reading_time': reading_time,
+        'entradas_relacionadas': entradas_relacionadas,
+        'entradas_recientes': entradas_recientes,
+    }
+    
+    return render(request, 'app/blog/blog_detalle.html', context)
+
 
 
 # Mapping de modelos
@@ -239,6 +352,7 @@ MODEL_MAPPING = {
     'servicio': Servicio,
     'proyecto': ProyectoFinalizado,
     'parrafo': Parrafo,
+    'entrada_blog': EntradaBlog,
 }
 
 @login_required(login_url='admin_login')
@@ -337,15 +451,17 @@ def ajax_save_item(request, model_name):
         
         # Manejar párrafos especialmente
         if model_name == 'parrafo':
-            # Obtener el servicio o proyecto padre
+            # Obtener el servicio, proyecto o entrada de blog padre
             servicio_id = request.POST.get('servicio_id')
             proyecto_id = request.POST.get('proyecto_id')
+            entrada_blog_id = request.POST.get('entrada_blog_id')
             
             if servicio_id:
                 try:
                     servicio = Servicio.objects.get(id=servicio_id)
                     obj.servicio = servicio
                     obj.proyecto = None
+                    obj.entrada_blog = None
                 except Servicio.DoesNotExist:
                     return JsonResponse({
                         'success': False,
@@ -356,20 +472,32 @@ def ajax_save_item(request, model_name):
                     proyecto = ProyectoFinalizado.objects.get(id=proyecto_id)
                     obj.proyecto = proyecto
                     obj.servicio = None
+                    obj.entrada_blog = None
                 except ProyectoFinalizado.DoesNotExist:
                     return JsonResponse({
                         'success': False,
                         'error': 'Proyecto no encontrado'
                     }, status=404)
+            elif entrada_blog_id:
+                try:
+                    entrada_blog = EntradaBlog.objects.get(id=entrada_blog_id)
+                    obj.entrada_blog = entrada_blog
+                    obj.servicio = None
+                    obj.proyecto = None
+                except EntradaBlog.DoesNotExist:
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Entrada de blog no encontrada'
+                    }, status=404)
             else:
                 return JsonResponse({
                     'success': False,
-                    'error': 'Debe especificar un servicio o proyecto'
+                    'error': 'Debe especificar un servicio, proyecto o entrada de blog'
                 }, status=400)
         
         # Actualizar campos normales
         for field in model_class._meta.fields:
-            if field.name in ['id', 'servicio', 'proyecto']:
+            if field.name in ['id', 'servicio', 'proyecto', 'entrada_blog']:
                 continue
                 
             field_value = None
@@ -387,6 +515,9 @@ def ajax_save_item(request, model_name):
                 if field_value:
                     setattr(obj, field.name, field_value)
                 # Si no hay archivo nuevo en edición, mantener el actual (no hacer nada)
+            elif field.__class__.__name__ == 'BooleanField':
+                # Para campos boolean, manejar checkboxes (si no viene, es False)
+                setattr(obj, field.name, field_value == 'on' or field_value == 'true' or field_value is True)
             else:
                 # Para campos normales, actualizar si hay valor o es creación
                 if field_value or not (item_id and item_id.strip()):
@@ -461,7 +592,8 @@ def get_model_display_name(model_name):
         'servicio': 'Servicio',
         'presentacion': 'Texto de Presentación',
         'proyecto': 'Proyecto',
-        'parrafo': 'Párrafo'
+        'parrafo': 'Párrafo',
+        'entrada_blog': 'Entrada de Blog'
     }
     return display_names.get(model_name, model_name.title())
 
@@ -525,7 +657,7 @@ def terminos_servicio(request):
 
 def obtener_parrafos_existentes(item_id, tipo_contenido):
     """
-    Obtiene todos los párrafos existentes de un servicio o proyecto.
+    Obtiene todos los párrafos existentes de un servicio, proyecto o entrada de blog.
     Extrae solo el texto limpio para proporcionar contexto a la IA.
     """
     try:
@@ -537,10 +669,15 @@ def obtener_parrafos_existentes(item_id, tipo_contenido):
                 servicio_id=item_id,
                 servicio__isnull=False
             ).order_by('id')  # Ordenar por ID ya que no hay campo 'orden'
-        else:  # proyecto
+        elif tipo_contenido == 'proyecto':
             parrafos = Parrafo.objects.filter(
                 proyecto_id=item_id,
                 proyecto__isnull=False
+            ).order_by('id')
+        else:  # entrada_blog
+            parrafos = Parrafo.objects.filter(
+                entrada_blog_id=item_id,
+                entrada_blog__isnull=False
             ).order_by('id')
         
         contexto_parrafos = []
@@ -568,16 +705,19 @@ def obtener_parrafos_existentes(item_id, tipo_contenido):
 
 def obtener_titulo_item(item_id, tipo_contenido):
     """
-    Obtiene el título del servicio o proyecto para contexto.
+    Obtiene el título del servicio, proyecto o entrada de blog para contexto.
     Actualizada para usar los modelos correctos.
     """
     try:
         if tipo_contenido == 'servicio':
             from .models import Servicio
             item = Servicio.objects.get(id=item_id)
-        else:  # proyecto
+        elif tipo_contenido == 'proyecto':
             from .models import ProyectoFinalizado
             item = ProyectoFinalizado.objects.get(id=item_id)
+        else:  # entrada_blog
+            from .models import EntradaBlog
+            item = EntradaBlog.objects.get(id=item_id)
         
         return item.titulo
         
@@ -675,22 +815,6 @@ def construir_prompt_ia(especificaciones, incluir_titulo=False, contexto_parrafo
     
     return prompt_completo
 
-def obtener_titulo_item(item_id, tipo_contenido):
-    """
-    Obtiene el título del servicio o proyecto para contexto.
-    """
-    try:
-        if tipo_contenido == 'servicio':
-            from .models import Servicio
-            item = Servicio.objects.get(id=item_id)
-        else:
-            from .models import Proyecto
-            item = Proyecto.objects.get(id=item_id)
-        
-        return item.titulo
-    except Exception as e:
-        print(f"Error obteniendo título del item: {str(e)}")
-        return ""
 
 @csrf_exempt
 @require_http_methods(["POST"])

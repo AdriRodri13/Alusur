@@ -1,0 +1,517 @@
+{% load static %}
+
+<!-- Blog Preview Section for SPA -->
+<section id="blog-preview" class="blog-preview-section">
+    <div class="container">
+        <div class="blog-preview-header" data-aos="fade-up">
+            <h2 class="blog-preview-title">Nuestro Blog</h2>
+            <p class="blog-preview-subtitle">
+                Descubre consejos profesionales, noticias del sector y las últimas tendencias en carpintería de aluminio
+            </p>
+        </div>
+        
+        <div class="blog-preview-cards" id="blogPreviewCards">
+            {% if ultimas_entradas %}
+                {% for entrada in ultimas_entradas %}
+                <a href="/blog/{{ entrada.slug }}/" class="blog-preview-card-link">
+                    <div class="blog-preview-card" data-aos="fade-up" data-aos-delay="{% if forloop.counter0 == 0 %}0{% elif forloop.counter0 == 1 %}100{% else %}200{% endif %}">
+                        <div class="blog-preview-card-image">
+                            {% if entrada.imagen_portada %}
+                            <img src="{{ entrada.imagen_portada.url }}" 
+                                 alt="{{ entrada.titulo }}" 
+                                 loading="lazy">
+                            {% else %}
+                            <img src="{% static 'app/images/blog-placeholder.jpg' %}" 
+                                 alt="{{ entrada.titulo }}" 
+                                 loading="lazy">
+                            {% endif %}
+                            {% if entrada.publicado %}
+                            <div class="blog-preview-badge">
+                                <i class="fas fa-star me-1"></i>Nuevo
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="blog-preview-card-content">
+                            <h3 class="blog-preview-card-title">
+                                {{ entrada.titulo }}
+                            </h3>
+                            <p class="blog-preview-card-description">
+                                {{ entrada.descripcion|truncatechars:120 }}
+                            </p>
+                            <div class="blog-preview-card-meta">
+                                <span class="blog-preview-card-date">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    {{ entrada.fecha_creacion|date:"d M Y" }}
+                                </span>
+                                <span class="blog-preview-card-read-more">
+                                    Leer más <i class="fas fa-arrow-right"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <!-- Empty State -->
+                <div class="blog-preview-empty" data-aos="fade-up">
+                    <i class="fas fa-blog mb-3 text-muted" style="font-size: 3rem;"></i>
+                    <h4 class="text-muted">Próximamente</h4>
+                    <p class="text-muted">Estamos preparando contenido interesante sobre carpintería de aluminio.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        {% if ultimas_entradas %}
+        <div class="blog-preview-more" data-aos="fade-up">
+            <a href="/blog/" class="btn btn-outline-danger btn-lg blog-preview-view-all" data-href="/blog/">
+                <i class="fas fa-blog me-2"></i>
+                Ver todos los artículos
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Blog Preview Specific CSS -->
+<style>
+.blog-preview-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.blog-preview-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(220,53,69,0.05)"><polygon points="0,0 1000,50 0,100"/></svg>') no-repeat;
+    background-size: cover;
+}
+
+.blog-preview-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 2;
+}
+
+.blog-preview-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.blog-preview-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border-radius: 2px;
+}
+
+.blog-preview-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.blog-preview-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.blog-preview-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.blog-preview-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.blog-preview-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(220, 53, 69, 0.02) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.blog-preview-card-link:hover .blog-preview-card::before {
+    opacity: 1;
+}
+
+.blog-preview-card-link:hover .blog-preview-card {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.blog-preview-card-image {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.blog-preview-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.blog-preview-card-link:hover .blog-preview-card-image img {
+    transform: scale(1.1);
+}
+
+.blog-preview-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    z-index: 2;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3); }
+    50% { box-shadow: 0 4px 20px rgba(220, 53, 69, 0.5); }
+    100% { box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3); }
+}
+
+.blog-preview-card-content {
+    padding: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.blog-preview-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    min-height: 2.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+.blog-preview-card-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    min-height: 3rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.blog-preview-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.blog-preview-card-date {
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+}
+
+.blog-preview-card-date i {
+    color: #dc3545;
+}
+
+.blog-preview-card-read-more {
+    color: #dc3545;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.blog-preview-card-read-more:hover {
+    color: #c82333;
+    transform: translateX(5px);
+}
+
+.blog-preview-more {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.blog-preview-view-all {
+    padding: 15px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    border: 2px solid #dc3545;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.blog-preview-view-all::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    transition: left 0.4s ease;
+    z-index: -1;
+}
+
+.blog-preview-view-all:hover::before {
+    left: 0;
+}
+
+.blog-preview-view-all:hover {
+    color: white;
+    border-color: #dc3545;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3);
+}
+
+/* Empty State */
+.blog-preview-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .blog-preview-section {
+        padding: 80px 0;
+    }
+    
+    .blog-preview-title {
+        font-size: 2rem;
+    }
+    
+    .blog-preview-cards {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .blog-preview-card-content {
+        padding: 1.5rem;
+    }
+    
+    .blog-preview-card-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .blog-preview-view-all {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .blog-preview-card-image {
+        height: 180px;
+    }
+    
+    .blog-preview-card-title {
+        font-size: 1.1rem;
+        min-height: auto;
+    }
+    
+    .blog-preview-card-description {
+        font-size: 0.9rem;
+        min-height: auto;
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* Loading Animation */
+.blog-preview-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+}
+
+.blog-preview-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #dc3545;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Enhanced animations */
+.blog-preview-card {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.blog-preview-card.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Intersection observer fallback */
+@media (prefers-reduced-motion: no-preference) {
+    .blog-preview-card {
+        animation: slideInUp 0.6s ease-out forwards;
+    }
+    
+    .blog-preview-card:nth-child(1) { animation-delay: 0.1s; }
+    .blog-preview-card:nth-child(2) { animation-delay: 0.2s; }
+    .blog-preview-card:nth-child(3) { animation-delay: 0.3s; }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<!-- Blog Preview JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize blog preview functionality
+    const blogPreviewSection = document.getElementById('blog-preview');
+    if (blogPreviewSection) {
+        initializeBlogPreview();
+    }
+});
+
+function initializeBlogPreview() {
+    // Add interactive effects
+    const cards = document.querySelectorAll('.blog-preview-card');
+    
+    cards.forEach((card, index) => {
+        // Add stagger animation
+        card.style.animationDelay = `${index * 0.1}s`;
+        
+        // Add hover tracking for analytics (optional)
+        card.addEventListener('mouseenter', function() {
+            // Track hover event if needed
+            // gtag('event', 'blog_preview_hover', { card_index: index });
+        });
+        
+        // Add click tracking
+        const cardLink = card.closest('.blog-preview-card-link');
+        const titleElement = card.querySelector('.blog-preview-card-title');
+        
+        if (cardLink) {
+            cardLink.addEventListener('click', function() {
+                // Track click event
+                // gtag('event', 'blog_preview_click', { 
+                //     article_title: titleElement ? titleElement.textContent.trim() : 'unknown'
+                // });
+            });
+        }
+    });
+    
+    // Enhanced view all button
+    const viewAllButton = document.querySelector('.blog-preview-view-all');
+    if (viewAllButton) {
+        viewAllButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Add loading effect
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando blog...';
+            this.style.pointerEvents = 'none';
+            
+            // Smooth transition effect
+            blogPreviewSection.style.opacity = '0.8';
+            
+            setTimeout(() => {
+                window.location.href = this.getAttribute('data-href');
+            }, 600);
+        });
+    }
+}
+
+// Intersection Observer for better animations
+if ('IntersectionObserver' in window) {
+    const blogObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+                blogObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '50px'
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const blogCards = document.querySelectorAll('.blog-preview-card');
+        blogCards.forEach(card => {
+            blogObserver.observe(card);
+        });
+    });
+}
+</script>

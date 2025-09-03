@@ -30,20 +30,24 @@
                 <i class="fas fa-paragraph"></i>
                 {% if servicio %}
                     Párrafos del Servicio: {{ servicio.titulo }}
-                {% else %}
+                {% elif proyecto %}
                     Párrafos del Proyecto: {{ proyecto.titulo }}
+                {% else %}
+                    Párrafos de la Entrada: {{ entrada_blog.titulo }}
                 {% endif %}
             </h5>
             <p class="crud-subtitle">
                 {% if servicio %}
                     Gestiona el contenido detallado del servicio
-                {% else %}
+                {% elif proyecto %}
                     Gestiona el contenido detallado del proyecto
+                {% else %}
+                    Gestiona el contenido detallado de la entrada del blog
                 {% endif %}
             </p>
         </div>
         <div class="crud-header-right">
-            <a href="{% if servicio %}{% url 'admin_servicios' %}{% else %}{% url 'admin_proyectos' %}{% endif %}" class="btn btn-secondary me-2">
+            <a href="{% if servicio %}{% url 'admin_servicios' %}{% elif proyecto %}{% url 'admin_proyectos' %}{% else %}{% url 'admin_blog' %}{% endif %}" class="btn btn-secondary me-2">
                 <i class="fas fa-arrow-left"></i>
                 Volver
             </a>
@@ -173,8 +177,10 @@
                     <input type="hidden" id="parrafoId" name="id">
                     {% if servicio %}
                         <input type="hidden" name="servicio_id" value="{{ servicio.id }}">
-                    {% else %}
+                    {% elif proyecto %}
                         <input type="hidden" name="proyecto_id" value="{{ proyecto.id }}">
+                    {% else %}
+                        <input type="hidden" name="entrada_blog_id" value="{{ entrada_blog.id }}">
                     {% endif %}
                     
                     <!-- Campo Título -->
@@ -619,11 +625,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function getItemId() {
         const servicioIdInput = document.querySelector('input[name="servicio_id"]');
         const proyectoIdInput = document.querySelector('input[name="proyecto_id"]');
+        const entradaBlogIdInput = document.querySelector('input[name="entrada_blog_id"]');
         
         if (servicioIdInput && servicioIdInput.value) {
             return servicioIdInput.value;
         } else if (proyectoIdInput && proyectoIdInput.value) {
             return proyectoIdInput.value;
+        } else if (entradaBlogIdInput && entradaBlogIdInput.value) {
+            return entradaBlogIdInput.value;
         }
         
         console.warn('No se pudo determinar el ID del item');
@@ -633,9 +642,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para determinar el tipo de contenido
     function getTipoContenido() {
         const servicioIdInput = document.querySelector('input[name="servicio_id"]');
+        const entradaBlogIdInput = document.querySelector('input[name="entrada_blog_id"]');
         
         if (servicioIdInput && servicioIdInput.value) {
             return 'servicio';
+        } else if (entradaBlogIdInput && entradaBlogIdInput.value) {
+            return 'entrada_blog';
         }
         
         return 'proyecto';

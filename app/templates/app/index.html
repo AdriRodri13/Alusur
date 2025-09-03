@@ -391,6 +391,9 @@
     </div>
 </section>
 
+    <!-- BLOG PREVIEW SECTION -->
+    {% include 'app/includes/blog_preview.html' %}
+
     <!-- CONTACTO VISUAL -->
     <section id="contacto-visual" class="section-padding bg-light">
         <div class="container">
@@ -1030,4 +1033,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
+<!-- Blog Preview JavaScript -->
+<script src="{% static 'app/blog/blog-preview.js' %}"></script>
 {% endblock extra_js %}

@@ -142,10 +142,28 @@ function editItem(id) {
                 saveButtonText.textContent = `Actualizar ${getModelDisplayName(modelName)}`;
             }
             
-            // Mostrar modal
-            const modalId = `${CRUD_CONFIG.modelName}Modal`;
-            const modal = new bootstrap.Modal(document.getElementById(modalId));
-            modal.show();
+            // Mostrar modal con configuración específica
+            let modalId = `${CRUD_CONFIG.modelName}Modal`;
+            
+            // Mapeo especial para nombres de modelos con guiones bajos
+            const modalIdMapping = {
+                'entrada_blog': 'entradaBlogModal'
+            };
+            
+            if (modalIdMapping[CRUD_CONFIG.modelName]) {
+                modalId = modalIdMapping[CRUD_CONFIG.modelName];
+            }
+            
+            const modalElement = document.getElementById(modalId);
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement, {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                modal.show();
+            } else {
+                console.error(`Modal element with ID ${modalId} not found`);
+            }
         } else {
             showAlert('Error al cargar los datos: ' + data.error, 'danger');
         }
@@ -317,7 +335,17 @@ function saveItem() {
             showAlert(data.message, 'success');
             
             // Cerrar modal
-            const modalId = `${CRUD_CONFIG.modelName}Modal`;
+            let modalId = `${CRUD_CONFIG.modelName}Modal`;
+            
+            // Mapeo especial para nombres de modelos con guiones bajos
+            const modalIdMapping = {
+                'entrada_blog': 'entradaBlogModal'
+            };
+            
+            if (modalIdMapping[CRUD_CONFIG.modelName]) {
+                modalId = modalIdMapping[CRUD_CONFIG.modelName];
+            }
+            
             const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             if (modal) {
                 modal.hide();
@@ -457,7 +485,8 @@ function getModelDisplayName(modelName) {
     const displayNames = {
         'servicio': 'Servicio',
         'presentacion': 'Texto de Presentación',
-        'proyecto': 'Proyecto'
+        'proyecto': 'Proyecto',
+        'entrada_blog': 'Entrada de Blog'
     };
     return displayNames[modelName] || modelName;
 }

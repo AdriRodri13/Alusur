@@ -131,6 +131,13 @@
                     </li>
                     
                     <li class="nav-item">
+                        <a class="nav-link{% if request.resolver_match.url_name == 'blog_lista' %} active{% endif %}" href="{% url 'blog_lista' %}">
+                            <i class="fas fa-blog me-1"></i>
+                            Blog
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
                         {% if request.resolver_match.url_name == 'inicio' %}
                             <a class="nav-link btn-nav-cta smooth-scroll" href="#contacto">
                                 <i class="fas fa-phone me-1"></i>

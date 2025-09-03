@@ -1,0 +1,445 @@
+{% extends "app/admin/base.html" %}
+{% load static %}
+
+{% block title %}Gestión del Blog - ALUSUR{% endblock title %}
+
+{% block page_title %}Gestión del Blog{% endblock page_title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/admin/crud.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="crud-container">
+    <!-- Header con botón crear -->
+    <div class="crud-header">
+        <div class="crud-header-left">
+            <h5 class="crud-title">
+                <i class="fas fa-blog"></i>
+                Entradas del Blog
+            </h5>
+            <p class="crud-subtitle">Gestiona las entradas del blog corporativo</p>
+        </div>
+        <div class="crud-header-right">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#entradaBlogModal" onclick="openCreateModal()">
+                <i class="fas fa-plus"></i>
+                Nueva Entrada
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="crud-filters">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar entradas...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="filter-select">
+                    <select class="form-select" id="estadoFilter">
+                        <option value="">Todos los estados</option>
+                        <option value="publicado">Publicados</option>
+                        <option value="borrador">Borradores</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filter-actions">
+                    <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                        <i class="fas fa-filter"></i>
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de entradas del blog -->
+    <div class="crud-table-container">
+        <div class="table-responsive">
+            <table class="table crud-table" id="blogTable">
+                <thead>
+                    <tr>
+                        <th width="50">#</th>
+                        <th>Imagen</th>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th width="100">Estado</th>
+                        <th width="120">Fecha</th>
+                        <th width="140">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entrada in entradas %}
+                    <tr data-estado="{% if entrada.publicado %}publicado{% else %}borrador{% endif %}">
+                        <td>{{ entrada.id }}</td>
+                        <td>
+                            <div class="table-image">
+                                {% if entrada.imagen_portada %}
+                                    <img src="{{ entrada.imagen_portada.url }}" alt="{{ entrada.titulo }}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% else %}
+                                    <i class="fas fa-image"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-title">{{ entrada.titulo }}</div>
+                            <small class="text-muted">{{ entrada.slug }}</small>
+                        </td>
+                        <td>
+                            <div class="table-description">
+                                {{ entrada.descripcion|truncatechars:100 }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if entrada.publicado %}
+                                <span class="badge bg-success">Publicado</span>
+                            {% else %}
+                                <span class="badge bg-warning">Borrador</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small>{{ entrada.fecha_creacion|date:"d/m/Y" }}</small>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'admin_entrada_blog_parrafos' entrada.id %}" class="btn btn-sm btn-outline-success" title="Gestionar Párrafos">
+                                    <i class="fas fa-paragraph"></i>
+                                </a>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editEntradaBlog({{ entrada.id }})" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="viewEntradaBlog({{ entrada.id }})" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteEntradaBlog({{ entrada.id }})" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <div class="py-5">
+                                <i class="fas fa-blog fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No hay entradas de blog registradas</h5>
+                                <p class="text-muted">Comienza creando tu primera entrada</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    {% if entradas.count > 0 %}
+    <div class="crud-pagination">
+        <nav aria-label="Paginación">
+            <div class="d-flex justify-content-center">
+                <span class="text-muted">Mostrando {{ entradas.count }} entrada{{ entradas.count|pluralize:"s" }}</span>
+            </div>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Crear/Editar Entrada de Blog -->
+<div class="modal fade" id="entradaBlogModal" tabindex="-1" aria-labelledby="entradaBlogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="entradaBlogModalLabel">
+                    <i class="fas fa-blog"></i>
+                    <span id="modalTitle">Nueva Entrada de Blog</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="entradaBlogForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <input type="hidden" id="entradaBlogId" name="id">
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="titulo" class="form-label">Título *</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" maxlength="200" required>
+                            <small class="form-text text-muted">Máximo 200 caracteres</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="slug" class="form-label">Slug</label>
+                            <input type="text" class="form-control" id="slug" name="slug" maxlength="200">
+                            <small class="form-text text-muted">URL amigable (se genera automáticamente del título si se deja vacío)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="descripcion" class="form-label">Descripción *</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required placeholder="Breve descripción que aparecerá en el listado del blog..."></textarea>
+                            <small class="form-text text-muted">Esta descripción aparecerá en la página principal del blog</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="imagen_portada" class="form-label">Imagen de Portada</label>
+                            <input type="file" class="form-control" id="imagen_portada" name="imagen_portada" accept="image/*">
+                            <small class="form-text text-muted">Imagen principal que aparecerá en el blog</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Vista previa</label>
+                            <div class="image-preview" id="imagen_portadaPreview">
+                                <i class="fas fa-image"></i>
+                                <span>Sin imagen</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="publicado" name="publicado">
+                                <label class="form-check-label" for="publicado">
+                                    <strong>Publicar entrada</strong>
+                                </label>
+                                <small class="form-text text-muted d-block">Si no está marcado, se guardará como borrador</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveButton">
+                        <i class="fas fa-save"></i>
+                        <span id="saveButtonText">Guardar Entrada</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ver Entrada de Blog -->
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalLabel">
+                    <i class="fas fa-eye"></i>
+                    Detalles de la Entrada
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="view-content">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>Título:</h6>
+                            <p id="viewTitulo" class="view-field"></p>
+                            
+                            <h6>Slug:</h6>
+                            <p id="viewSlug" class="view-field"></p>
+                            
+                            <h6>Descripción:</h6>
+                            <p id="viewDescripcion" class="view-field content-box"></p>
+                            
+                            <h6>Estado:</h6>
+                            <p id="viewPublicado" class="view-field"></p>
+                            
+                            <h6>Fechas:</h6>
+                            <small id="viewFechas" class="text-muted"></small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Imagen de Portada:</h6>
+                            <div class="view-image" id="viewImagen_portada">
+                                <i class="fas fa-image"></i>
+                                <span>Sin imagen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'app/admin/crud.js' %}"></script>
+<script>
+    // Configuración específica para entradas de blog
+    const CRUD_CONFIG = {
+        modelName: 'entrada_blog',
+        ajaxUrls: {
+            get: '{% url "admin_ajax_get_item" "entrada_blog" 0 %}',
+            save: '{% url "admin_ajax_save_item" "entrada_blog" %}',
+            delete: '{% url "admin_ajax_delete_item" "entrada_blog" 0 %}'
+        }
+    };
+
+    // Funciones específicas para entradas de blog
+    function editEntradaBlog(id) {
+        editItem(id);
+    }
+
+    function viewEntradaBlog(id) {
+        viewItem(id);
+    }
+
+    function deleteEntradaBlog(id) {
+        deleteItem(id);
+    }
+
+    function openCreateModal() {
+        openCreateModalGeneric();
+    }
+
+    // Filtro por estado
+    document.addEventListener('DOMContentLoaded', function() {
+        const estadoFilter = document.getElementById('estadoFilter');
+        if (estadoFilter) {
+            estadoFilter.addEventListener('change', function() {
+                filterTableByEstado();
+            });
+        }
+
+        // Generar slug automáticamente del título
+        const tituloInput = document.getElementById('titulo');
+        const slugInput = document.getElementById('slug');
+        
+        if (tituloInput && slugInput) {
+            tituloInput.addEventListener('input', function() {
+                // Solo generar slug si está vacío (para no sobrescribir uno personalizado)
+                if (!slugInput.value.trim()) {
+                    const slug = generateSlug(this.value);
+                    slugInput.value = slug;
+                }
+            });
+        }
+    });
+
+    function filterTableByEstado() {
+        const estadoValue = document.getElementById('estadoFilter')?.value.toLowerCase() || '';
+        const searchValue = document.getElementById('searchInput')?.value.toLowerCase() || '';
+        const table = document.querySelector('.crud-table tbody');
+        const rows = table.querySelectorAll('tr[data-estado]');
+        
+        rows.forEach(row => {
+            const estado = row.getAttribute('data-estado');
+            const text = row.textContent.toLowerCase();
+            
+            const matchesEstado = !estadoValue || estado === estadoValue;
+            const matchesSearch = text.includes(searchValue);
+            
+            row.style.display = (matchesEstado && matchesSearch) ? '' : 'none';
+        });
+    }
+
+    // Override del filtro de tabla para incluir estado
+    function filterTable() {
+        filterTableByEstado();
+    }
+
+    function generateSlug(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[áàäâã]/g, 'a')
+            .replace(/[éèëê]/g, 'e')
+            .replace(/[íìïî]/g, 'i')
+            .replace(/[óòöôõ]/g, 'o')
+            .replace(/[úùüû]/g, 'u')
+            .replace(/ñ/g, 'n')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .substring(0, 200);
+    }
+
+    // Extender las funciones de CRUD para manejar campos específicos del blog
+    function populateEditForm(data) {
+        const form = document.querySelector('form[id$="Form"]');
+        if (!form) return;
+        
+        // Llenar campos específicos del blog
+        const entradaBlogIdField = document.getElementById('entradaBlogId');
+        const tituloField = document.getElementById('titulo');
+        const slugField = document.getElementById('slug');
+        const descripcionField = document.getElementById('descripcion');
+        const publicadoField = document.getElementById('publicado');
+        const imagenPreview = document.getElementById('imagen_portadaPreview');
+
+        if (entradaBlogIdField) entradaBlogIdField.value = data.id || '';
+        if (tituloField) tituloField.value = data.titulo || '';
+        if (slugField) slugField.value = data.slug || '';
+        if (descripcionField) descripcionField.value = data.descripcion || '';
+        if (publicadoField) publicadoField.checked = data.publicado || false;
+        
+        // Manejo de imagen en edición
+        if (imagenPreview) {
+            if (data.imagen_portada_url || data.imagen_portada) {
+                const imageUrl = data.imagen_portada_url || data.imagen_portada;
+                imagenPreview.innerHTML = `<img src="${imageUrl}" alt="Preview" class="img-fluid rounded">`;
+            } else {
+                imagenPreview.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+            }
+        }
+    }
+
+    function populateViewModal(data) {
+        const viewTitulo = document.getElementById('viewTitulo');
+        const viewSlug = document.getElementById('viewSlug');
+        const viewDescripcion = document.getElementById('viewDescripcion');
+        const viewPublicado = document.getElementById('viewPublicado');
+        const viewFechas = document.getElementById('viewFechas');
+        const viewImagen = document.getElementById('viewImagen_portada');
+
+        if (viewTitulo) viewTitulo.textContent = data.titulo || 'Sin título';
+        if (viewSlug) viewSlug.textContent = data.slug || 'Sin slug';
+        if (viewDescripcion) viewDescripcion.textContent = data.descripcion || 'Sin descripción';
+        if (viewPublicado) {
+            viewPublicado.innerHTML = data.publicado ? 
+                '<span class="badge bg-success">Publicado</span>' : 
+                '<span class="badge bg-warning">Borrador</span>';
+        }
+        
+        if (viewFechas) {
+            let fechasText = '';
+            if (data.fecha_creacion) {
+                fechasText += `Creado: ${new Date(data.fecha_creacion).toLocaleDateString()}`;
+            }
+            if (data.fecha_actualizacion) {
+                fechasText += ` | Actualizado: ${new Date(data.fecha_actualizacion).toLocaleDateString()}`;
+            }
+            viewFechas.textContent = fechasText;
+        }
+        
+        if (viewImagen) {
+            if (data.imagen_portada_url || data.imagen_portada) {
+                const imageUrl = data.imagen_portada_url || data.imagen_portada;
+                viewImagen.innerHTML = `<img src="${imageUrl}" alt="Imagen de portada" class="img-fluid rounded">`;
+            } else {
+                viewImagen.innerHTML = '<i class="fas fa-image"></i><span>Sin imagen</span>';
+            }
+        }
+    }
+</script>
+{% endblock extra_js %}

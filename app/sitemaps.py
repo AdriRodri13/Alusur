@@ -1,7 +1,7 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from django.utils import timezone
-from .models import Servicio, ProyectoFinalizado, TextoPresentacion
+from .models import Servicio, ProyectoFinalizado, TextoPresentacion, EntradaBlog
 
 class StaticViewSitemap(Sitemap):
     """Sitemap para páginas estáticas del sitio"""
@@ -12,6 +12,7 @@ class StaticViewSitemap(Sitemap):
     def items(self):
         return [
             'inicio',
+            'blog_lista',
             'aviso_privacidad', 
             'terminos_servicio',
             'politica_cookies'
@@ -90,4 +91,26 @@ class TextoPresentacionSitemap(Sitemap):
 
     def lastmod(self, obj):
         return timezone.now()
+
+
+class EntradaBlogSitemap(Sitemap):
+    """Sitemap para entradas del blog"""
+    protocol = "https"
+    changefreq = "weekly"
+    priority = 0.8
+
+    def items(self):
+        return EntradaBlog.objects.filter(publicado=True).order_by('-fecha_creacion')
+
+    def location(self, obj):
+        return obj.get_absolute_url()
+
+    def lastmod(self, obj):
+        return obj.fecha_actualizacion
+
+    def priority(self, obj):
+        # Prioridad dinámica basada en si tiene párrafos
+        if hasattr(obj, 'parrafos') and obj.parrafos.exists():
+            return 0.8
+        return 0.7
 
