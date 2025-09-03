@@ -381,9 +381,16 @@ def ajax_save_item(request, model_name):
             else:
                 continue
             
-            # Solo actualizar si hay valor o es una actualización
-            if field_value or (item_id and item_id.strip()):
-                setattr(obj, field.name, field_value)
+            # Manejar campos de archivo/imagen especialmente
+            if hasattr(field, 'upload_to'):  # ImageField/FileField
+                # Solo actualizar si hay un archivo nuevo
+                if field_value:
+                    setattr(obj, field.name, field_value)
+                # Si no hay archivo nuevo en edición, mantener el actual (no hacer nada)
+            else:
+                # Para campos normales, actualizar si hay valor o es creación
+                if field_value or not (item_id and item_id.strip()):
+                    setattr(obj, field.name, field_value)
         
         # Guardar
         obj.save()
